@@ -7,13 +7,13 @@ Configuration for PHPStorm
 
 * Git
 
-```
+```sh
 git clone https://github.com/phpfmt/fmt.git
 ```
 
 * Composer
 
-```
+```sh
 php composer.phar global require phpfmt/fmt
 ```
 
@@ -39,20 +39,19 @@ Tested with PhpStorm 9.0.2 with `phpfmt v19.6.5`.
 
 * Git
 
-```
+```sh
 git clone https://github.com/phpfmt/fmt.git
 ```
 
 * Composer
 
-```
+```sh
 php composer.phar global require phpfmt/fmt
 ```
 
 2 - Set up a File Watcher : Open Settings (or “Preferences” on OS X) > Tools > File Watchers and setup a new Watcher :
 
-// TODO Fix
-![phpstorm-configuration]()
+![phpstorm-configuration](https://raw.githubusercontent.com/phpfmt/fmt/master/phpstorm-file-watcher-configuration.png)
 
 Fill the fields with the following:
 

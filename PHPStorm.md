@@ -52,7 +52,7 @@ php composer.phar global require phpfmt/fmt
 2 - Set up a File Watcher : Open Settings (or “Preferences” on OS X) > Tools > File Watchers and setup a new Watcher :
 
 // TODO Fix
-![phpstorm-configuration](https://www.dropbox.com/s/54v41lnj39qorr5/Screenshot%202016-04-14%2015.27.57.png?dl=0)
+![phpstorm-configuration]()
 
 Fill the fields with the following:
 

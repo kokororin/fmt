@@ -16,14 +16,14 @@ final class OnlyOrderUseClauses extends OrderAndRemoveUseClauses {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Order use block - do not remove unused imports.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 // From
 use C;

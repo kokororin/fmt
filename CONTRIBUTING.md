@@ -10,9 +10,9 @@ The rules are:
 
 3 - Ideally, all public methods should be documented as they are part of public interface.
 
-4 - None of the changes may affect the core passes. This is assessed through tests (tests/* and tests-PSR/*). Each maintainer is free to choose a policy regarding tests, including having no tests whatsoever. Run tests using `php test.php -v`.
+4 - None of the changes may affect the core passes. This is assessed through tests (tests/* and tests-PSR/*). Each maintainer is free to choose a policy regarding tests, including having no tests whatsoever. Run tests using `composer test -- -v`.
 
-5 - If all tests passes, then regenerate php.fmt using `php build.php`.
+5 - If all tests passes, then regenerate php.fmt using `php composer build`.
 
 6 - Goto 1
 
@@ -20,5 +20,3 @@ The rules are:
 ## Maintainer is not responding?
 
 Open the PR and let me know about the non-responsive maintainer. I may take over, or appoint you as the new maintainer.
-
-

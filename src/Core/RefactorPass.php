@@ -17,23 +17,23 @@ final class RefactorPass extends FormatterPass {
 
 	private $to;
 
-	public function __construct(string $from, string $to) {
+	public function __construct($from, $to) {
 		$this->setFrom($from);
 		$this->setTo($to);
 	}
 
-	public function calculateBuffer(string $fromStr, string $toStr, string $skipCall, string $buffer): string {
+	public function calculateBuffer($fromStr, $toStr, $skipCall, $buffer) {
 		if (strpos($toStr, '/*skip*/')) {
 			return str_replace(explode($skipCall, $fromStr), explode('/*skip*/', $toStr), $buffer);
 		}
 		return str_replace($fromStr, $toStr, $buffer);
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return true;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$from = $this->getFrom();
 		$fromSize = sizeof($from);
 		$fromStr = implode('', array_map(function ($v) {
@@ -107,15 +107,15 @@ final class RefactorPass extends FormatterPass {
 		return $this->code;
 	}
 
-	private function getFrom(): string {
+	private function getFrom() {
 		return $this->from;
 	}
 
-	private function getTo(): string {
+	private function getTo() {
 		return $this->to;
 	}
 
-	private function setFrom(string $from): string{
+	private function setFrom($from) {
 		$tkns = token_get_all('<?php ' . $from);
 		array_shift($tkns);
 		$tkns = array_map(function ($v) {
@@ -125,7 +125,7 @@ final class RefactorPass extends FormatterPass {
 		return $this;
 	}
 
-	private function setTo(string $to): string{
+	private function setTo($to) {
 		$tkns = token_get_all('<?php ' . $to);
 		array_shift($tkns);
 		$tkns = array_map(function ($v) {

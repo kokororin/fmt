@@ -21,11 +21,11 @@ final class PSR2IndentWithSpace extends FormatterPass {
 		}
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return true;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$spaces = str_repeat(' ', (int) $this->size);
 		$this->tkns = token_get_all($source);
 		$this->code = '';

@@ -18,14 +18,14 @@ final class ClassToStatic extends ClassToSelf {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return '"static" is preferred within class, trait or interface.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From

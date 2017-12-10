@@ -13,7 +13,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 final class EchoToPrint extends AdditionalPass {
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_ECHO])) {
 			return true;
 		}
@@ -21,7 +21,7 @@ final class EchoToPrint extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		while (list($index, $token) = each($this->tkns)) {
 			list($id) = $this->getToken($token);
@@ -31,7 +31,7 @@ final class EchoToPrint extends AdditionalPass {
 				$start = $index;
 				$end = $this->walkUsefulRightUntil($this->tkns, $index, [ST_SEMI_COLON, T_CLOSE_TAG]);
 				$convert = true;
-				for ($i = $start; $i < $end; $i++) {
+				for ($i = $start; $i < $end; ++$i) {
 					$tkn = $this->tkns[$i];
 					if (ST_PARENTHESES_OPEN === $tkn[0]) {
 						$this->refWalkBlock($tkns, $ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
@@ -54,14 +54,14 @@ final class EchoToPrint extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Convert from T_ECHO to print.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 echo 1;
@@ -70,5 +70,4 @@ print 2;
 ?>
 EOT;
 	}
-
 }

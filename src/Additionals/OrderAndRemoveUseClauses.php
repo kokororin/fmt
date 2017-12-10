@@ -37,7 +37,7 @@ class OrderAndRemoveUseClauses extends AdditionalPass {
 		}
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_USE])) {
 			return true;
 		}
@@ -45,7 +45,7 @@ class OrderAndRemoveUseClauses extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source = '') {
 		$source = $this->sortWithinNamespaces($source);
 
 		return $source;
@@ -54,14 +54,14 @@ class OrderAndRemoveUseClauses extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Order use block and remove unused imports.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 // From
 use C;

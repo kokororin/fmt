@@ -18,7 +18,7 @@ final class RestoreComments extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_COMMENT])) {
 			return true;
 		}
@@ -26,7 +26,7 @@ final class RestoreComments extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		reset($this->commentStack);
 		$this->tkns = token_get_all($source);
 		$this->code = '';
@@ -43,11 +43,11 @@ final class RestoreComments extends AdditionalPass {
 		return $this->renderLight($this->tkns);
 	}
 
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Revert any formatting of comments content.';
 	}
 
-	public function getExample(): string {
+	public function getExample() {
 		return '';
 	}
 }

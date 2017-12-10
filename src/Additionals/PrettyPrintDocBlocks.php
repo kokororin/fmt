@@ -15,7 +15,7 @@
 final class PrettyPrintDocBlocks extends AdditionalPass {
 	const EMPTY_LINE = "\x2 EMPTYLINE \x3";
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_DOC_COMMENT])) {
 			return true;
 		}
@@ -23,7 +23,7 @@ final class PrettyPrintDocBlocks extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		while (list($index, $token) = each($this->tkns)) {
@@ -41,14 +41,14 @@ final class PrettyPrintDocBlocks extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Prettify Doc Blocks';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 /**

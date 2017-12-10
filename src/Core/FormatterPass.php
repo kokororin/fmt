@@ -40,11 +40,11 @@ abstract class FormatterPass {
 
 	private $memoUseful = [null, null];
 
-	abstract public function candidate(string $source, array $foundTokens): bool;
+	abstract public function candidate($source, $foundTokens);
 
-	abstract public function format(string $source): string;
+	abstract public function format($source);
 
-	protected function alignPlaceholders(string $origPlaceholder, int $contextCounter) {
+	protected function alignPlaceholders($origPlaceholder, $contextCounter) {
 		for ($j = 0; $j <= $contextCounter; ++$j) {
 			$placeholder = sprintf($origPlaceholder, $j);
 			if (false === strpos($this->code, $placeholder)) {
@@ -88,27 +88,27 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function appendCode(string $code) {
+	protected function appendCode($code = '') {
 		$this->code .= $code;
 	}
 
-	protected function getCrlf(): string {
+	protected function getCrlf() {
 		return $this->newLine;
 	}
 
-	protected function getCrlfIndent(): string {
+	protected function getCrlfIndent() {
 		return $this->getCrlf() . $this->getIndent();
 	}
 
-	protected function getIndent(int $increment = 0): string {
+	protected function getIndent($increment = 0) {
 		return str_repeat($this->indentChar, $this->indent + $increment);
 	}
 
-	protected function getSpace(bool $true = true): string {
+	protected function getSpace($true = true) {
 		return $true ? ' ' : '';
 	}
 
-	protected function getToken($token): array{
+	protected function getToken($token) {
 		$ret = [$token, $token];
 		if (isset($token[1])) {
 			$ret = $token;
@@ -116,42 +116,42 @@ abstract class FormatterPass {
 		return $ret;
 	}
 
-	protected function hasLn(string $text): bool {
+	protected function hasLn($text) {
 		return (false !== strpos($text, $this->newLine));
 	}
 
-	protected function hasLnAfter(): bool{
+	protected function hasLnAfter() {
 		$id = null;
 		$text = null;
 		list($id, $text) = $this->inspectToken();
 		return T_WHITESPACE === $id && $this->hasLn($text);
 	}
 
-	protected function hasLnBefore(): bool{
+	protected function hasLnBefore() {
 		$id = null;
 		$text = null;
 		list($id, $text) = $this->inspectToken(-1);
 		return T_WHITESPACE === $id && $this->hasLn($text);
 	}
 
-	protected function hasLnLeftToken(): bool {
+	protected function hasLnLeftToken() {
 		list(, $text) = $this->getToken($this->leftToken());
 		return $this->hasLn($text);
 	}
 
-	protected function hasLnRightToken(): bool {
+	protected function hasLnRightToken() {
 		list(, $text) = $this->getToken($this->rightToken());
 		return $this->hasLn($text);
 	}
 
-	protected function inspectToken(int $delta = 1): array{
+	protected function inspectToken($delta = 1) {
 		if (!isset($this->tkns[$this->ptr + $delta])) {
 			return [null, null];
 		}
 		return $this->getToken($this->tkns[$this->ptr + $delta]);
 	}
 
-	protected function isShortArray(): bool {
+	protected function isShortArray() {
 		return !$this->leftTokenIs([
 			ST_BRACKET_CLOSE,
 			ST_CURLY_CLOSE,
@@ -163,21 +163,21 @@ abstract class FormatterPass {
 		]);
 	}
 
-	protected function leftMemoTokenIs($token): bool {
+	protected function leftMemoTokenIs($token) {
 		return $this->resolveFoundToken($this->memo[0], $token);
 	}
 
-	protected function leftMemoUsefulTokenIs($token, bool $debug = false): bool {
+	protected function leftMemoUsefulTokenIs($token, $debug = false) {
 		return $this->resolveFoundToken($this->memoUseful[0], $token);
 	}
 
-	protected function leftToken(array $ignoreList = []) {
+	protected function leftToken($ignoreList = []) {
 		$i = $this->leftTokenIdx($ignoreList);
 
-		return $this->tkns[$i];
+		return isset($this->tkns[$i]) ? $this->tkns[$i] : null;
 	}
 
-	protected function leftTokenIdx(array $ignoreList = []): int{
+	protected function leftTokenIdx($ignoreList = []) {
 		$ignoreList = $this->resolveIgnoreList($ignoreList);
 
 		$i = $this->walkLeft($this->tkns, $this->ptr, $ignoreList);
@@ -185,18 +185,18 @@ abstract class FormatterPass {
 		return $i;
 	}
 
-	protected function leftTokenIs($token, array $ignoreList = []): bool {
+	protected function leftTokenIs($token, $ignoreList = []) {
 		return $this->tokenIs('left', $token, $ignoreList);
 	}
 
-	protected function leftTokenSubsetAtIdx(array $tkns, int $idx, array $ignoreList = []): int{
+	protected function leftTokenSubsetAtIdx($tkns, $idx, $ignoreList = []) {
 		$ignoreList = $this->resolveIgnoreList($ignoreList);
 		$idx = $this->walkLeft($tkns, $idx, $ignoreList);
 
 		return $idx;
 	}
 
-	protected function leftTokenSubsetIsAtIdx(array $tkns, int $idx, $token, array $ignoreList = []): bool{
+	protected function leftTokenSubsetIsAtIdx($tkns, $idx, $token, $ignoreList = []) {
 		$idx = $this->leftTokenSubsetAtIdx($tkns, $idx, $ignoreList);
 
 		return $this->resolveTokenMatch($tkns, $idx, $token);
@@ -206,11 +206,11 @@ abstract class FormatterPass {
 		return $this->leftToken($this->ignoreFutileTokens);
 	}
 
-	protected function leftUsefulTokenIdx(): int {
+	protected function leftUsefulTokenIdx() {
 		return $this->leftTokenIdx($this->ignoreFutileTokens);
 	}
 
-	protected function leftUsefulTokenIs($token): bool {
+	protected function leftUsefulTokenIs($token) {
 		return $this->leftTokenIs($token, $this->ignoreFutileTokens);
 	}
 
@@ -228,7 +228,7 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function peekAndCountUntilAny(array $tkns, int $ptr, array $tknids): array{
+	protected function peekAndCountUntilAny($tkns, $ptr, $tknids) {
 		$tknids = array_flip($tknids);
 		$tknsSize = sizeof($tkns);
 		$countTokens = [];
@@ -250,7 +250,7 @@ abstract class FormatterPass {
 		return [$id, $countTokens];
 	}
 
-	protected function printAndStopAt($tknids): array{
+	protected function printAndStopAt($tknids) {
 		if (is_scalar($tknids)) {
 			$tknids = [$tknids];
 		}
@@ -268,7 +268,6 @@ abstract class FormatterPass {
 			}
 			$this->appendCode($text);
 		}
-		return [null, null];
 	}
 
 	protected function printAndStopAtEndOfParamBlock() {
@@ -307,7 +306,7 @@ abstract class FormatterPass {
 		return $paramCount;
 	}
 
-	protected function printBlock(string $start, string $end) {
+	protected function printBlock($start, $end) {
 		$count = 1;
 		while (list($index, $token) = each($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
@@ -365,7 +364,7 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function printUntilAny(array $tknids) {
+	protected function printUntilAny($tknids) {
 		$tknids = array_flip($tknids);
 		$whitespaceNewLine = false;
 		$id = null;
@@ -391,12 +390,12 @@ abstract class FormatterPass {
 		$this->printUntil(ST_QUOTE);
 	}
 
-	protected function refInsert(array &$tkns, int &$ptr, array $item) {
+	protected function refInsert(&$tkns, &$ptr, $item) {
 		array_splice($tkns, $ptr, 0, [$item]);
 		++$ptr;
 	}
 
-	protected function refSkipBlocks(array $tkns, int &$ptr) {
+	protected function refSkipBlocks($tkns, &$ptr) {
 		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 
@@ -526,7 +525,7 @@ abstract class FormatterPass {
 		--$ptr;
 	}
 
-	protected function refSkipIfTokenIsAny(array $tkns, int &$ptr, array $skipIds) {
+	protected function refSkipIfTokenIsAny($tkns, &$ptr, $skipIds) {
 		$skipIds = array_flip($skipIds);
 		++$ptr;
 		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
@@ -537,14 +536,14 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function refWalkBackUsefulUntil(array $tkns, int &$ptr, array $expectedId) {
+	protected function refWalkBackUsefulUntil($tkns, &$ptr, array $expectedId) {
 		$expectedId = array_flip($expectedId);
 		do {
 			$ptr = $this->walkLeft($tkns, $ptr, $this->ignoreFutileTokens);
 		} while (isset($expectedId[$tkns[$ptr][0]]));
 	}
 
-	protected function refWalkBlock(array $tkns, int &$ptr, string $start, string $end) {
+	protected function refWalkBlock($tkns, &$ptr, $start, $end) {
 		$count = 0;
 		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
@@ -560,7 +559,7 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function refWalkBlockReverse(array $tkns, int &$ptr, string $start, string $end) {
+	protected function refWalkBlockReverse($tkns, &$ptr, $start, $end) {
 		$count = 0;
 		for (; $ptr >= 0; --$ptr) {
 			$id = $tkns[$ptr][0];
@@ -576,7 +575,7 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function refWalkCurlyBlock(array $tkns, int &$ptr) {
+	protected function refWalkCurlyBlock($tkns, &$ptr) {
 		$count = 0;
 		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
@@ -598,7 +597,7 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function refWalkCurlyBlockReverse(array $tkns, int &$ptr) {
+	protected function refWalkCurlyBlockReverse($tkns, &$ptr) {
 		$count = 0;
 		for (; $ptr >= 0; --$ptr) {
 			$id = $tkns[$ptr][0];
@@ -620,19 +619,19 @@ abstract class FormatterPass {
 		}
 	}
 
-	protected function refWalkUsefulUntil(array $tkns, int &$ptr, $expectedId) {
+	protected function refWalkUsefulUntil($tkns, &$ptr, $expectedId) {
 		do {
 			$ptr = $this->walkRight($tkns, $ptr, $this->ignoreFutileTokens);
 		} while ($expectedId != $tkns[$ptr][0]);
 	}
 
-	protected function refWalkUsefulUntilReverse(array $tkns, int &$ptr, $expectedId) {
+	protected function refWalkUsefulUntilReverse($tkns, &$ptr, $expectedId) {
 		do {
 			$ptr = $this->walkLeft($tkns, $ptr, $this->ignoreFutileTokens);
 		} while ($ptr >= 0 && $expectedId != $tkns[$ptr][0]);
 	}
 
-	protected function render(array $tkns = null): string {
+	protected function render($tkns = null) {
 		if (null == $tkns) {
 			$tkns = $this->tkns;
 		}
@@ -646,7 +645,7 @@ abstract class FormatterPass {
 		return $str;
 	}
 
-	protected function renderLight(array $tkns = null): string {
+	protected function renderLight($tkns = null) {
 		if (null == $tkns) {
 			$tkns = $this->tkns;
 		}
@@ -657,13 +656,13 @@ abstract class FormatterPass {
 		return $str;
 	}
 
-	protected function rightToken(array $ignoreList = []) {
+	protected function rightToken($ignoreList = []) {
 		$i = $this->rightTokenIdx($ignoreList);
 
 		return $this->tkns[$i];
 	}
 
-	protected function rightTokenIdx(array $ignoreList = []): int{
+	protected function rightTokenIdx($ignoreList = []) {
 		$ignoreList = $this->resolveIgnoreList($ignoreList);
 
 		$i = $this->walkRight($this->tkns, $this->ptr, $ignoreList);
@@ -671,18 +670,18 @@ abstract class FormatterPass {
 		return $i;
 	}
 
-	protected function rightTokenIs($token, array $ignoreList = []): bool {
+	protected function rightTokenIs($token, $ignoreList = []) {
 		return $this->tokenIs('right', $token, $ignoreList);
 	}
 
-	protected function rightTokenSubsetAtIdx(array $tkns, int $idx, array $ignoreList = []): int{
+	protected function rightTokenSubsetAtIdx($tkns, $idx, $ignoreList = []) {
 		$ignoreList = $this->resolveIgnoreList($ignoreList);
 		$idx = $this->walkRight($tkns, $idx, $ignoreList);
 
 		return $idx;
 	}
 
-	protected function rightTokenSubsetIsAtIdx(array $tkns, int $idx, $token, array $ignoreList = []): bool{
+	protected function rightTokenSubsetIsAtIdx($tkns, $idx, $token, $ignoreList = []) {
 		$idx = $this->rightTokenSubsetAtIdx($tkns, $idx, $ignoreList);
 
 		return $this->resolveTokenMatch($tkns, $idx, $token);
@@ -692,23 +691,23 @@ abstract class FormatterPass {
 		return $this->rightToken($this->ignoreFutileTokens);
 	}
 
-	protected function rightUsefulTokenIdx(): int {
+	protected function rightUsefulTokenIdx() {
 		return $this->rightTokenIdx($this->ignoreFutileTokens);
 	}
 
-	protected function rightUsefulTokenIs($token): bool {
+	protected function rightUsefulTokenIs($token) {
 		return $this->rightTokenIs($token, $this->ignoreFutileTokens);
 	}
 
-	protected function rtrimAndAppendCode(string $code) {
+	protected function rtrimAndAppendCode($code = '') {
 		$this->code = rtrim($this->code) . $code;
 	}
 
-	protected function rtrimLnAndAppendCode(string $code) {
+	protected function rtrimLnAndAppendCode($code = '') {
 		$this->code = rtrim($this->code, "\t ") . $code;
 	}
 
-	protected function scanAndReplace(array &$tkns, int &$ptr, string $start, string $end, string $call, array $lookFor): string{
+	protected function scanAndReplace(&$tkns, &$ptr, $start, $end, $call, $lookFor) {
 		$lookFor = array_flip($lookFor);
 		$placeholder = '<?php' . ' /*\x2 PHPOPEN \x3*/';
 		$tmp = '';
@@ -737,7 +736,7 @@ abstract class FormatterPass {
 		return $start . $tmp . $end;
 	}
 
-	protected function scanAndReplaceCurly(array &$tkns, int &$ptr, string $start, string $call, array $lookFor): string{
+	protected function scanAndReplaceCurly(&$tkns, &$ptr, $start, $call, $lookFor) {
 		$lookFor = array_flip($lookFor);
 		$placeholder = '<?php' . ' /*\x2 PHPOPEN \x3*/';
 		$tmp = '';
@@ -781,25 +780,25 @@ abstract class FormatterPass {
 		return $start . $tmp . ST_CURLY_CLOSE;
 	}
 
-	protected function setIndent(int $increment) {
+	protected function setIndent($increment) {
 		$this->indent += $increment;
 		if ($this->indent < 0) {
 			$this->indent = 0;
 		}
 	}
 
-	protected function siblings(array $tkns, int $ptr): array{
+	protected function siblings($tkns, $ptr) {
 		$ignoreList = $this->resolveIgnoreList([T_WHITESPACE]);
 		$left = $this->walkLeft($tkns, $ptr, $ignoreList);
 		$right = $this->walkRight($tkns, $ptr, $ignoreList);
 		return [$left, $right];
 	}
 
-	protected function substrCountTrailing(string $haystack, string $needle): int {
+	protected function substrCountTrailing($haystack, $needle) {
 		return strlen(rtrim($haystack, " \t")) - strlen(rtrim($haystack, " \t" . $needle));
 	}
 
-	protected function tokenIs(string $direction, $token, array $ignoreList = []): bool {
+	protected function tokenIs($direction, $token, $ignoreList = []) {
 		if ('left' != $direction) {
 			$direction = 'right';
 		}
@@ -817,7 +816,7 @@ abstract class FormatterPass {
 		return $this->resolveTokenMatch($this->tkns, $this->cache[$key], $token);
 	}
 
-	protected function walkAndAccumulateCurlyBlock(array &$tkns): string{
+	protected function walkAndAccumulateCurlyBlock(&$tkns) {
 		$count = 1;
 		$ret = '';
 		while (list($index, $token) = each($tkns)) {
@@ -843,7 +842,7 @@ abstract class FormatterPass {
 		return $ret;
 	}
 
-	protected function walkAndAccumulateStopAt(array &$tkns, string $tknid): string{
+	protected function walkAndAccumulateStopAt(&$tkns, $tknid) {
 		$ret = '';
 		while (list($index, $token) = each($tkns)) {
 			list($id, $text) = $this->getToken($token);
@@ -856,7 +855,7 @@ abstract class FormatterPass {
 		return $ret;
 	}
 
-	protected function walkAndAccumulateStopAtAny(array &$tkns, array $tknids): array{
+	protected function walkAndAccumulateStopAtAny(&$tkns, $tknids) {
 		$tknids = array_flip($tknids);
 		$ret = '';
 		$id = null;
@@ -872,7 +871,7 @@ abstract class FormatterPass {
 		return [$ret, $id];
 	}
 
-	protected function walkAndAccumulateUntil(array &$tkns, $tknid): string{
+	protected function walkAndAccumulateUntil(&$tkns, $tknid) {
 		$ret = '';
 		while (list($index, $token) = each($tkns)) {
 			list($id, $text) = $this->getToken($token);
@@ -884,7 +883,7 @@ abstract class FormatterPass {
 		return $ret;
 	}
 
-	protected function walkAndAccumulateUntilAny(array &$tkns, array $tknids): array{
+	protected function walkAndAccumulateUntilAny(&$tkns, $tknids) {
 		$tknids = array_flip($tknids);
 		$ret = '';
 		while (list(, $token) = each($tkns)) {
@@ -897,7 +896,7 @@ abstract class FormatterPass {
 		return [$ret, $id];
 	}
 
-	protected function walkUntil($tknid): array{
+	protected function walkUntil($tknid) {
 		while (list($index, $token) = each($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
@@ -905,10 +904,9 @@ abstract class FormatterPass {
 				return [$id, $text];
 			}
 		}
-		return [null, null];
 	}
 
-	protected function walkUsefulRightUntil(array $tkns, int $idx, $tokens): int{
+	protected function walkUsefulRightUntil($tkns, $idx, $tokens) {
 		$ignoreList = $this->resolveIgnoreList($this->ignoreFutileTokens);
 		$tokens = array_flip($tokens);
 
@@ -922,11 +920,11 @@ abstract class FormatterPass {
 		return;
 	}
 
-	private function calculateCacheKey(string $direction, array $ignoreList): string {
+	private function calculateCacheKey($direction, $ignoreList) {
 		return $direction . "\x2" . implode('', $ignoreList);
 	}
 
-	private function resolveFoundToken($foundToken, $token): bool {
+	private function resolveFoundToken($foundToken, $token) {
 		if ($foundToken === $token) {
 			return true;
 		} elseif (is_array($token) && isset($foundToken[1]) && in_array($foundToken[0], $token)) {
@@ -940,14 +938,14 @@ abstract class FormatterPass {
 		return false;
 	}
 
-	private function resolveIgnoreList(array $ignoreList = []): array{
+	private function resolveIgnoreList($ignoreList = []) {
 		if (!empty($ignoreList)) {
 			return array_flip($ignoreList);
 		}
 		return [T_WHITESPACE => true];
 	}
 
-	private function resolveTokenMatch(array $tkns, int $idx, $token): bool {
+	private function resolveTokenMatch($tkns, $idx, $token) {
 		if (!isset($tkns[$idx])) {
 			return false;
 		}
@@ -956,13 +954,13 @@ abstract class FormatterPass {
 		return $this->resolveFoundToken($foundToken, $token);
 	}
 
-	private function walkLeft(array $tkns, int $idx, array $ignoreList): int{
+	private function walkLeft($tkns, $idx, $ignoreList) {
 		$i = $idx;
 		while (--$i >= 0 && isset($ignoreList[$tkns[$i][0]]));
 		return $i;
 	}
 
-	private function walkRight(array $tkns, int $idx, array $ignoreList): int{
+	private function walkRight($tkns, $idx, $ignoreList) {
 		$i = $idx;
 		$tknsSize = sizeof($tkns) - 1;
 		while (++$i < $tknsSize && isset($ignoreList[$tkns[$i][0]]));

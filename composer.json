@@ -1,11 +1,14 @@
 {
-    "name": "phpfmt/fmt",
+    "name": "phpfmt-next/fmt",
     "type": "application",
     "description": "A script to automatically fix K&R and PSR-1/2 Coding Standard.",
     "license": "BSD-3-Clause",
     "keywords": ["language syntax", "formatter", "formatting", "psr1", "psr2", "coding", "style"],
-    "homepage": "https://github.com/phpfmt/fmt",
-    "bin": ["fmt.php","fmt.phar","refactor.php","aphpfmt"],
+    "homepage": "https://github.com/phpfmt-next/fmt",
+    "bin": [
+        "bin/fmt.phar",
+        "bin/refactor.phar"
+    ],
     "authors": [
         {
             "name": "Carlos C",
@@ -13,11 +16,23 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/phpfmt/fmt/issues",
-        "source": "https://github.com/phpfmt/fmt"
+        "issues": "https://github.com/phpfmt-next/fmt/issues",
+        "source": "https://github.com/phpfmt-next/fmt/fmt"
     },
-    "require":{
+    "scripts": {
+        "build": "php scripts/build.php",
+        "format": "php scripts/format.php",
+        "test": "php scripts/test.php -v"
+    },
+    "require": {
         "php": ">=5.6.0",
         "ext-tokenizer": "*"
+    },
+    "require-dev": {
+        "ext-xdebug": "*",
+        "dericofilho/csp": "2.0.*",
+        "phpunit/php-code-coverage": "2.0.*",
+        "satooshi/php-coveralls": "dev-master",
+        "symfony/console": "2.7.*"
     }
 }

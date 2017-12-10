@@ -13,7 +13,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return isset($foundTokens[T_VAR]) ||
 		isset($foundTokens[T_PUBLIC]) ||
 		isset($foundTokens[T_PRIVATE]) ||
@@ -25,7 +25,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 		;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -150,7 +150,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				$visibility = null;
 				$static = null;
 				$skipWhitespaces = false;
-				if ('abstract' == strtolower((string) $finalOrAbstract)) {
+				if ('abstract' == strtolower($finalOrAbstract)) {
 					$finalOrAbstract = null;
 					$this->printUntil(ST_SEMI_COLON);
 					break;

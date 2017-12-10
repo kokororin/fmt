@@ -17,7 +17,7 @@ final class TrimSpaceBeforeSemicolon extends AdditionalPass {
 	 * @param $source
 	 * @param $foundTokens
 	 */
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return true;
 	}
 
@@ -25,7 +25,7 @@ final class TrimSpaceBeforeSemicolon extends AdditionalPass {
 	 * @param  $source
 	 * @return mixed
 	 */
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$isComment = false;
@@ -51,14 +51,14 @@ final class TrimSpaceBeforeSemicolon extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Remove empty lines before semi-colon.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From

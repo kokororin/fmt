@@ -15,7 +15,7 @@
 final class ReindentObjOps extends FormatterPass {
 	const ALIGN_WITH_INDENT = 1;
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (
 			isset($foundTokens[T_OBJECT_OPERATOR]) ||
 			isset($foundTokens[T_DOUBLE_COLON])
@@ -26,7 +26,7 @@ final class ReindentObjOps extends FormatterPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -187,13 +187,13 @@ final class ReindentObjOps extends FormatterPass {
 	}
 
 	protected function incrementCounters(
-		int &$levelCounter,
-		array &$levelEntranceCounter,
-		array &$contextCounter,
-		array &$maxContextCounter,
-		array &$touchCounter,
-		array &$alignType,
-		array &$printedPlaceholder
+		&$levelCounter,
+		&$levelEntranceCounter,
+		&$contextCounter,
+		&$maxContextCounter,
+		&$touchCounter,
+		&$alignType,
+		&$printedPlaceholder
 	) {
 		++$levelCounter;
 		if (!isset($levelEntranceCounter[$levelCounter])) {

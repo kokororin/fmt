@@ -16,7 +16,7 @@
  * From PHP-CS-Fixer
  */
 final class StrictComparison extends AdditionalPass {
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_IS_EQUAL]) || isset($foundTokens[T_IS_NOT_EQUAL])) {
 			return true;
 		}
@@ -24,7 +24,7 @@ final class StrictComparison extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -47,14 +47,14 @@ final class StrictComparison extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'All comparisons are converted to strict. Danger! This pass leads to behavior change.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From

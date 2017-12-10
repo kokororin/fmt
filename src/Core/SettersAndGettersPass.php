@@ -35,7 +35,7 @@ final class SettersAndGettersPass extends FormatterPass {
 		}
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_CLASS])) {
 			return true;
 		}
@@ -43,7 +43,7 @@ final class SettersAndGettersPass extends FormatterPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		while (list($index, $token) = each($this->tkns)) {
@@ -132,7 +132,7 @@ final class SettersAndGettersPass extends FormatterPass {
 		return $this->code;
 	}
 
-	private function generate(string $visibility, string $var): string {
+	private function generate($visibility, $var) {
 		switch ($this->type) {
 		case self::TYPE_SNAKE_CASE:
 			$ret = $this->generateSnakeCase($visibility, $var);
@@ -148,35 +148,34 @@ final class SettersAndGettersPass extends FormatterPass {
 		return $ret;
 	}
 
-	private function generateCamelCase(string $visibility, string $var): string{
+	private function generateCamelCase($visibility, $var) {
 		$str = $this->newLine . $visibility . ' function set' . ucfirst(str_replace('$', '', $var)) . '(' . $var . '){' . $this->newLine . '$this->' . str_replace('$', '', $var) . ' = ' . $var . ';' . $this->newLine . '}' . $this->newLine . $this->newLine;
 		$str .= $visibility . ' function get' . ucfirst(str_replace('$', '', $var)) . '(){' . $this->newLine . 'return $this->' . str_replace('$', '', $var) . ';' . $this->newLine . '}' . $this->newLine;
 		return $str;
 	}
 
-	private function generateGolang(string $visibility, string $var): string{
+	private function generateGolang($visibility, $var) {
 		$str = $this->newLine . $visibility . ' function Set' . ucfirst(str_replace('$', '', $var)) . '(' . $var . '){' . $this->newLine . '$this->' . str_replace('$', '', $var) . ' = ' . $var . ';' . $this->newLine . '}' . $this->newLine . $this->newLine;
 		$str .= $visibility . ' function ' . ucfirst(str_replace('$', '', $var)) . '(){' . $this->newLine . 'return $this->' . str_replace('$', '', $var) . ';' . $this->newLine . '}' . $this->newLine;
 		return $str;
 	}
 
-	private function generateSnakeCase(string $visibility, string $var): string{
+	private function generateSnakeCase($visibility, $var) {
 		$str = $this->newLine . $visibility . ' function set_' . (str_replace('$', '', $var)) . '(' . $var . '){' . $this->newLine . '$this->' . str_replace('$', '', $var) . ' = ' . $var . ';' . $this->newLine . '}' . $this->newLine . $this->newLine;
 		$str .= $visibility . ' function get_' . (str_replace('$', '', $var)) . '(){' . $this->newLine . 'return $this->' . str_replace('$', '', $var) . ';' . $this->newLine . '}' . $this->newLine;
 		return $str;
 	}
 
-	private function printPlaceholder(string $text) {
+	private function printPlaceholder($text) {
 		$this->skipPlaceholderUntilSemicolon();
 
 		$this->appendCode(';' . $this->newLine . sprintf(self::PLACEHOLDER, $text));
 	}
 
-	private function skipPlaceholderUntilSemicolon(): array{
+	private function skipPlaceholderUntilSemicolon() {
 		if ($this->rightUsefulTokenIs(ST_EQUAL)) {
 			return $this->printAndStopAt(ST_SEMI_COLON);
 		}
 		each($this->tkns);
-		return [];
 	}
 }

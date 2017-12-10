@@ -1,22 +1,8 @@
-phpfmt
-======
-
-***[This project follows a Code of Conduct.](https://github.com/phpfmt/code-of-conduct)***
-
-## Build statuses
-- Master: [![Build Status](https://travis-ci.org/phpfmt/fmt.svg?branch=master)](https://travis-ci.org/phpfmt/fmt)
-
-[![Throughput Graph](https://graphs.waffle.io/phpfmt/fmt/throughput.svg)](https://waffle.io/phpfmt/fmt/metrics)
+# phpfmt
+[![Build Status](https://travis-ci.org/phpfmt-next/fmt.svg?branch=master)](https://travis-ci.org/phpfmt-next/fmt)
 
 ## Requirements
 - PHP >= 5.6.0 to run the formatter. Note that the formatter can parse even a PHP file version 4 in case needed. HHVM is not supported.
-
-## Plugins
-
-* [Sublime Text 2/3](https://github.com/phpfmt/sublime-phpfmt)
-* [Vim](https://github.com/phpfmt/vim-phpfmt)
-* [PHPStorm](https://github.com/phpfmt/fmt/blob/master/PHPStorm.md)
-* [PHPStorm beta](https://github.com/phpfmt/phpstorm-phpfmt)
 
 ## Usage
 

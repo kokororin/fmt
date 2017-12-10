@@ -17,11 +17,11 @@ final class StripExtraCommaInArray extends AdditionalPass {
 
 	const ST_SHORT_ARRAY_OPEN = 'SHORT_ARRAY_OPEN';
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return true;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 
 		$contextStack = [];
@@ -80,14 +80,14 @@ final class StripExtraCommaInArray extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Remove trailing commas within array blocks';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From

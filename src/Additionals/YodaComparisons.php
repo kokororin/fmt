@@ -23,7 +23,7 @@ final class YodaComparisons extends AdditionalPass {
 
 	const PARENTHESES_BLOCK = 'PARENTHESES_BLOCK';
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (
 			isset($foundTokens[T_IS_EQUAL]) ||
 			isset($foundTokens[T_IS_IDENTICAL]) ||
@@ -36,21 +36,21 @@ final class YodaComparisons extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string {
+	public function format($source) {
 		return $this->yodise($source);
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Execute Yoda Comparisons.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 if($a == 1){

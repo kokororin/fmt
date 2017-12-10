@@ -15,7 +15,7 @@
 final class LeftAlignComment extends FormatterPass {
 	const NON_INDENTABLE_COMMENT = "/*\x2 COMMENT \x3*/";
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (
 			isset($foundTokens[T_COMMENT]) ||
 			isset($foundTokens[T_DOC_COMMENT])
@@ -26,7 +26,7 @@ final class LeftAlignComment extends FormatterPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$touchedNonIndentableComment = false;

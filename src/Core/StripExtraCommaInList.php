@@ -15,7 +15,7 @@
 final class StripExtraCommaInList extends FormatterPass {
 	const EMPTY_LIST = 'ST_EMPTY_LIST';
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_LIST])) {
 			return true;
 		}
@@ -23,7 +23,7 @@ final class StripExtraCommaInList extends FormatterPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 
 		$contextStack = [];

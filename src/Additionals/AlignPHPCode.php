@@ -15,7 +15,7 @@
 final class AlignPHPCode extends AdditionalPass {
 	const PLACEHOLDER_STRING = "\x2 CONSTANT_STRING_%d \x3";
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_INLINE_HTML])) {
 			return true;
 		}
@@ -23,7 +23,7 @@ final class AlignPHPCode extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		while (list($index, $token) = each($this->tkns)) {
@@ -47,7 +47,7 @@ final class AlignPHPCode extends AdditionalPass {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 
-					if (T_CONSTANT_ENCAPSED_STRING == $id || T_ENCAPSED_AND_WHITESPACE == $id) {
+					if (T_CONSTANT_ENCAPSED_STRING == $id || T_ENCAPSED_AND_WHITESPACE == $id || T_START_HEREDOC == $id) {
 						$strings[] = $text;
 						$text = sprintf(self::PLACEHOLDER_STRING, $this->ptr);
 						$placeholders[] = $text;
@@ -96,14 +96,14 @@ final class AlignPHPCode extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Align PHP code within HTML block.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <div>
 	<?php

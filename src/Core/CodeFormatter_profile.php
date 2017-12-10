@@ -20,13 +20,13 @@ final class CodeFormatter extends BaseCodeFormatter {
 
 	private $timings = [];
 
-	public function afterExecutedPass(string $source, string $className) {
+	public function afterExecutedPass($source, $className) {
 		$cn = get_class($className);
 		$this->timings[$cn] = microtime(true) - $this->currentTiming;
 		echo $cn, ':', (memory_get_usage() / 1024 / 1024), "\t", (memory_get_peak_usage() / 1024 / 1024), PHP_EOL;
 	}
 
-	public function afterFormat(string $source) {
+	public function afterFormat($source) {
 		asort($this->timings, SORT_NUMERIC);
 		$total = array_sum($this->timings);
 
@@ -37,11 +37,11 @@ final class CodeFormatter extends BaseCodeFormatter {
 		echo tabwriter($lines);
 	}
 
-	public function beforeFormat(string $source) {
+	public function beforeFormat($source) {
 		echo 'before:', (memory_get_usage() / 1024 / 1024), "\t", (memory_get_peak_usage() / 1024 / 1024), PHP_EOL;
 	}
 
-	public function beforePass(string $source, string $className) {
+	public function beforePass($source, $className) {
 		$this->currentTiming = microtime(true);
 	}
 }

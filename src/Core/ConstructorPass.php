@@ -31,14 +31,14 @@ final class ConstructorPass extends FormatterPass {
 		}
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_CLASS])) {
 			return true;
 		}
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -119,7 +119,7 @@ final class ConstructorPass extends FormatterPass {
 		return $this->code;
 	}
 
-	private function generate(string $var): string {
+	private function generate($var) {
 		switch ($this->type) {
 		case self::TYPE_SNAKE_CASE:
 			$ret = $this->generateSnakeCase($var);
@@ -135,17 +135,17 @@ final class ConstructorPass extends FormatterPass {
 		return $ret;
 	}
 
-	private function generateCamelCase(string $var): string{
+	private function generateCamelCase($var) {
 		$str = '$this->set' . ucfirst(str_replace('$', '', $var)) . '(' . $var . ');' . $this->newLine;
 		return $str;
 	}
 
-	private function generateGolang(string $var): string{
+	private function generateGolang($var) {
 		$str = '$this->Set' . ucfirst(str_replace('$', '', $var)) . '(' . $var . ');' . $this->newLine;
 		return $str;
 	}
 
-	private function generateSnakeCase(string $var): string{
+	private function generateSnakeCase($var) {
 		$str = '$this->set_' . (str_replace('$', '', $var)) . '(' . $var . ');' . $this->newLine;
 		return $str;
 	}

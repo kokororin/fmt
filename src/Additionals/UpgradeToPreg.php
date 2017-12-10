@@ -45,14 +45,14 @@ final class UpgradeToPreg extends AdditionalPass {
 
 	private static $delimiters = ['/', '#', '!'];
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return (
 			false !== stripos($source, 'ereg') ||
 			false !== stripos($source, 'split')
 		);
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -111,14 +111,14 @@ final class UpgradeToPreg extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Upgrade ereg_* calls to preg_*';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return '<?php
 // From:
 $var = ereg("[A-Z]", $var);

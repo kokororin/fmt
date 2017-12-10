@@ -13,7 +13,7 @@ Try to get acquainted with the `FormatterPass` class, which holds all the calls 
 
 ## Assumptions
 
-* Forked phpfmt/fmt into your own Github Account.
+* Forked phpfmt-next/fmt into your own Github Account.
 * Cloned your forked repository locally.
 * Installed php 5.6 or newer
 
@@ -26,7 +26,7 @@ We are calling it `RemoveComments` (class name).
 ### Step 1 - Creating files
 
 Create a new file in
-`phpfmt/src/Additionals/RemoveComments.php`.
+`src/Additionals/RemoveComments.php`.
 Put this content inside:
 ```php
 <?php
@@ -64,12 +64,12 @@ EOT;
 ```
 
 Now let us create the test files at
-`phpfmt/src/tests/352-remove-comments.in` and `phpfmt/src/tests/352-remove-comments.in`. The number `352` should be replaced with the largest number of tests available within the tests folder.
+`src/tests/352-remove-comments.in` and `src/tests/352-remove-comments.in`. The number `352` should be replaced with the largest number of tests available within the tests folder.
 
 Tests files ending with `.in` are input and `.out` are the expected output for that
 particular test.
 
-Thus, `phpfmt/src/tests/352-remove-comments.in`:
+Thus, `src/tests/352-remove-comments.in`:
 ```php
 <?php
 //passes:RemoveComments
@@ -78,7 +78,7 @@ Thus, `phpfmt/src/tests/352-remove-comments.in`:
 $a = new SomeClass; // this comment not
 ```
 
-And `phpfmt/src/tests/352-remove-comments.out`:
+And `src/tests/352-remove-comments.out`:
 ```php
 <?php
 //passes:RemoveComments
@@ -116,7 +116,7 @@ tokens](http://php.net/manual/en/tokens.php), and phpfmt special token list at `
 
 ### Step 2 - Implementation
 
-Thus, `phpfmt/src/Additionals/RemoveComments.php` becomes:
+Thus, `src/Additionals/RemoveComments.php` becomes:
 ```php
 <?php
 class RemoveComments extends AdditionalPass {

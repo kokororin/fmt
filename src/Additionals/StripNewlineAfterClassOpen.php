@@ -16,7 +16,7 @@
  * From PHP-CS-Fixer
  */
 final class StripNewlineAfterClassOpen extends AdditionalPass {
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_CLASS]) || isset($foundTokens[T_TRAIT])) {
 			return true;
 		}
@@ -24,7 +24,7 @@ final class StripNewlineAfterClassOpen extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		while (list($index, $token) = each($this->tkns)) {
@@ -57,14 +57,14 @@ final class StripNewlineAfterClassOpen extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Strip empty lines after class opening curly brace.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From

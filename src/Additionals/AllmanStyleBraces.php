@@ -15,7 +15,7 @@
 final class AllmanStyleBraces extends AdditionalPass {
 	const OTHER_BLOCK = '';
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[ST_CURLY_OPEN])) {
 			return true;
 		}
@@ -23,7 +23,7 @@ final class AllmanStyleBraces extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$blockStack = [];
@@ -184,14 +184,14 @@ final class AllmanStyleBraces extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Transform all curly braces into Allman-style.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 if ($a) {

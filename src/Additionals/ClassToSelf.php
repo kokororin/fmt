@@ -15,7 +15,7 @@
 class ClassToSelf extends AdditionalPass {
 	const PLACEHOLDER = 'self';
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (
 			isset($foundTokens[T_CLASS]) ||
 			isset($foundTokens[T_INTERFACE]) ||
@@ -27,7 +27,7 @@ class ClassToSelf extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$tknsLen = sizeof($this->tkns);
@@ -68,14 +68,14 @@ class ClassToSelf extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return '"self" is preferred within class, trait or interface.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From
@@ -97,7 +97,7 @@ class A {
 EOT;
 	}
 
-	private function convertToPlaceholder(string $name, $start, $end) {
+	private function convertToPlaceholder($name, $start, $end) {
 		for ($i = $start; $i < $end; ++$i) {
 			list($id, $text) = $this->getToken($this->tkns[$i]);
 

@@ -48,6 +48,7 @@ abstract class BaseCodeFormatter {
 		'SortUseNameSpace' => false,
 		'SpaceAfterExclamationMark' => false,
 		'SpaceAroundExclamationMark' => false,
+		'SpaceAroundParentheses' => false,
 
 		'TightConcat' => false,
 

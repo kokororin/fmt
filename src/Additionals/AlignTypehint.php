@@ -15,14 +15,14 @@
 final class AlignTypehint extends AdditionalPass {
 	const ALIGNABLE_TYPEHINT = "\x2 TYPEHINT%d \x3";
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_FUNCTION])) {
 			return true;
 		}
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -65,14 +65,14 @@ final class AlignTypehint extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Vertically align function type hints.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 //From:

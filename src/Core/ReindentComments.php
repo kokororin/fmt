@@ -18,7 +18,7 @@ final class ReindentComments extends FormatterPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (isset($foundTokens[T_COMMENT])) {
 			return true;
 		}
@@ -26,7 +26,7 @@ final class ReindentComments extends FormatterPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		reset($this->commentStack);
 		$this->tkns = token_get_all($source);
 		$this->code = '';
@@ -50,8 +50,8 @@ final class ReindentComments extends FormatterPass {
 					continue;
 				}
 
-				$indent = substr((string) strrchr($ptText, 10), 1);
-				$indentLevel = strlen((string) $indent);
+				$indent = substr(strrchr($ptText, 10), 1);
+				$indentLevel = strlen($indent);
 				$innerIndentLevel = $indentLevel + 1;
 				$innerIndent = str_repeat($this->indentChar, $innerIndentLevel);
 

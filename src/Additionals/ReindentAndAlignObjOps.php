@@ -19,7 +19,7 @@ class ReindentAndAlignObjOps extends AdditionalPass {
 
 	const ALIGN_WITH_SPACES = 2;
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		if (
 			isset($foundTokens[T_OBJECT_OPERATOR]) ||
 			isset($foundTokens[T_DOUBLE_COLON])
@@ -30,7 +30,7 @@ class ReindentAndAlignObjOps extends AdditionalPass {
 		return false;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
@@ -352,14 +352,14 @@ class ReindentAndAlignObjOps extends AdditionalPass {
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Align object operators.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return <<<'EOT'
 <?php
 // From:

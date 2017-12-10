@@ -15,11 +15,11 @@
 final class EliminateDuplicatedEmptyLines extends FormatterPass {
 	const EMPTY_LINE = "\x2 EMPTYLINE \x3";
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return true;
 	}
 
-	public function format(string $source): string{
+	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 

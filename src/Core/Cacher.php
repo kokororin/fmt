@@ -17,7 +17,7 @@ interface Cacher {
 
 	public function create_db();
 
-	public function is_changed(string $target, string $filename);
+	public function is_changed($target, $filename);
 
-	public function upsert(string $target, string $filename, string $content);
+	public function upsert($target, $filename, $content);
 }

@@ -12,7 +12,7 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function selfupdate(array $argv, bool $inPhar) {
+function selfupdate($argv, $inPhar) {
 	$opts = [
 		'http' => [
 			'method' => 'GET',
@@ -23,7 +23,7 @@ function selfupdate(array $argv, bool $inPhar) {
 	$context = stream_context_create($opts);
 
 	// current release
-	$releases = json_decode(file_get_contents('https://api.github.com/repos/phpfmt/fmt/tags', false, $context), true);
+	$releases = json_decode(file_get_contents('https://api.github.com/repos/phpfmt-next/fmt/tags', false, $context), true);
 	$commit = json_decode(file_get_contents($releases[0]['commit']['url'], false, $context), true);
 	$files = json_decode(file_get_contents($commit['commit']['tree']['url'], false, $context), true);
 	foreach ($files['tree'] as $file) {

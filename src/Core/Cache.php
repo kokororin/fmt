@@ -20,7 +20,7 @@ final class Cache implements Cacher {
 
 	private $noop = false;
 
-	public function __construct(string $filename) {
+	public function __construct($filename) {
 		if (empty($filename)) {
 			$this->noop = true;
 			return;
@@ -55,7 +55,7 @@ final class Cache implements Cacher {
 		$this->db->exec('CREATE TABLE cache (target TEXT, filename TEXT, hash TEXT, unique(target, filename));');
 	}
 
-	public function is_changed(string $target, string $filename) {
+	public function is_changed($target, $filename) {
 		$content = file_get_contents($filename);
 		if ($this->noop) {
 			return $content;
@@ -70,7 +70,7 @@ final class Cache implements Cacher {
 		return false;
 	}
 
-	public function upsert(string $target, string $filename, string $content) {
+	public function upsert($target, $filename, $content) {
 		if ($this->noop) {
 			return;
 		}
@@ -78,7 +78,7 @@ final class Cache implements Cacher {
 		$this->db->exec('REPLACE INTO cache VALUES ("' . SQLite3::escapeString($target) . '","' . SQLite3::escapeString($filename) . '", "' . SQLite3::escapeString($hash) . '")');
 	}
 
-	private function calculateHash(string $content): string {
+	private function calculateHash($content) {
 		return sprintf('%u', crc32($content));
 	}
 

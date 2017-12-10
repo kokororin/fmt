@@ -29,25 +29,25 @@ final class SortUseNameSpace extends AdditionalPass {
 		$this->pass = new OrderAndRemoveUseClauses($sortFunction);
 	}
 
-	public function candidate(string $source, array $foundTokens): bool {
+	public function candidate($source, $foundTokens) {
 		return $this->pass->candidate($source, $foundTokens);
 	}
 
-	public function format(string $source): string {
+	public function format($source) {
 		return $this->pass->format($source);
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getDescription(): string {
+	public function getDescription() {
 		return 'Organize use clauses by length and alphabetic order.';
 	}
 
 	/**
 	 * @codeCoverageIgnore
 	 */
-	public function getExample(): string {
+	public function getExample() {
 		return '';
 	}
 }

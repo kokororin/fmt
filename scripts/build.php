@@ -179,3 +179,30 @@ foreach ($targets as $target) {
 		}
 	}
 }
+
+$readmePath = __DIR__ . '/../README.md';
+$readmeContent = file_get_contents($readmePath);
+
+$cmd = exec('which php') . ' ' . __DIR__ . '/../bin/fmt.phar --list-simple';
+$passes = explode(PHP_EOL, trim(`$cmd`));
+$passes = implode(PHP_EOL,
+	array_map(function ($v) {
+		return ' * ' . $v;
+	}, $passes)
+);
+
+$cmd = 'cd ' . __DIR__ . '/../bin && ' . exec('which php') . ' fmt.phar --help';
+$help = trim(`$cmd`);
+
+$readmeContent = preg_replace_callback('/<!-- help START -->(.*)<!-- help END -->/s', function ($matches) use ($help) {
+	return '<!-- help START -->' . PHP_EOL . '```bash
+$ php fmt.phar --help
+' . $help . '
+```' . PHP_EOL . '<!-- help END -->';
+}, $readmeContent);
+
+$readmeContent = preg_replace_callback('/<!-- transformations START -->(.*)<!-- transformations END -->/s', function ($matches) use ($passes) {
+	return '<!-- transformations START -->' . PHP_EOL . $passes . PHP_EOL . '<!-- transformations END -->';
+}, $readmeContent);
+
+file_put_contents($readmePath, $readmeContent);

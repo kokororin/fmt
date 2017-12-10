@@ -43,7 +43,6 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'-o=file' => 'output the formatted code to "file"',
 		'-o=-' => 'output the formatted code to standard output',
 		'-v' => 'verbose',
-		'--version' => 'output the version',
 	];
 	if ($inPhar) {
 		$options['--selfupdate'] = 'self-update fmt.phar from Github';

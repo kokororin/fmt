@@ -16,7 +16,7 @@
 if (!ini_get('short_open_tag')) {
 	unset($argv[0]);
 	$ret = 0;
-	passthru($_SERVER['_'] . ' -dshort_open_tag=1 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
+	passthru(exec('which php') . ' -dshort_open_tag=1 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
 	exit($ret);
 }
 

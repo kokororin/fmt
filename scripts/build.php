@@ -15,7 +15,7 @@
 if (ini_get('phar.readonly')) {
 	unset($argv[0]);
 	$ret = 0;
-	passthru($_SERVER['_'] . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
+	passthru(exec('which php') . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
 	exit($ret);
 }
 require __DIR__ . '/../vendor/dericofilho/csp/csp.php';

@@ -22,7 +22,7 @@
     "scripts": {
         "build": "php scripts/build.php",
         "format": "php scripts/format.php",
-        "test": "php scripts/test.php -v"
+        "test": "php scripts/test.php"
     },
     "require": {
         "php": ">=5.6.0",

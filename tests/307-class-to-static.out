@@ -2,7 +2,7 @@
 //passes:Default,ClassToStatic
 
 class SomeClass {
-	const AConstant = self::constant;
+	const AConstant = static::constant;
 }
 
 class SomeClass2 {

@@ -4873,16 +4873,40 @@ final class ResizeSpaces extends FormatterPass {
 				$this->appendCode(' ');
 				break;
 
+			case ST_QUESTION:
+				$probablyTypeHint = $this->leftTokenIs(ST_COMMA) || $this->leftTokenIs(ST_PARENTHESES_OPEN) || $this->leftTokenIs(ST_COLON);
+				$inTernaryOperator += $probablyTypeHint ? 0 : 1;
+				$shortTernaryOperator = $this->rightTokenIs(ST_COLON);
+
+				list($prevId) = $this->inspectToken(-1);
+				list($nextId) = $this->inspectToken(+1);
+				if (
+					T_WHITESPACE === $prevId &&
+					T_WHITESPACE !== $nextId
+				) {
+					$this->appendCode($text . $this->getSpace(!($probablyTypeHint || $shortTernaryOperator)));
+					break;
+				} elseif (
+					T_WHITESPACE !== $prevId &&
+					T_WHITESPACE === $nextId
+				) {
+					$this->appendCode($this->getSpace(!$probablyTypeHint) . $text);
+					break;
+				} elseif (
+					T_WHITESPACE !== $prevId &&
+					T_WHITESPACE !== $nextId
+				) {
+					$this->appendCode($this->getSpace(!$probablyTypeHint) . $text . $this->getSpace(!($probablyTypeHint || $shortTernaryOperator)));
+					break;
+				}
+
+				$this->appendCode($text);
+				break;
+
 			case '%':
 			case '/':
 			case T_POW:
-			case ST_QUESTION:
 			case ST_CONCAT:
-				if (ST_QUESTION == $id) {
-					++$inTernaryOperator;
-					$shortTernaryOperator = $this->rightTokenIs(ST_COLON);
-				}
-
 				list($prevId) = $this->inspectToken(-1);
 				list($nextId) = $this->inspectToken(+1);
 				if (
@@ -5225,6 +5249,10 @@ final class ResizeSpaces extends FormatterPass {
 			case T_OPEN_TAG:
 				$hasEchoAfterOpenTag = true;
 				$this->appendCode($text);
+				break;
+
+			case T_YIELD_FROM:
+				$this->appendCode($text . $this->getSpace($this->rightTokenIs(T_STRING)));
 				break;
 
 			default:
@@ -8318,7 +8346,7 @@ EOT;
 				$this->leftTokenSubsetIsAtIdx($this->tkns, $i, [T_INSTANCEOF, T_NEW]) ||
 				$this->rightTokenSubsetIsAtIdx($this->tkns, $i, T_DOUBLE_COLON)
 			) {
-				$this->tkns[$i] = [T_STRING, self::PLACEHOLDER];
+				$this->tkns[$i] = [T_STRING, static::PLACEHOLDER];
 			}
 		}
 	}
@@ -13539,7 +13567,6 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'-o=file' => 'output the formatted code to "file"',
 		'-o=-' => 'output the formatted code to standard output',
 		'-v' => 'verbose',
-		'--version' => 'output the version',
 	];
 	if ($inPhar) {
 		$options['--selfupdate'] = 'self-update fmt.phar from Github';

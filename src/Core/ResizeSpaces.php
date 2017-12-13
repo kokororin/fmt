@@ -72,16 +72,40 @@ final class ResizeSpaces extends FormatterPass {
 				$this->appendCode(' ');
 				break;
 
+			case ST_QUESTION:
+				$probablyTypeHint = $this->leftTokenIs(ST_COMMA) || $this->leftTokenIs(ST_PARENTHESES_OPEN) || $this->leftTokenIs(ST_COLON);
+				$inTernaryOperator += $probablyTypeHint ? 0 : 1;
+				$shortTernaryOperator = $this->rightTokenIs(ST_COLON);
+
+				list($prevId) = $this->inspectToken(-1);
+				list($nextId) = $this->inspectToken(+1);
+				if (
+					T_WHITESPACE === $prevId &&
+					T_WHITESPACE !== $nextId
+				) {
+					$this->appendCode($text . $this->getSpace(!($probablyTypeHint || $shortTernaryOperator)));
+					break;
+				} elseif (
+					T_WHITESPACE !== $prevId &&
+					T_WHITESPACE === $nextId
+				) {
+					$this->appendCode($this->getSpace(!$probablyTypeHint) . $text);
+					break;
+				} elseif (
+					T_WHITESPACE !== $prevId &&
+					T_WHITESPACE !== $nextId
+				) {
+					$this->appendCode($this->getSpace(!$probablyTypeHint) . $text . $this->getSpace(!($probablyTypeHint || $shortTernaryOperator)));
+					break;
+				}
+
+				$this->appendCode($text);
+				break;
+
 			case '%':
 			case '/':
 			case T_POW:
-			case ST_QUESTION:
 			case ST_CONCAT:
-				if (ST_QUESTION == $id) {
-					++$inTernaryOperator;
-					$shortTernaryOperator = $this->rightTokenIs(ST_COLON);
-				}
-
 				list($prevId) = $this->inspectToken(-1);
 				list($nextId) = $this->inspectToken(+1);
 				if (

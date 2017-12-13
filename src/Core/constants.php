@@ -59,6 +59,9 @@ if (!defined('T_POW_EQUAL')) {
 if (!defined('T_YIELD')) {
 	define('T_YIELD', 'yield');
 }
+if (!defined('T_YIELD_FROM')) {
+	define('T_YIELD_FROM', 'yield_from');
+}
 if (!defined('T_FINALLY')) {
 	define('T_FINALLY', 'finally');
 }

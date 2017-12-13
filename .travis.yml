@@ -8,3 +8,4 @@ php:
 
 script:
   - composer test -- -v --baseline
+  - composer build

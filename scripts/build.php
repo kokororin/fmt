@@ -15,7 +15,7 @@
 if (ini_get('phar.readonly')) {
 	unset($argv[0]);
 	$ret = 0;
-	passthru(exec('which php') . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
+	passthru(PHP_BINARY . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
 	exit($ret);
 }
 require __DIR__ . '/../vendor/dericofilho/csp/csp.php';
@@ -183,7 +183,7 @@ foreach ($targets as $target) {
 $readmePath = __DIR__ . '/../README.md';
 $readmeContent = file_get_contents($readmePath);
 
-$cmd = exec('which php') . ' ' . __DIR__ . '/../bin/fmt.phar --list-simple';
+$cmd = PHP_BINARY . ' ' . __DIR__ . '/../bin/fmt.phar --list-simple';
 $passes = explode(PHP_EOL, trim(`$cmd`));
 $passes = implode(PHP_EOL,
 	array_map(function ($v) {
@@ -191,7 +191,7 @@ $passes = implode(PHP_EOL,
 	}, $passes)
 );
 
-$cmd = 'cd ' . __DIR__ . '/../bin && ' . exec('which php') . ' fmt.phar --help';
+$cmd = 'cd ' . __DIR__ . '/../bin && ' . PHP_BINARY . ' fmt.phar --help';
 $help = trim(`$cmd`);
 
 $readmeContent = preg_replace_callback('/<!-- help START -->(.*)<!-- help END -->/s', function ($matches) use ($help) {

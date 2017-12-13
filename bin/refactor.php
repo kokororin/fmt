@@ -49,6 +49,9 @@ if (!defined('T_POW_EQUAL')) {
 if (!defined('T_YIELD')) {
 	define('T_YIELD', 'yield');
 }
+if (!defined('T_YIELD_FROM')) {
+	define('T_YIELD_FROM', 'yield_from');
+}
 if (!defined('T_FINALLY')) {
 	define('T_FINALLY', 'finally');
 }
@@ -62,6 +65,7 @@ if (!defined('T_COALESCE')) {
 define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
 define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
+
 	
 abstract class FormatterPass {
 	protected $cache = [];

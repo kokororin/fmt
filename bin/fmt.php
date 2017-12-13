@@ -1669,7 +1669,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.5');
+	define('VERSION', '19.6.6');
 
 	
 function extractFromArgv($argv, $item) {
@@ -1736,11 +1736,16 @@ function selfupdate($argv, $inPhar) {
 	$commit = json_decode(file_get_contents($releases[0]['commit']['url'], false, $context), true);
 	$files = json_decode(file_get_contents($commit['commit']['tree']['url'], false, $context), true);
 	foreach ($files['tree'] as $file) {
-		if ('fmt.phar' == $file['path']) {
-			$phar_file = base64_decode(json_decode(file_get_contents($file['url'], false, $context), true)['content']);
-		}
-		if ('fmt.phar.sha1' == $file['path']) {
-			$phar_sha1 = base64_decode(json_decode(file_get_contents($file['url'], false, $context), true)['content']);
+		if ('bin' == $file['path']) {
+			$binFiles = json_decode(file_get_contents($file['url'], false, $context), true);
+			foreach ($binFiles['tree'] as $binFile) {
+				if ('fmt.phar' == $binFile['path']) {
+					$phar_file = base64_decode(json_decode(file_get_contents($binFile['url'], false, $context), true)['content']);
+				}
+				if ('fmt.phar.sha1' == $binFile['path']) {
+					$phar_sha1 = base64_decode(json_decode(file_get_contents($binFile['url'], false, $context), true)['content']);
+				}
+			}
 		}
 	}
 	if (!isset($phar_sha1) || !isset($phar_file)) {
@@ -1798,6 +1803,9 @@ if (!defined('T_POW_EQUAL')) {
 if (!defined('T_YIELD')) {
 	define('T_YIELD', 'yield');
 }
+if (!defined('T_YIELD_FROM')) {
+	define('T_YIELD_FROM', 'yield_from');
+}
 if (!defined('T_FINALLY')) {
 	define('T_FINALLY', 'finally');
 }
@@ -1811,6 +1819,7 @@ if (!defined('T_COALESCE')) {
 define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
 define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
+
 	
 abstract class FormatterPass {
 	protected $cache = [];

@@ -29,10 +29,21 @@
         "ext-tokenizer": "*"
     },
     "require-dev": {
-        "ext-xdebug": "*",
         "dericofilho/csp": "2.0.*",
         "phpunit/php-code-coverage": "2.0.*",
-        "satooshi/php-coveralls": "dev-master",
+        "satooshi/php-coveralls": "0.7.*",
         "symfony/console": "2.7.*"
-    }
+    },
+    "repositories": [{
+        "type": "package",
+        "package": {
+            "name": "dericofilho/csp",
+            "version": "2.0.0",
+            "source": {
+                "url": "https://github.com/phpfmt-next/csp.git",
+                "type": "git",
+                "reference": "master"
+            }
+        }
+    }]
 }

@@ -29,30 +29,30 @@ final class RemoveIncludeParentheses extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_PARENTHESES_OPEN:
-				$this->appendCode($text);
-				$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-				break;
-			case ST_PARENTHESES_CLOSE:
-				$parenCount--;
-				if ($parenCount > 0) {
+				case ST_PARENTHESES_OPEN:
 					$this->appendCode($text);
-				}
-				break;
-			case T_INCLUDE:
-			case T_REQUIRE:
-			case T_INCLUDE_ONCE:
-			case T_REQUIRE_ONCE:
-				$this->appendCode($text . $this->getSpace());
-				if (!$this->rightTokenIs(ST_PARENTHESES_OPEN)) {
+					$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
 					break;
-				}
-				++$parenCount;
-				$this->walkUntil(ST_PARENTHESES_OPEN);
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+				case ST_PARENTHESES_CLOSE:
+					$parenCount--;
+					if ($parenCount > 0) {
+						$this->appendCode($text);
+					}
+					break;
+				case T_INCLUDE:
+				case T_REQUIRE:
+				case T_INCLUDE_ONCE:
+				case T_REQUIRE_ONCE:
+					$this->appendCode($text . $this->getSpace());
+					if (!$this->rightTokenIs(ST_PARENTHESES_OPEN)) {
+						break;
+					}
+					++$parenCount;
+					$this->walkUntil(ST_PARENTHESES_OPEN);
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

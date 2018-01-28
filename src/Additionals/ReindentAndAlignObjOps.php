@@ -48,130 +48,193 @@ class ReindentAndAlignObjOps extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_QUOTE:
-				$this->appendCode($text);
-				$this->printUntilTheEndOfString();
-				break;
-			case T_CLOSE_TAG:
-				$this->appendCode($text);
-				$this->printUntil(T_OPEN_TAG);
-				break;
-			case T_START_HEREDOC:
-				$this->appendCode($text);
-				$this->printUntil(T_END_HEREDOC);
-				break;
+				case ST_QUOTE:
+					$this->appendCode($text);
+					$this->printUntilTheEndOfString();
+					break;
+				case T_CLOSE_TAG:
+					$this->appendCode($text);
+					$this->printUntil(T_OPEN_TAG);
+					break;
+				case T_START_HEREDOC:
+					$this->appendCode($text);
+					$this->printUntil(T_END_HEREDOC);
+					break;
 
-			case T_WHILE:
-			case T_IF:
-			case T_FOR:
-			case T_FOREACH:
-			case T_SWITCH:
-				$this->appendCode($text);
-				$this->printUntil(ST_PARENTHESES_OPEN);
-				$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-				break;
-
-			case T_NEW:
-				$this->appendCode($text);
-				if ($touchedParenOpen) {
-					$touchedParenOpen = false;
-					$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_COMMA]);
-					if (ST_PARENTHESES_OPEN == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-						$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-						$this->printUntilAny([ST_PARENTHESES_CLOSE, ST_COMMA]);
-					} elseif (ST_PARENTHESES_CLOSE == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-					}
-				}
-				break;
-
-			case T_FUNCTION:
-				$this->appendCode($text);
-				$touchedFunction = true;
-				break;
-
-			case T_VARIABLE:
-			case T_STRING:
-				$this->appendCode($text);
-				if (!isset($levelEntranceCounter[$levelCounter])) {
-					$levelEntranceCounter[$levelCounter] = 0;
-				}
-				if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-					$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
-				}
-				break;
-
-			case ST_CURLY_OPEN:
-			case T_CURLY_OPEN:
-			case T_DOLLAR_OPEN_CURLY_BRACES:
-				$this->appendCode($text);
-				$curlyOpenType = $id;
-				if ($touchedFunction) {
-					$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-					$touchedFunction = false;
-					$curlyOpenType = T_FUNCTION;
-				}
-				$touchedCurlyBlock[] = $curlyOpenType;
-				break;
-
-			case ST_CURLY_CLOSE:
-				$this->appendCode($text);
-				$curlyOpenType = array_pop($touchedCurlyBlock);
-				if (T_FUNCTION == $curlyOpenType) {
-					--$levelCounter;
-				}
-				break;
-
-			case ST_PARENTHESES_OPEN:
-				$touchedParenOpen = true;
-				$this->appendCode($text);
-				if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)) {
+				case T_WHILE:
+				case T_IF:
+				case T_FOR:
+				case T_FOREACH:
+				case T_SWITCH:
+					$this->appendCode($text);
+					$this->printUntil(ST_PARENTHESES_OPEN);
 					$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
 					break;
-				}
-				$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-				break;
 
-			case ST_BRACKET_OPEN:
-				$this->appendCode($text);
-				if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_BRACKET_OPEN, ST_BRACKET_CLOSE)) {
-					$this->printBlock(ST_BRACKET_OPEN, ST_BRACKET_CLOSE);
+				case T_NEW:
+					$this->appendCode($text);
+					if ($touchedParenOpen) {
+						$touchedParenOpen = false;
+						$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_COMMA]);
+						if (ST_PARENTHESES_OPEN == $foundToken) {
+							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+							$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
+							$this->printUntilAny([ST_PARENTHESES_CLOSE, ST_COMMA]);
+						} elseif (ST_PARENTHESES_CLOSE == $foundToken) {
+							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+						}
+					}
 					break;
-				}
-				$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-				break;
 
-			case ST_PARENTHESES_CLOSE:
-			case ST_BRACKET_CLOSE:
-				--$levelCounter;
-				$this->appendCode($text);
-				break;
+				case T_FUNCTION:
+					$this->appendCode($text);
+					$touchedFunction = true;
+					break;
 
-			case T_DOUBLE_COLON:
-				if (!$this->hasLnBefore()) {
+				case T_VARIABLE:
+				case T_STRING:
+					$this->appendCode($text);
+					if (!isset($levelEntranceCounter[$levelCounter])) {
+						$levelEntranceCounter[$levelCounter] = 0;
+					}
+					if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
+					}
+					break;
+
+				case ST_CURLY_OPEN:
+				case T_CURLY_OPEN:
+				case T_DOLLAR_OPEN_CURLY_BRACES:
+					$this->appendCode($text);
+					$curlyOpenType = $id;
+					if ($touchedFunction) {
+						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+						$touchedFunction = false;
+						$curlyOpenType = T_FUNCTION;
+					}
+					$touchedCurlyBlock[] = $curlyOpenType;
+					break;
+
+				case ST_CURLY_CLOSE:
+					$this->appendCode($text);
+					$curlyOpenType = array_pop($touchedCurlyBlock);
+					if (T_FUNCTION == $curlyOpenType) {
+						--$levelCounter;
+					}
+					break;
+
+				case ST_PARENTHESES_OPEN:
+					$touchedParenOpen = true;
+					$this->appendCode($text);
+					if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)) {
+						$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
+						break;
+					}
+					$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+					break;
+
+				case ST_BRACKET_OPEN:
+					$this->appendCode($text);
+					if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_BRACKET_OPEN, ST_BRACKET_CLOSE)) {
+						$this->printBlock(ST_BRACKET_OPEN, ST_BRACKET_CLOSE);
+						break;
+					}
+					$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+					break;
+
+				case ST_PARENTHESES_CLOSE:
+				case ST_BRACKET_CLOSE:
+					--$levelCounter;
 					$this->appendCode($text);
 					break;
-				}
-			case T_OBJECT_OPERATOR:
-				if ($levelCounter < 0) {
-					$levelCounter = 0;
-				}
-				if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-					$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
-				}
-				if (0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
-					++$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
-					if ($this->hasLnBefore()) {
-						$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = self::ALIGN_WITH_INDENT;
+
+				case T_DOUBLE_COLON:
+					if (!$this->hasLnBefore()) {
+						$this->appendCode($text);
+						break;
+					}
+				case T_OBJECT_OPERATOR:
+					if ($levelCounter < 0) {
+						$levelCounter = 0;
+					}
+					if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+						$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
+					}
+					if (0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+						++$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
+						if ($this->hasLnBefore()) {
+							$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = self::ALIGN_WITH_INDENT;
+							$this->appendCode($this->getIndent(+1) . $text);
+							$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, $this->newLine]);
+							if (ST_SEMI_COLON == $foundToken) {
+								$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+							} elseif (ST_PARENTHESES_OPEN == $foundToken || ST_PARENTHESES_CLOSE == $foundToken) {
+								$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+								$this->indentParenthesesContent();
+							}
+							break;
+						}
+						$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = self::ALIGN_WITH_SPACES;
+						if (!isset($printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]])) {
+							$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
+						}
+						++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
+						$placeholder = sprintf(
+							self::ALIGNABLE_OBJOP,
+							$levelCounter,
+							$levelEntranceCounter[$levelCounter],
+							$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
+						);
+						$this->appendCode($placeholder . $text);
+						$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, ST_EQUAL, $this->newLine, ST_COMMA]);
+						if (ST_SEMI_COLON == $foundToken || ST_EQUAL == $foundToken || ST_COMMA == $foundToken) {
+							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+						} elseif (ST_PARENTHESES_OPEN == $foundToken) {
+							if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)) {
+								$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
+								break;
+							}
+							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+							$this->injectPlaceholderParenthesesContent($placeholder);
+						} elseif (ST_PARENTHESES_CLOSE == $foundToken) {
+							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+							$this->injectPlaceholderParenthesesContent($placeholder);
+						}
+						break;
+					} elseif ($this->hasLnBefore() || $this->hasLnLeftToken()) {
+						++$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
+						if (self::ALIGN_WITH_SPACES == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+							++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
+							$placeholder = sprintf(
+								self::ALIGNABLE_OBJOP,
+								$levelCounter,
+								$levelEntranceCounter[$levelCounter],
+								$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
+							);
+							$this->appendCode($placeholder . $text);
+							$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, $this->newLine]);
+							if (ST_SEMI_COLON == $foundToken) {
+								$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+							} elseif (
+								ST_PARENTHESES_OPEN == $foundToken &&
+								!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)
+							) {
+								$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
+								break;
+							} elseif (ST_PARENTHESES_OPEN == $foundToken || ST_PARENTHESES_CLOSE == $foundToken) {
+								$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
+								$this->injectPlaceholderParenthesesContent($placeholder);
+							}
+							break;
+						}
 						$this->appendCode($this->getIndent(+1) . $text);
 						$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, $this->newLine]);
 						if (ST_SEMI_COLON == $foundToken) {
@@ -182,122 +245,59 @@ class ReindentAndAlignObjOps extends AdditionalPass {
 						}
 						break;
 					}
-					$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = self::ALIGN_WITH_SPACES;
-					if (!isset($printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]])) {
-						$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]] = 0;
-					}
-					++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
-					$placeholder = sprintf(
-						self::ALIGNABLE_OBJOP,
-						$levelCounter,
-						$levelEntranceCounter[$levelCounter],
-						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
-					);
-					$this->appendCode($placeholder . $text);
-					$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, ST_EQUAL, $this->newLine, ST_COMMA]);
-					if (ST_SEMI_COLON == $foundToken || ST_EQUAL == $foundToken || ST_COMMA == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-					} elseif (ST_PARENTHESES_OPEN == $foundToken) {
-						if (!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)) {
-							$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-							break;
-						}
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-						$this->injectPlaceholderParenthesesContent($placeholder);
-					} elseif (ST_PARENTHESES_CLOSE == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-						$this->injectPlaceholderParenthesesContent($placeholder);
-					}
+					$this->appendCode($text);
 					break;
-				} elseif ($this->hasLnBefore() || $this->hasLnLeftToken()) {
-					++$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
-					if (self::ALIGN_WITH_SPACES == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
-						++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
-						$placeholder = sprintf(
-							self::ALIGNABLE_OBJOP,
-							$levelCounter,
-							$levelEntranceCounter[$levelCounter],
-							$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
-						);
-						$this->appendCode($placeholder . $text);
-						$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, $this->newLine]);
-						if (ST_SEMI_COLON == $foundToken) {
-							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-						} elseif (
-							ST_PARENTHESES_OPEN == $foundToken &&
-							!$this->hasLnInBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE)
-						) {
-							$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-							break;
-						} elseif (ST_PARENTHESES_OPEN == $foundToken || ST_PARENTHESES_CLOSE == $foundToken) {
-							$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-							$this->injectPlaceholderParenthesesContent($placeholder);
-						}
-						break;
-					}
-					$this->appendCode($this->getIndent(+1) . $text);
-					$foundToken = $this->printUntilAny([ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_SEMI_COLON, $this->newLine]);
-					if (ST_SEMI_COLON == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-					} elseif (ST_PARENTHESES_OPEN == $foundToken || ST_PARENTHESES_CLOSE == $foundToken) {
-						$this->incrementCounters($levelCounter, $levelEntranceCounter, $contextCounter, $maxContextCounter, $touchCounter, $alignType, $printedPlaceholder);
-						$this->indentParenthesesContent();
-					}
-					break;
-				}
-				$this->appendCode($text);
-				break;
 
-			case T_COMMENT:
-			case T_DOC_COMMENT:
-				if (
-					isset($alignType[$levelCounter]) &&
-					isset($levelEntranceCounter[$levelCounter]) &&
-					isset($alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) &&
-					($this->hasLnBefore() || $this->hasLnLeftToken()) &&
-					!$this->leftUsefulTokenIs(ST_CURLY_CLOSE)
-				) {
-					if (self::ALIGN_WITH_SPACES == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
-						++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
-						$this->appendCode(
-							sprintf(
-								self::ALIGNABLE_OBJOP,
-								$levelCounter,
-								$levelEntranceCounter[$levelCounter],
-								$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
-							)
-						);
-					} elseif (self::ALIGN_WITH_INDENT == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+				case T_COMMENT:
+				case T_DOC_COMMENT:
+					if (
+						isset($alignType[$levelCounter]) &&
+						isset($levelEntranceCounter[$levelCounter]) &&
+						isset($alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) &&
+						($this->hasLnBefore() || $this->hasLnLeftToken()) &&
+						!$this->leftUsefulTokenIs(ST_CURLY_CLOSE)
+					) {
+						if (self::ALIGN_WITH_SPACES == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+							++$printedPlaceholder[$levelCounter][$levelEntranceCounter[$levelCounter]][$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]];
+							$this->appendCode(
+								sprintf(
+									self::ALIGNABLE_OBJOP,
+									$levelCounter,
+									$levelEntranceCounter[$levelCounter],
+									$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
+								)
+							);
+						} elseif (self::ALIGN_WITH_INDENT == $alignType[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+							$this->appendCode($this->getIndent(+1));
+						}
+					}
+					$this->appendCode($text);
+					if ($this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON]) && $this->hasLn($text)) {
 						$this->appendCode($this->getIndent(+1));
 					}
-				}
-				$this->appendCode($text);
-				if ($this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON]) && $this->hasLn($text)) {
-					$this->appendCode($this->getIndent(+1));
-				}
-				break;
+					break;
 
-			case ST_COMMA:
-			case ST_SEMI_COLON:
-			case ST_EQUAL:
-				if (!isset($levelEntranceCounter[$levelCounter])) {
-					$levelEntranceCounter[$levelCounter] = 0;
-				}
-				++$levelEntranceCounter[$levelCounter];
-				$this->appendCode($text);
-				break;
+				case ST_COMMA:
+				case ST_SEMI_COLON:
+				case ST_EQUAL:
+					if (!isset($levelEntranceCounter[$levelCounter])) {
+						$levelEntranceCounter[$levelCounter] = 0;
+					}
+					++$levelEntranceCounter[$levelCounter];
+					$this->appendCode($text);
+					break;
 
-			case T_WHITESPACE:
-				$this->appendCode($text);
-				if ($this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON]) && $this->hasLn($text)) {
-					$this->appendCode($this->getIndent(+1));
-				}
-				break;
+				case T_WHITESPACE:
+					$this->appendCode($text);
+					if ($this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON]) && $this->hasLn($text)) {
+						$this->appendCode($this->getIndent(+1));
+					}
+					break;
 
-			default:
-				$touchedParenOpen = false;
-				$this->appendCode($text);
-				break;
+				default:
+					$touchedParenOpen = false;
+					$this->appendCode($text);
+					break;
 			}
 		}
 

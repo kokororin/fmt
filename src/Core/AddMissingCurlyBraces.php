@@ -46,37 +46,37 @@ final class AddMissingCurlyBraces extends FormatterPass {
 			$hasCurlyOnLeft = false;
 
 			switch ($id) {
-			case T_ELSE:
-				if ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, T_IF], $this->ignoreFutileTokens)) {
+				case T_ELSE:
+					if ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, T_IF], $this->ignoreFutileTokens)) {
+						break;
+					}
+					$this->insertCurlyBraces();
 					break;
-				}
-				$this->insertCurlyBraces();
-				break;
 
-			case ST_CURLY_CLOSE:
-				$touchedCurlyClose = true;
-				break;
-
-			case T_WHILE:
-				if ($touchedCurlyClose) {
-					$touchedCurlyClose = false;
-					$hasCurlyOnLeft = true;
-				}
-
-			case T_FOR:
-			case T_FOREACH:
-			case T_ELSEIF:
-			case T_IF:
-				$this->refWalkUsefulUntil($this->tkns, $this->ptr, ST_PARENTHESES_OPEN);
-				$this->refWalkBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-				if (
-					($hasCurlyOnLeft && $this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_SEMI_COLON], $this->ignoreFutileTokens)) ||
-					$this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, ST_SEMI_COLON], $this->ignoreFutileTokens)
-				) {
+				case ST_CURLY_CLOSE:
+					$touchedCurlyClose = true;
 					break;
-				}
-				$this->insertCurlyBraces();
-				break;
+
+				case T_WHILE:
+					if ($touchedCurlyClose) {
+						$touchedCurlyClose = false;
+						$hasCurlyOnLeft = true;
+					}
+
+				case T_FOR:
+				case T_FOREACH:
+				case T_ELSEIF:
+				case T_IF:
+					$this->refWalkUsefulUntil($this->tkns, $this->ptr, ST_PARENTHESES_OPEN);
+					$this->refWalkBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
+					if (
+						($hasCurlyOnLeft && $this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_SEMI_COLON], $this->ignoreFutileTokens)) ||
+						$this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, ST_SEMI_COLON], $this->ignoreFutileTokens)
+					) {
+						break;
+					}
+					$this->insertCurlyBraces();
+					break;
 			}
 		}
 		return $this->render($this->tkns);

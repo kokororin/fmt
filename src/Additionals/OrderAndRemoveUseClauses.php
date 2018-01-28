@@ -282,57 +282,57 @@ EOT;
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_NAMESPACE:
-				$return .= $text;
-				while (list($index, $token) = eachArray($tokens)) {
-					list($id, $text) = $this->getToken($token);
-					$this->ptr = $index;
+				case T_NAMESPACE:
 					$return .= $text;
-					if (ST_CURLY_OPEN == $id || ST_SEMI_COLON == $id) {
-						break;
-					}
-				}
-				$namespaceBlock = '';
-				if (ST_CURLY_OPEN === $id) {
-					$curlyCount = 1;
 					while (list($index, $token) = eachArray($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
-						$namespaceBlock .= $text;
-
-						if (ST_CURLY_OPEN == $id) {
-							++$curlyCount;
-						} elseif (ST_CURLY_CLOSE == $id) {
-							--$curlyCount;
-						}
-
-						if (0 == $curlyCount) {
+						$return .= $text;
+						if (ST_CURLY_OPEN == $id || ST_SEMI_COLON == $id) {
 							break;
 						}
 					}
-				} elseif (ST_SEMI_COLON === $id) {
-					while (list($index, $token) = eachArray($tokens)) {
-						list($id, $text) = $this->getToken($token);
-						$this->ptr = $index;
+					$namespaceBlock = '';
+					if (ST_CURLY_OPEN === $id) {
+						$curlyCount = 1;
+						while (list($index, $token) = eachArray($tokens)) {
+							list($id, $text) = $this->getToken($token);
+							$this->ptr = $index;
+							$namespaceBlock .= $text;
 
-						if (T_NAMESPACE == $id && !$this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
-							prev($tokens);
-							break;
+							if (ST_CURLY_OPEN == $id) {
+								++$curlyCount;
+							} elseif (ST_CURLY_CLOSE == $id) {
+								--$curlyCount;
+							}
+
+							if (0 == $curlyCount) {
+								break;
+							}
 						}
+					} elseif (ST_SEMI_COLON === $id) {
+						while (list($index, $token) = eachArray($tokens)) {
+							list($id, $text) = $this->getToken($token);
+							$this->ptr = $index;
 
-						$namespaceBlock .= $text;
+							if (T_NAMESPACE == $id && !$this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
+								prev($tokens);
+								break;
+							}
+
+							$namespaceBlock .= $text;
+						}
 					}
-				}
 
-				$return .= str_replace(
-					self::OPENER_PLACEHOLDER,
-					'',
-					$this->sortUseClauses(self::OPENER_PLACEHOLDER . $namespaceBlock, self::SPLIT_COMMA, self::REMOVE_UNUSED, self::STRIP_BLANK_LINES, self::BLANK_LINE_AFTER_USE_BLOCK)
-				);
+					$return .= str_replace(
+						self::OPENER_PLACEHOLDER,
+						'',
+						$this->sortUseClauses(self::OPENER_PLACEHOLDER . $namespaceBlock, self::SPLIT_COMMA, self::REMOVE_UNUSED, self::STRIP_BLANK_LINES, self::BLANK_LINE_AFTER_USE_BLOCK)
+					);
 
-				break;
-			default:
-				$return .= $text;
+					break;
+				default:
+					$return .= $text;
 			}
 		}
 

@@ -33,15 +33,15 @@ final class TrimSpaceBeforeSemicolon extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_SEMI_COLON:
-				if (!$this->leftTokenIs([T_COMMENT, T_DOC_COMMENT])) {
-					$this->rtrimAndAppendCode($text);
-					break;
-				}
+				case ST_SEMI_COLON:
+					if (!$this->leftTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+						$this->rtrimAndAppendCode($text);
+						break;
+					}
 
-			default:
-				$this->appendCode($text);
-				break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

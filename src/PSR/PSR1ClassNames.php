@@ -29,28 +29,28 @@ final class PSR1ClassNames extends FormatterPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_CLASS:
-				if (!$this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
-					$foundClass = true;
-				}
-
-				$this->appendCode($text);
-				break;
-			case T_STRING:
-				if ($foundClass) {
-					$count = 0;
-					$tmp = ucwords(str_replace(['-', '_'], ' ', strtolower($text), $count));
-					if ($count > 0) {
-						$text = str_replace(' ', '', $tmp);
+				case T_CLASS:
+					if (!$this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+						$foundClass = true;
 					}
-					$this->appendCode($text);
 
-					$foundClass = false;
+					$this->appendCode($text);
 					break;
-				}
-			default:
-				$this->appendCode($text);
-				break;
+				case T_STRING:
+					if ($foundClass) {
+						$count = 0;
+						$tmp = ucwords(str_replace(['-', '_'], ' ', strtolower($text), $count));
+						if ($count > 0) {
+							$text = str_replace(' ', '', $tmp);
+						}
+						$this->appendCode($text);
+
+						$foundClass = false;
+						break;
+					}
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 		return $this->code;

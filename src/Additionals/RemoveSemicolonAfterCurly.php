@@ -33,48 +33,48 @@ final class RemoveSemicolonAfterCurly extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_NAMESPACE:
-			case T_CLASS:
-			case T_TRAIT:
-			case T_INTERFACE:
-			case T_WHILE:
-			case T_IF:
-			case T_SWITCH:
-			case T_FOR:
-			case T_FOREACH:
-				$touchedFunction = true;
-				$this->appendCode($text);
-				break;
+				case T_NAMESPACE:
+				case T_CLASS:
+				case T_TRAIT:
+				case T_INTERFACE:
+				case T_WHILE:
+				case T_IF:
+				case T_SWITCH:
+				case T_FOR:
+				case T_FOREACH:
+					$touchedFunction = true;
+					$this->appendCode($text);
+					break;
 
-			case T_FUNCTION:
-				$touchedFunction = true;
-				if (!$this->rightUsefulTokenIs(T_STRING)) {
-					$touchedFunction = false;
-				}
-				$this->appendCode($text);
-				break;
+				case T_FUNCTION:
+					$touchedFunction = true;
+					if (!$this->rightUsefulTokenIs(T_STRING)) {
+						$touchedFunction = false;
+					}
+					$this->appendCode($text);
+					break;
 
-			case ST_CURLY_OPEN:
-				$curlyType = ST_CURLY_OPEN;
-				if (!$touchedFunction) {
-					$curlyType = self::LAMBDA_CURLY_OPEN;
-				}
-				$curlyStack[] = $curlyType;
-				$this->appendCode($text);
-				break;
+				case ST_CURLY_OPEN:
+					$curlyType = ST_CURLY_OPEN;
+					if (!$touchedFunction) {
+						$curlyType = self::LAMBDA_CURLY_OPEN;
+					}
+					$curlyStack[] = $curlyType;
+					$this->appendCode($text);
+					break;
 
-			case ST_CURLY_CLOSE:
-				$curlyType = array_pop($curlyStack);
-				$this->appendCode($text);
+				case ST_CURLY_CLOSE:
+					$curlyType = array_pop($curlyStack);
+					$this->appendCode($text);
 
-				if (self::LAMBDA_CURLY_OPEN != $curlyType && $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
-					$this->walkUntil(ST_SEMI_COLON);
-				}
-				break;
+					if (self::LAMBDA_CURLY_OPEN != $curlyType && $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+						$this->walkUntil(ST_SEMI_COLON);
+					}
+					break;
 
-			default:
-				$this->appendCode($text);
-				break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

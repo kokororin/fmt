@@ -27,18 +27,18 @@ final class SpaceAfterExclamationMark extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_EXCLAMATION:
-				$this->appendCode(
-					$text .
-					$this->getSpace(!$this->rightUsefulTokenIs([
-						T_BOOLEAN_AND, T_BOOLEAN_OR,
-						T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR,
-					]))
-				);
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+				case ST_EXCLAMATION:
+					$this->appendCode(
+						$text .
+						$this->getSpace(!$this->rightUsefulTokenIs([
+							T_BOOLEAN_AND, T_BOOLEAN_OR,
+							T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR,
+						]))
+					);
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 		return $this->code;

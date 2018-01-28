@@ -30,43 +30,43 @@ final class PSR2MultilineFunctionParams extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_FUNCTION:
-				$this->appendCode($text);
-				$this->printUntil(ST_PARENTHESES_OPEN);
-				$this->appendCode(self::LINE_BREAK);
-				$touchedComma = false;
-				while (list($index, $token) = eachArray($this->tkns)) {
-					list($id, $text) = $this->getToken($token);
-					$this->ptr = $index;
-
-					if (ST_PARENTHESES_OPEN === $id) {
-						$this->appendCode($text);
-						$this->printUntil(ST_PARENTHESES_CLOSE);
-						continue;
-					} elseif (ST_BRACKET_OPEN === $id) {
-						$this->appendCode($text);
-						$this->printUntil(ST_BRACKET_CLOSE);
-						continue;
-					} elseif (ST_PARENTHESES_CLOSE === $id) {
-						$this->appendCode(self::LINE_BREAK);
-						$this->appendCode($text);
-						break;
-					}
+				case T_FUNCTION:
 					$this->appendCode($text);
+					$this->printUntil(ST_PARENTHESES_OPEN);
+					$this->appendCode(self::LINE_BREAK);
+					$touchedComma = false;
+					while (list($index, $token) = eachArray($this->tkns)) {
+						list($id, $text) = $this->getToken($token);
+						$this->ptr = $index;
 
-					if (ST_COMMA === $id && !$this->hasLnAfter()) {
-						$touchedComma = true;
-						$this->appendCode(self::LINE_BREAK);
+						if (ST_PARENTHESES_OPEN === $id) {
+							$this->appendCode($text);
+							$this->printUntil(ST_PARENTHESES_CLOSE);
+							continue;
+						} elseif (ST_BRACKET_OPEN === $id) {
+							$this->appendCode($text);
+							$this->printUntil(ST_BRACKET_CLOSE);
+							continue;
+						} elseif (ST_PARENTHESES_CLOSE === $id) {
+							$this->appendCode(self::LINE_BREAK);
+							$this->appendCode($text);
+							break;
+						}
+						$this->appendCode($text);
+
+						if (ST_COMMA === $id && !$this->hasLnAfter()) {
+							$touchedComma = true;
+							$this->appendCode(self::LINE_BREAK);
+						}
 					}
-				}
-				$placeholderReplace = $this->newLine;
-				if (!$touchedComma) {
-					$placeholderReplace = '';
-				}
-				$this->code = str_replace(self::LINE_BREAK, $placeholderReplace, $this->code);
-				break;
-			default:
-				$this->appendCode($text);
+					$placeholderReplace = $this->newLine;
+					if (!$touchedComma) {
+						$placeholderReplace = '';
+					}
+					$this->code = str_replace(self::LINE_BREAK, $placeholderReplace, $this->code);
+					break;
+				default:
+					$this->appendCode($text);
 			}
 		}
 

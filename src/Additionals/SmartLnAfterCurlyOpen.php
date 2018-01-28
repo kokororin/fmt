@@ -28,46 +28,46 @@ final class SmartLnAfterCurlyOpen extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_CURLY_OPEN:
-				$this->appendCode($text);
-				$curlyCount = 1;
-				$stack = '';
-				$foundLineBreak = false;
-				$hasLnAfter = $this->hasLnAfter();
-				while (list($index, $token) = eachArray($this->tkns)) {
-					list($id, $text) = $this->getToken($token);
-					$this->ptr = $index;
-					$stack .= $text;
-					if (T_START_HEREDOC == $id) {
-						$stack .= $this->walkAndAccumulateUntil($this->tkns, T_END_HEREDOC);
-						continue;
+				case ST_CURLY_OPEN:
+					$this->appendCode($text);
+					$curlyCount = 1;
+					$stack = '';
+					$foundLineBreak = false;
+					$hasLnAfter = $this->hasLnAfter();
+					while (list($index, $token) = eachArray($this->tkns)) {
+						list($id, $text) = $this->getToken($token);
+						$this->ptr = $index;
+						$stack .= $text;
+						if (T_START_HEREDOC == $id) {
+							$stack .= $this->walkAndAccumulateUntil($this->tkns, T_END_HEREDOC);
+							continue;
+						}
+						if (ST_QUOTE == $id) {
+							$stack .= $this->walkAndAccumulateUntil($this->tkns, ST_QUOTE);
+							continue;
+						}
+						if (ST_CURLY_OPEN == $id) {
+							++$curlyCount;
+						}
+						if (ST_CURLY_CLOSE == $id) {
+							--$curlyCount;
+						}
+						if (T_WHITESPACE === $id && $this->hasLn($text)) {
+							$foundLineBreak = true;
+							break;
+						}
+						if (0 == $curlyCount) {
+							break;
+						}
 					}
-					if (ST_QUOTE == $id) {
-						$stack .= $this->walkAndAccumulateUntil($this->tkns, ST_QUOTE);
-						continue;
+					if ($foundLineBreak && !$hasLnAfter) {
+						$this->appendCode($this->newLine);
 					}
-					if (ST_CURLY_OPEN == $id) {
-						++$curlyCount;
-					}
-					if (ST_CURLY_CLOSE == $id) {
-						--$curlyCount;
-					}
-					if (T_WHITESPACE === $id && $this->hasLn($text)) {
-						$foundLineBreak = true;
-						break;
-					}
-					if (0 == $curlyCount) {
-						break;
-					}
-				}
-				if ($foundLineBreak && !$hasLnAfter) {
-					$this->appendCode($this->newLine);
-				}
-				$this->appendCode($stack);
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+					$this->appendCode($stack);
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 		return $this->code;

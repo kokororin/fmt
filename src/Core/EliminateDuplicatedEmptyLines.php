@@ -27,18 +27,18 @@ final class EliminateDuplicatedEmptyLines extends FormatterPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_WHITESPACE:
-			case T_COMMENT:
-			case T_OPEN_TAG:
-				if ($this->hasLn($text) || (T_COMMENT == $id && '//' == substr($text, 0, 2))) {
-					$text = str_replace($this->newLine, self::EMPTY_LINE . $this->newLine, $text);
-				}
+				case T_WHITESPACE:
+				case T_COMMENT:
+				case T_OPEN_TAG:
+					if ($this->hasLn($text) || (T_COMMENT == $id && '//' == substr($text, 0, 2))) {
+						$text = str_replace($this->newLine, self::EMPTY_LINE . $this->newLine, $text);
+					}
 
-				$this->appendCode($text);
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+					$this->appendCode($text);
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

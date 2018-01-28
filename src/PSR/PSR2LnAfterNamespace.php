@@ -29,33 +29,33 @@ final class PSR2LnAfterNamespace extends FormatterPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_NAMESPACE:
-				if ($this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
-					$this->appendCode($text);
-					break;
-				}
-				if ($this->leftTokenIs(ST_CURLY_CLOSE)) {
-					$this->appendCode($this->getCrlf());
-				}
-				$this->appendCode($text);
-				while (list($index, $token) = eachArray($this->tkns)) {
-					list($id, $text) = $this->getToken($token);
-					$this->ptr = $index;
-					$this->appendCode($text);
-					if (ST_SEMI_COLON === $id) {
-						list(, $text) = $this->inspectToken();
-						if (1 === substr_count($text, $this->newLine)) {
-							$this->appendCode($this->newLine);
-						}
-						break;
-					} elseif (ST_CURLY_OPEN === $id) {
+				case T_NAMESPACE:
+					if ($this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
+						$this->appendCode($text);
 						break;
 					}
-				}
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+					if ($this->leftTokenIs(ST_CURLY_CLOSE)) {
+						$this->appendCode($this->getCrlf());
+					}
+					$this->appendCode($text);
+					while (list($index, $token) = eachArray($this->tkns)) {
+						list($id, $text) = $this->getToken($token);
+						$this->ptr = $index;
+						$this->appendCode($text);
+						if (ST_SEMI_COLON === $id) {
+							list(, $text) = $this->inspectToken();
+							if (1 === substr_count($text, $this->newLine)) {
+								$this->appendCode($this->newLine);
+							}
+							break;
+						} elseif (ST_CURLY_OPEN === $id) {
+							break;
+						}
+					}
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

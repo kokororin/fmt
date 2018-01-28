@@ -15,61 +15,61 @@ class PHPDocTypesToFunctionTypehint extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_FUNCTION:
-				$this->appendCode($text);
-				if (!$this->rightUsefulTokenIs(T_STRING)) {
-					continue;
-				}
-				if (!$this->leftTokenIs(T_DOC_COMMENT)) {
-					continue;
-				}
+				case T_FUNCTION:
+					$this->appendCode($text);
+					if (!$this->rightUsefulTokenIs(T_STRING)) {
+						continue;
+					}
+					if (!$this->leftTokenIs(T_DOC_COMMENT)) {
+						continue;
+					}
 
-				$foundParams = [];
-				$foundReturn = '';
-				list(, $docBlock) = $this->leftToken();
-				$words = explode(' ', $docBlock);
-				while (list(, $word) = eachArray($words)) {
-					$word = trim(strtolower($word));
-					switch ($word) {
-					case '@param':
-						$foundType = '';
-						$foundName = '';
-						while (list(, $word) = eachArray($words)) {
-							$word = trim(strtolower($word));
-							if ('$' == $word[0]) {
-								$foundName = $word;
-								break;
-							} else {
-								$foundType = $word;
-							}
+					$foundParams = [];
+					$foundReturn = '';
+					list(, $docBlock) = $this->leftToken();
+					$words = explode(' ', $docBlock);
+					while (list(, $word) = eachArray($words)) {
+						$word = trim(strtolower($word));
+						switch ($word) {
+							case '@param':
+								$foundType = '';
+								$foundName = '';
+								while (list(, $word) = eachArray($words)) {
+									$word = trim(strtolower($word));
+									if ('$' == $word[0]) {
+										$foundName = $word;
+										break;
+									} else {
+										$foundType = $word;
+									}
+								}
+								$foundParams[$foundName] = $foundType;
+							case '@return':
+								while (list(, $word) = eachArray($words)) {
+									$word = trim(strtolower($word));
+									$foundReturn = $word;
+									break;
+								}
 						}
-						$foundParams[$foundName] = $foundType;
-					case '@return':
-						while (list(, $word) = eachArray($words)) {
-							$word = trim(strtolower($word));
-							$foundReturn = $word;
+					}
+					while (list($index, $token) = eachArray($this->tkns)) {
+						list($id, $text) = $this->getToken($token);
+						$this->ptr = $index;
+						if (ST_CURLY_OPEN == $id && '' != $foundReturn) {
+							$text = ':' . $foundReturn . ' ' . $text;
+							$this->appendCode($text);
 							break;
 						}
-					}
-				}
-				while (list($index, $token) = eachArray($this->tkns)) {
-					list($id, $text) = $this->getToken($token);
-					$this->ptr = $index;
-					if (ST_CURLY_OPEN == $id && '' != $foundReturn) {
-						$text = ':' . $foundReturn . ' ' . $text;
+						if (T_VARIABLE == $id && isset($foundParams[$text])) {
+							$text = $foundParams[$text] . ' ' . $text;
+						}
 						$this->appendCode($text);
-						break;
 					}
-					if (T_VARIABLE == $id && isset($foundParams[$text])) {
-						$text = $foundParams[$text] . ' ' . $text;
-					}
-					$this->appendCode($text);
-				}
-				break;
+					break;
 
-			default:
-				$this->appendCode($text);
-				break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

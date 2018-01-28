@@ -28,14 +28,14 @@ final class NewLineBeforeReturn extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_RETURN:
-				if (!$this->leftUsefulTokenIs([ST_CURLY_OPEN, ST_COLON])) {
-					$this->rtrimAndAppendCode($this->newLine . $this->newLine . $text);
+				case T_RETURN:
+					if (!$this->leftUsefulTokenIs([ST_CURLY_OPEN, ST_COLON])) {
+						$this->rtrimAndAppendCode($this->newLine . $this->newLine . $text);
+						break;
+					}
+				default:
+					$this->appendCode($text);
 					break;
-				}
-			default:
-				$this->appendCode($text);
-				break;
 			}
 		}
 

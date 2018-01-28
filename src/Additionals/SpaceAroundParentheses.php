@@ -29,46 +29,46 @@ final class SpaceAroundParentheses extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case ST_PARENTHESES_OPEN:
-				list($prevId) = $this->inspectToken(-1);
-				list($nextId) = $this->inspectToken(+1);
+				case ST_PARENTHESES_OPEN:
+					list($prevId) = $this->inspectToken(-1);
+					list($nextId) = $this->inspectToken(+1);
 
-				$this->appendCode(
-					$this->getSpace(
-						(
-							$this->leftTokenIs(
-								[
-									ST_PARENTHESES_OPEN,
-								]
-							)
-							&& T_WHITESPACE != $prevId && T_FUNCTION != $prevId)
-					)
-					. $text .
-					$this->getSpace(!$this->rightTokenIs([
-						T_WHITESPACE, ST_PARENTHESES_CLOSE,
-					]))
-				);
-				break;
-			case ST_PARENTHESES_CLOSE:
-				list($prevId) = $this->inspectToken(-1);
-				list($nextId) = $this->inspectToken(+1);
+					$this->appendCode(
+						$this->getSpace(
+							(
+								$this->leftTokenIs(
+									[
+										ST_PARENTHESES_OPEN,
+									]
+								)
+								&& T_WHITESPACE != $prevId && T_FUNCTION != $prevId)
+						)
+						. $text .
+						$this->getSpace(!$this->rightTokenIs([
+							T_WHITESPACE, ST_PARENTHESES_CLOSE,
+						]))
+					);
+					break;
+				case ST_PARENTHESES_CLOSE:
+					list($prevId) = $this->inspectToken(-1);
+					list($nextId) = $this->inspectToken(+1);
 
-				$this->appendCode(
-					$this->getSpace(
-						(
-							!$this->leftTokenIs(
-								[
-									ST_PARENTHESES_OPEN,
-								]
-							)
-							&& T_WHITESPACE != $prevId)
-					)
-					. $text
-				);
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+					$this->appendCode(
+						$this->getSpace(
+							(
+								!$this->leftTokenIs(
+									[
+										ST_PARENTHESES_OPEN,
+									]
+								)
+								&& T_WHITESPACE != $prevId)
+						)
+						. $text
+					);
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 

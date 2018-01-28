@@ -29,12 +29,12 @@ final class SplitElseIf extends AdditionalPass {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
-			case T_ELSEIF:
-				$this->appendCode('else if');
-				break;
-			default:
-				$this->appendCode($text);
-				break;
+				case T_ELSEIF:
+					$this->appendCode('else if');
+					break;
+				default:
+					$this->appendCode($text);
+					break;
 			}
 		}
 		return $this->code;

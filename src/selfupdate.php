@@ -40,7 +40,7 @@ function selfupdate($argv, $inPhar) {
 		}
 	}
 	if (!isset($phar_sha1) || !isset($phar_file)) {
-		fwrite(STDERR, 'Could not autoupdate - not release found' . PHP_EOL);
+		fwrite(STDERR, 'Could not autoupdate - no release found' . PHP_EOL);
 		exit(255);
 	}
 	if ($inPhar && !file_exists($argv[0])) {

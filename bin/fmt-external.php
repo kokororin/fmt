@@ -93,7 +93,7 @@ abstract class Helper implements HelperInterface
             return strlen($string);
         }
 
-        if (false === $encoding = mb_detect_encoding($string)) {
+        if (false === $encoding = mb_detect_encoding($string, null, true)) {
             return strlen($string);
         }
 
@@ -104,26 +104,28 @@ abstract class Helper implements HelperInterface
     {
         static $timeFormats = array(
             array(0, '< 1 sec'),
-            array(2, '1 sec'),
-            array(59, 'secs', 1),
+            array(1, '1 sec'),
+            array(2, 'secs', 1),
             array(60, '1 min'),
-            array(3600, 'mins', 60),
-            array(5400, '1 hr'),
-            array(86400, 'hrs', 3600),
-            array(129600, '1 day'),
-            array(604800, 'days', 86400),
+            array(120, 'mins', 60),
+            array(3600, '1 hr'),
+            array(7200, 'hrs', 3600),
+            array(86400, '1 day'),
+            array(172800, 'days', 86400),
         );
 
-        foreach ($timeFormats as $format) {
+        foreach ($timeFormats as $index => $format) {
             if ($secs >= $format[0]) {
-                continue;
-            }
+                if ((isset($timeFormats[$index + 1]) && $secs < $timeFormats[$index + 1][0])
+                    || $index == count($timeFormats) - 1
+                ) {
+                    if (2 == count($format)) {
+                        return $format[1];
+                    }
 
-            if (2 == count($format)) {
-                return $format[1];
+                    return floor($secs / $format[2]).' '.$format[1];
+                }
             }
-
-            return ceil($secs / $format[2]).' '.$format[1];
         }
     }
 
@@ -146,13 +148,18 @@ abstract class Helper implements HelperInterface
 
     public static function strlenWithoutDecoration(OutputFormatterInterface $formatter, $string)
     {
+        return self::strlen(self::removeDecoration($formatter, $string));
+    }
+
+    public static function removeDecoration(OutputFormatterInterface $formatter, $string)
+    {
         $isDecorated = $formatter->isDecorated();
         $formatter->setDecorated(false);
                 $string = $formatter->format($string);
                 $string = preg_replace("/\033\[[^m]*m/", '', $string);
         $formatter->setDecorated($isDecorated);
 
-        return self::strlen($string);
+        return $string;
     }
 }
 
@@ -169,10 +176,8 @@ class OutputFormatterStyleStack
     
     private $styles;
 
-    
     private $emptyStyle;
 
-    
     public function __construct(OutputFormatterStyleInterface $emptyStyle = null)
     {
         $this->emptyStyle = $emptyStyle ?: new OutputFormatterStyle();
@@ -454,7 +459,22 @@ class OutputFormatter implements OutputFormatterInterface
     
     public static function escape($text)
     {
-        return preg_replace('/([^\\\\]?)</', '$1\\<', $text);
+        $text = preg_replace('/([^\\\\]?)</', '$1\\<', $text);
+
+        return self::escapeTrailingBackslash($text);
+    }
+
+    
+    public static function escapeTrailingBackslash($text)
+    {
+        if ('\\' === substr($text, -1)) {
+            $len = strlen($text);
+            $text = rtrim($text, '\\');
+            $text = str_replace("\0", '', $text);
+            $text .= str_repeat("\0", $len - strlen($text));
+        }
+
+        return $text;
     }
 
     
@@ -514,7 +534,7 @@ class OutputFormatter implements OutputFormatterInterface
         $message = (string) $message;
         $offset = 0;
         $output = '';
-        $tagRegex = '[a-z][a-z0-9_=;-]*';
+        $tagRegex = '[a-z][a-z0-9_=;-]*+';
         preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
         foreach ($matches[0] as $i => $match) {
             $pos = $match[1];
@@ -545,6 +565,10 @@ class OutputFormatter implements OutputFormatterInterface
         }
 
         $output .= $this->applyCurrentStyle(substr($message, $offset));
+
+        if (false !== strpos($output, "\0")) {
+            return strtr($output, array("\0" => '\\', '\\<' => '<'));
+        }
 
         return str_replace('\\<', '<', $output);
     }
@@ -633,7 +657,6 @@ interface OutputInterface
     
     public function isDecorated();
 
-    
     public function setFormatter(OutputFormatterInterface $formatter);
 
     
@@ -653,7 +676,6 @@ interface ConsoleOutputInterface extends OutputInterface
     
     public function getErrorOutput();
 
-    
     public function setErrorOutput(OutputInterface $error);
 }
 
@@ -717,21 +739,25 @@ abstract class Output implements OutputInterface
         return $this->verbosity;
     }
 
+    
     public function isQuiet()
     {
         return self::VERBOSITY_QUIET === $this->verbosity;
     }
 
+    
     public function isVerbose()
     {
         return self::VERBOSITY_VERBOSE <= $this->verbosity;
     }
 
+    
     public function isVeryVerbose()
     {
         return self::VERBOSITY_VERY_VERBOSE <= $this->verbosity;
     }
 
+    
     public function isDebug()
     {
         return self::VERBOSITY_DEBUG <= $this->verbosity;
@@ -813,7 +839,7 @@ class StreamOutput extends Output
     
     protected function doWrite($message, $newline)
     {
-        if (false === @fwrite($this->stream, $message.($newline ? PHP_EOL : ''))) {
+        if (false === @fwrite($this->stream, $message) || ($newline && (false === @fwrite($this->stream, PHP_EOL)))) {
                         throw new \RuntimeException('Unable to write output.');
         }
 
@@ -824,7 +850,11 @@ class StreamOutput extends Output
     protected function hasColorSupport()
     {
         if (DIRECTORY_SEPARATOR === '\\') {
-            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI');
+            return
+                '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR.'.'.PHP_WINDOWS_VERSION_MINOR.'.'.PHP_WINDOWS_VERSION_BUILD
+                || false !== getenv('ANSICON')
+                || 'ON' === getenv('ConEmuANSI')
+                || 'xterm' === getenv('TERM');
         }
 
         return function_exists('posix_isatty') && @posix_isatty($this->stream);
@@ -843,18 +873,19 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 
 class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 {
-    
     private $stderr;
 
     
     public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
-        $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
-        $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
+        parent::__construct($this->openOutputStream(), $verbosity, $decorated, $formatter);
 
-        parent::__construct(fopen($outputStream, 'w'), $verbosity, $decorated, $formatter);
+        $actualDecorated = $this->isDecorated();
+        $this->stderr = new StreamOutput($this->openErrorStream(), $verbosity, $decorated, $this->getFormatter());
 
-        $this->stderr = new StreamOutput(fopen($errorStream, 'w'), $verbosity, $decorated, $this->getFormatter());
+        if (null === $decorated) {
+            $this->setDecorated($actualDecorated && $this->stderr->isDecorated());
+        }
     }
 
     
@@ -905,7 +936,29 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
     
     private function isRunningOS400()
     {
-        return 'OS400' === php_uname('s');
+        $checks = array(
+            function_exists('php_uname') ? php_uname('s') : '',
+            getenv('OSTYPE'),
+            PHP_OS,
+        );
+
+        return false !== stripos(implode(';', $checks), 'OS400');
+    }
+
+    
+    private function openOutputStream()
+    {
+        $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
+
+        return @fopen($outputStream, 'w') ?: fopen('php://output', 'w');
+    }
+
+    
+    private function openErrorStream()
+    {
+        $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
+
+        return fopen($errorStream, 'w');
     }
 }
 
@@ -916,29 +969,29 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 
 namespace Symfony\Component\Console\Helper{
 
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 class ProgressBar
 {
-        private $barWidth = 28;
+    private $barWidth = 28;
     private $barChar;
     private $emptyBarChar = '-';
     private $progressChar = '>';
-    private $format = null;
+    private $format;
+    private $internalFormat;
     private $redrawFreq = 1;
-
-    
     private $output;
     private $step = 0;
     private $max;
     private $startTime;
     private $stepWidth;
     private $percent = 0.0;
-    private $lastMessagesLength = 0;
     private $formatLineCount;
-    private $messages;
+    private $messages = array();
     private $overwrite = true;
+    private $firstRun = true;
 
     private static $formatters;
     private static $formats;
@@ -946,18 +999,18 @@ class ProgressBar
     
     public function __construct(OutputInterface $output, $max = 0)
     {
+        if ($output instanceof ConsoleOutputInterface) {
+            $output = $output->getErrorOutput();
+        }
+
         $this->output = $output;
         $this->setMaxSteps($max);
 
         if (!$this->output->isDecorated()) {
                         $this->overwrite = false;
 
-            if ($this->max > 10) {
-                                $this->setRedrawFrequency($max / 10);
-            }
+                        $this->setRedrawFrequency($max / 10);
         }
-
-        $this->setFormat($this->determineBestFormat());
 
         $this->startTime = time();
     }
@@ -1002,6 +1055,7 @@ class ProgressBar
         return isset(self::$formats[$name]) ? self::$formats[$name] : null;
     }
 
+    
     public function setMessage($message, $name = 'message')
     {
         $this->messages[$name] = $message;
@@ -1027,7 +1081,7 @@ class ProgressBar
     
     public function getStep()
     {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.6 and will be removed in 3.0. Use the getProgress() method instead.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.6 and will be removed in 3.0. Use the getProgress() method instead.', E_USER_DEPRECATED);
 
         return $this->getProgress();
     }
@@ -1105,21 +1159,14 @@ class ProgressBar
     
     public function setFormat($format)
     {
-                if (!$this->max && null !== self::getFormatDefinition($format.'_nomax')) {
-            $this->format = self::getFormatDefinition($format.'_nomax');
-        } elseif (null !== self::getFormatDefinition($format)) {
-            $this->format = self::getFormatDefinition($format);
-        } else {
-            $this->format = $format;
-        }
-
-        $this->formatLineCount = substr_count($this->format, "\n");
+        $this->format = null;
+        $this->internalFormat = $format;
     }
 
     
     public function setRedrawFrequency($freq)
     {
-        $this->redrawFreq = (int) $freq;
+        $this->redrawFreq = max((int) $freq, 1);
     }
 
     
@@ -1145,7 +1192,7 @@ class ProgressBar
     
     public function setCurrent($step)
     {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.6 and will be removed in 3.0. Use the setProgress() method instead.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.6 and will be removed in 3.0. Use the setProgress() method instead.', E_USER_DEPRECATED);
 
         $this->setProgress($step);
     }
@@ -1198,6 +1245,10 @@ class ProgressBar
             return;
         }
 
+        if (null === $this->format) {
+            $this->setRealFormat($this->internalFormat ?: $this->determineBestFormat());
+        }
+
                 $self = $this;
         $output = $this->output;
         $messages = $this->messages;
@@ -1225,7 +1276,25 @@ class ProgressBar
             return;
         }
 
-        $this->overwrite(str_repeat("\n", $this->formatLineCount));
+        if (null === $this->format) {
+            $this->setRealFormat($this->internalFormat ?: $this->determineBestFormat());
+        }
+
+        $this->overwrite('');
+    }
+
+    
+    private function setRealFormat($format)
+    {
+                if (!$this->max && null !== self::getFormatDefinition($format.'_nomax')) {
+            $this->format = self::getFormatDefinition($format.'_nomax');
+        } elseif (null !== self::getFormatDefinition($format)) {
+            $this->format = self::getFormatDefinition($format);
+        } else {
+            $this->format = $format;
+        }
+
+        $this->formatLineCount = substr_count($this->format, "\n");
     }
 
     
@@ -1238,34 +1307,23 @@ class ProgressBar
     
     private function overwrite($message)
     {
-        $lines = explode("\n", $message);
+        if ($this->overwrite) {
+            if (!$this->firstRun) {
+                                $this->output->write("\x0D");
 
-                if (null !== $this->lastMessagesLength) {
-            foreach ($lines as $i => $line) {
-                if ($this->lastMessagesLength > Helper::strlenWithoutDecoration($this->output->getFormatter(), $line)) {
-                    $lines[$i] = str_pad($line, $this->lastMessagesLength, "\x20", STR_PAD_RIGHT);
+                                $this->output->write("\x1B[2K");
+
+                                if ($this->formatLineCount > 0) {
+                    $this->output->write(str_repeat("\x1B[1A\x1B[2K", $this->formatLineCount));
                 }
             }
-        }
-
-        if ($this->overwrite) {
-                        $this->output->write("\x0D");
         } elseif ($this->step > 0) {
-                        $this->output->writeln('');
+            $this->output->writeln('');
         }
 
-        if ($this->formatLineCount) {
-            $this->output->write(sprintf("\033[%dA", $this->formatLineCount));
-        }
-        $this->output->write(implode("\n", $lines));
+        $this->firstRun = false;
 
-        $this->lastMessagesLength = 0;
-        foreach ($lines as $line) {
-            $len = Helper::strlenWithoutDecoration($this->output->getFormatter(), $line);
-            if ($len > $this->lastMessagesLength) {
-                $this->lastMessagesLength = $len;
-            }
-        }
+        $this->output->write($message);
     }
 
     private function determineBestFormat()
@@ -1669,7 +1727,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.6');
+	define('VERSION', '19.6.7');
 
 	
 function extractFromArgv($argv, $item) {
@@ -1721,6 +1779,23 @@ function tabwriter(array $lines) {
 
 	return $final;
 }
+
+function eachArray(&$array) {
+	if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+		return each($array);
+	}
+	$res = [];
+	$key = key($array);
+	if (null !== $key) {
+		next($array);
+		$res[1] = $res['value'] = $array[$key];
+		$res[0] = $res['key'] = $key;
+	} else {
+		$res = false;
+	}
+	return $res;
+}
+
 	
 function selfupdate($argv, $inPhar) {
 	$opts = [
@@ -1749,7 +1824,7 @@ function selfupdate($argv, $inPhar) {
 		}
 	}
 	if (!isset($phar_sha1) || !isset($phar_file)) {
-		fwrite(STDERR, 'Could not autoupdate - not release found' . PHP_EOL);
+		fwrite(STDERR, 'Could not autoupdate - no release found' . PHP_EOL);
 		exit(255);
 	}
 	if ($inPhar && !file_exists($argv[0])) {
@@ -2060,7 +2135,7 @@ abstract class FormatterPass {
 		}
 		$tknids = array_flip($tknids);
 		$touchedLn = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2077,7 +2152,7 @@ abstract class FormatterPass {
 	protected function printAndStopAtEndOfParamBlock() {
 		$count = 1;
 		$paramCount = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2112,7 +2187,7 @@ abstract class FormatterPass {
 
 	protected function printBlock($start, $end) {
 		$count = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2132,7 +2207,7 @@ abstract class FormatterPass {
 
 	protected function printCurlyBlock() {
 		$count = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2157,7 +2232,7 @@ abstract class FormatterPass {
 	}
 
 	protected function printUntil($tknid) {
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2175,7 +2250,7 @@ abstract class FormatterPass {
 		if (isset($tknids[$this->newLine])) {
 			$whitespaceNewLine = true;
 		}
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -2517,7 +2592,7 @@ abstract class FormatterPass {
 		$tmp = '';
 		$tknCount = 1;
 		$foundPotentialTokens = false;
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if (isset($lookFor[$id])) {
 				$foundPotentialTokens = true;
@@ -2546,7 +2621,7 @@ abstract class FormatterPass {
 		$tmp = '';
 		$tknCount = 1;
 		$foundPotentialTokens = false;
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if (isset($lookFor[$id])) {
 				$foundPotentialTokens = true;
@@ -2623,7 +2698,7 @@ abstract class FormatterPass {
 	protected function walkAndAccumulateCurlyBlock(&$tkns) {
 		$count = 1;
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 
@@ -2648,7 +2723,7 @@ abstract class FormatterPass {
 
 	protected function walkAndAccumulateStopAt(&$tkns, $tknid) {
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if ($tknid == $id) {
 				prev($tkns);
@@ -2663,7 +2738,7 @@ abstract class FormatterPass {
 		$tknids = array_flip($tknids);
 		$ret = '';
 		$id = null;
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if (isset($tknids[$id])) {
@@ -2677,7 +2752,7 @@ abstract class FormatterPass {
 
 	protected function walkAndAccumulateUntil(&$tkns, $tknid) {
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 			if ($tknid == $id) {
@@ -2690,7 +2765,7 @@ abstract class FormatterPass {
 	protected function walkAndAccumulateUntilAny(&$tkns, $tknids) {
 		$tknids = array_flip($tknids);
 		$ret = '';
-		while (list(, $token) = each($tkns)) {
+		while (list(, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 			if (isset($tknids[$id])) {
@@ -2701,7 +2776,7 @@ abstract class FormatterPass {
 	}
 
 	protected function walkUntil($tknid) {
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if ($id == $tknid) {

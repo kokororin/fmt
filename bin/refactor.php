@@ -306,7 +306,7 @@ abstract class FormatterPass {
 		}
 		$tknids = array_flip($tknids);
 		$touchedLn = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -323,7 +323,7 @@ abstract class FormatterPass {
 	protected function printAndStopAtEndOfParamBlock() {
 		$count = 1;
 		$paramCount = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -358,7 +358,7 @@ abstract class FormatterPass {
 
 	protected function printBlock($start, $end) {
 		$count = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -378,7 +378,7 @@ abstract class FormatterPass {
 
 	protected function printCurlyBlock() {
 		$count = 1;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -403,7 +403,7 @@ abstract class FormatterPass {
 	}
 
 	protected function printUntil($tknid) {
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -421,7 +421,7 @@ abstract class FormatterPass {
 		if (isset($tknids[$this->newLine])) {
 			$whitespaceNewLine = true;
 		}
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->cache = [];
@@ -763,7 +763,7 @@ abstract class FormatterPass {
 		$tmp = '';
 		$tknCount = 1;
 		$foundPotentialTokens = false;
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if (isset($lookFor[$id])) {
 				$foundPotentialTokens = true;
@@ -792,7 +792,7 @@ abstract class FormatterPass {
 		$tmp = '';
 		$tknCount = 1;
 		$foundPotentialTokens = false;
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if (isset($lookFor[$id])) {
 				$foundPotentialTokens = true;
@@ -869,7 +869,7 @@ abstract class FormatterPass {
 	protected function walkAndAccumulateCurlyBlock(&$tkns) {
 		$count = 1;
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 
@@ -894,7 +894,7 @@ abstract class FormatterPass {
 
 	protected function walkAndAccumulateStopAt(&$tkns, $tknid) {
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			if ($tknid == $id) {
 				prev($tkns);
@@ -909,7 +909,7 @@ abstract class FormatterPass {
 		$tknids = array_flip($tknids);
 		$ret = '';
 		$id = null;
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if (isset($tknids[$id])) {
@@ -923,7 +923,7 @@ abstract class FormatterPass {
 
 	protected function walkAndAccumulateUntil(&$tkns, $tknid) {
 		$ret = '';
-		while (list($index, $token) = each($tkns)) {
+		while (list($index, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 			if ($tknid == $id) {
@@ -936,7 +936,7 @@ abstract class FormatterPass {
 	protected function walkAndAccumulateUntilAny(&$tkns, $tknids) {
 		$tknids = array_flip($tknids);
 		$ret = '';
-		while (list(, $token) = each($tkns)) {
+		while (list(, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$ret .= $text;
 			if (isset($tknids[$id])) {
@@ -947,7 +947,7 @@ abstract class FormatterPass {
 	}
 
 	protected function walkUntil($tknid) {
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if ($id == $tknid) {
@@ -1054,7 +1054,7 @@ final class RefactorPass extends FormatterPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$skipCall = null;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 
@@ -1062,7 +1062,7 @@ final class RefactorPass extends FormatterPass {
 				$match = true;
 				$buffer = $text;
 				for ($i = 1; $i < $fromSize; ++$i) {
-					list($index, $token) = each($this->tkns);
+					list($index, $token) = eachArray($this->tkns);
 					$this->ptr = $index;
 					list($id, $text) = $this->getToken($token);
 					$buffer .= $text;
@@ -1070,7 +1070,7 @@ final class RefactorPass extends FormatterPass {
 						$skipCall = $from[$i][1];
 						$stopText = strtolower(trim(str_replace('skipUntil:', '', substr($text, 2, -2))));
 						++$i;
-						while (list($index, $token) = each($this->tkns)) {
+						while (list($index, $token) = eachArray($this->tkns)) {
 							$this->ptr = $index;
 							list($id, $text) = $this->getToken($token);
 							$buffer .= $text;

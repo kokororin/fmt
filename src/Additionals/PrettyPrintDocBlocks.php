@@ -26,7 +26,7 @@ final class PrettyPrintDocBlocks extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if (T_DOC_COMMENT == $id) {
@@ -172,7 +172,7 @@ EOT;
 		$seqdetect = 0;
 		// Filter empty lines before '@' block
 		reset($lines);
-		while (list($idx, $line) = each($lines)) {
+		while (list($idx, $line) = eachArray($lines)) {
 			$weight = substr(strrchr($line, ':'), 1);
 			$line = substr($line, 0, -1 * (strlen($line) - strrpos($line, ':')));
 			if ($weight != $seqdetect) {
@@ -182,7 +182,7 @@ EOT;
 
 			++$seqdetect;
 		}
-		while (list($idx, $line) = each($lines)) {
+		while (list($idx, $line) = eachArray($lines)) {
 			$weight = substr(strrchr($line, ':'), 1);
 			$line = substr($line, 0, -1 * (strlen($line) - strrpos($line, ':')));
 			if (empty($line)) {
@@ -235,7 +235,7 @@ EOT;
 					$columnCount = 0;
 					$maxColumnCount = $patternsColumns[$pattern];
 					foreach ($maxColumn as $rightMost) {
-						while ((list(, $word) = each($words))) {
+						while ((list(, $word) = eachArray($words))) {
 							if (trim($word)) {
 								break;
 							}
@@ -249,7 +249,7 @@ EOT;
 							break;
 						}
 					}
-					while ((list(, $word) = each($words))) {
+					while ((list(, $word) = eachArray($words))) {
 						if (!trim($word)) {
 							continue;
 						}

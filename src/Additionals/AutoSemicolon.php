@@ -28,7 +28,7 @@ final class AutoSemicolon extends AdditionalPass {
 		$lastCurly = null;
 		$ternary = 0;
 		$touchedSingleColon = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

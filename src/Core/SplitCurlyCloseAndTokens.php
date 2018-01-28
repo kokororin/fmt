@@ -19,7 +19,7 @@ class SplitCurlyCloseAndTokens extends FormatterPass {
 		}
 
 		$this->tkns = token_get_all($source);
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id) = $this->getToken($token);
 			$this->ptr = $index;
 
@@ -39,7 +39,7 @@ class SplitCurlyCloseAndTokens extends FormatterPass {
 		$blockStack = [];
 		$touchedBlock = null;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 

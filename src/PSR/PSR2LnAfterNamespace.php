@@ -25,7 +25,7 @@ final class PSR2LnAfterNamespace extends FormatterPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -38,7 +38,7 @@ final class PSR2LnAfterNamespace extends FormatterPass {
 					$this->appendCode($this->getCrlf());
 				}
 				$this->appendCode($text);
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					$this->appendCode($text);

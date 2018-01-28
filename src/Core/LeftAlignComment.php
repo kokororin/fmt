@@ -31,7 +31,7 @@ final class LeftAlignComment extends FormatterPass {
 		$this->code = '';
 		$touchedNonIndentableComment = false;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			if (self::NON_INDENTABLE_COMMENT === $text) {

@@ -29,7 +29,7 @@ final class TrimSpaceBeforeSemicolon extends AdditionalPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$isComment = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

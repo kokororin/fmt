@@ -46,7 +46,7 @@ final class SettersAndGettersPass extends FormatterPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -61,7 +61,7 @@ final class SettersAndGettersPass extends FormatterPass {
 				$touchedFunction = false;
 				$curlyCount = null;
 				$this->appendCode($text);
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					if (ST_CURLY_OPEN == $id) {
@@ -176,6 +176,6 @@ final class SettersAndGettersPass extends FormatterPass {
 		if ($this->rightUsefulTokenIs(ST_EQUAL)) {
 			return $this->printAndStopAt(ST_SEMI_COLON);
 		}
-		each($this->tkns);
+		eachArray($this->tkns);
 	}
 }

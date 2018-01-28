@@ -27,7 +27,7 @@ final class GeneratePHPDoc extends AdditionalPass {
 		$touchedVisibility = false;
 		$touchedDocComment = false;
 		$visibilityIdx = 0;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -104,7 +104,7 @@ final class GeneratePHPDoc extends AdditionalPass {
 				$paramStack = [];
 				$tmp = ['type' => '', 'name' => ''];
 				$count = 1;
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 
@@ -136,7 +136,7 @@ final class GeneratePHPDoc extends AdditionalPass {
 				if (!$this->rightUsefulTokenIs(ST_SEMI_COLON)) {
 					$this->walkUntil(ST_CURLY_OPEN);
 					$count = 1;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = eachArray($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 

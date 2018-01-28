@@ -30,7 +30,7 @@ final class ReindentComments extends FormatterPass {
 		reset($this->commentStack);
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->tkns[$this->ptr] = [$id, $text];

@@ -25,7 +25,7 @@ final class WrongConstructorName extends AdditionalPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$touchedNamespace = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -44,7 +44,7 @@ final class WrongConstructorName extends AdditionalPass {
 					break;
 				}
 				$classLocalName = '';
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					$this->appendCode($text);
@@ -56,7 +56,7 @@ final class WrongConstructorName extends AdditionalPass {
 					}
 				}
 				$count = 1;
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 

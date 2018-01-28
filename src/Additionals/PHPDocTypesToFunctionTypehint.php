@@ -11,7 +11,7 @@ class PHPDocTypesToFunctionTypehint extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -28,13 +28,13 @@ class PHPDocTypesToFunctionTypehint extends AdditionalPass {
 				$foundReturn = '';
 				list(, $docBlock) = $this->leftToken();
 				$words = explode(' ', $docBlock);
-				while (list(, $word) = each($words)) {
+				while (list(, $word) = eachArray($words)) {
 					$word = trim(strtolower($word));
 					switch ($word) {
 					case '@param':
 						$foundType = '';
 						$foundName = '';
-						while (list(, $word) = each($words)) {
+						while (list(, $word) = eachArray($words)) {
 							$word = trim(strtolower($word));
 							if ('$' == $word[0]) {
 								$foundName = $word;
@@ -45,14 +45,14 @@ class PHPDocTypesToFunctionTypehint extends AdditionalPass {
 						}
 						$foundParams[$foundName] = $foundType;
 					case '@return':
-						while (list(, $word) = each($words)) {
+						while (list(, $word) = eachArray($words)) {
 							$word = trim(strtolower($word));
 							$foundReturn = $word;
 							break;
 						}
 					}
 				}
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					if (ST_CURLY_OPEN == $id && '' != $foundReturn) {

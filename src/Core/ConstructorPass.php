@@ -51,7 +51,7 @@ final class ConstructorPass extends FormatterPass {
 		$touchedFunction = false;
 		$curlyCount = null;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -62,7 +62,7 @@ final class ConstructorPass extends FormatterPass {
 				$touchedFunction = false;
 				$curlyCount = null;
 				$this->appendCode($text);
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					if (ST_CURLY_OPEN == $id) {

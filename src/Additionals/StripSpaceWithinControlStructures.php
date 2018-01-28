@@ -34,7 +34,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 		$this->code = '';
 		$touchedDo = false;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 
@@ -53,7 +53,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 				$this->printUntil(ST_CURLY_OPEN);
 
 				if ($this->hasLnAfter()) {
-					each($this->tkns);
+					eachArray($this->tkns);
 					$this->appendCode($this->newLine);
 					continue;
 				}
@@ -73,7 +73,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 					$this->printUntil(ST_CURLY_OPEN);
 
 					if ($this->hasLnAfter()) {
-						each($this->tkns);
+						eachArray($this->tkns);
 						$this->appendCode($this->newLine);
 						continue;
 					}
@@ -85,7 +85,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 				$this->appendCode($text);
 				$this->printUntil(ST_COLON);
 
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					if (T_WHITESPACE != $id) {

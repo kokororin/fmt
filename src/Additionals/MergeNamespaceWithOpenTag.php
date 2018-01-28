@@ -24,7 +24,7 @@ final class MergeNamespaceWithOpenTag extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -39,7 +39,7 @@ final class MergeNamespaceWithOpenTag extends AdditionalPass {
 				break;
 			}
 		}
-		while (list(, $token) = each($this->tkns)) {
+		while (list(, $token) = eachArray($this->tkns)) {
 			list(, $text) = $this->getToken($token);
 			$this->appendCode($text);
 		}

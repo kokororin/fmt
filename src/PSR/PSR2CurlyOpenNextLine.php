@@ -21,7 +21,7 @@ final class PSR2CurlyOpenNextLine extends FormatterPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -40,7 +40,7 @@ final class PSR2CurlyOpenNextLine extends FormatterPass {
 				if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
 					break;
 				}
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					if (ST_CURLY_OPEN === $id) {
@@ -55,7 +55,7 @@ final class PSR2CurlyOpenNextLine extends FormatterPass {
 				if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE])) {
 					$this->appendCode($text);
 					$touchedLn = false;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = eachArray($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (T_WHITESPACE == $id && $this->hasLn($text)) {

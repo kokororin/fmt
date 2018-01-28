@@ -105,7 +105,7 @@ EOT;
 		$aliasCount = [];
 		$unusedImport = [];
 
-		while (list($index, $token) = each($tokens)) {
+		while (list($index, $token) = eachArray($tokens)) {
 			list($id, $text) = $this->getToken($token);
 
 			if (T_DOUBLE_COLON == $id) {
@@ -119,7 +119,7 @@ EOT;
 				!$touchedDoubleColon
 			) {
 				$newTokens[] = $token;
-				while (list(, $token) = each($tokens)) {
+				while (list(, $token) = eachArray($tokens)) {
 					list($id, $text) = $this->getToken($token);
 					$newTokens[] = $token;
 				}
@@ -256,7 +256,7 @@ EOT;
 		$namespaceCount = 0;
 		$tokens = token_get_all($source);
 		$touchedTUse = false;
-		while (list(, $token) = each($tokens)) {
+		while (list(, $token) = eachArray($tokens)) {
 			list($id, $text) = $this->getToken($token);
 			if (T_USE === $id) {
 				$touchedTUse = true;
@@ -278,13 +278,13 @@ EOT;
 
 		$return = '';
 		reset($tokens);
-		while (list($index, $token) = each($tokens)) {
+		while (list($index, $token) = eachArray($tokens)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
 			case T_NAMESPACE:
 				$return .= $text;
-				while (list($index, $token) = each($tokens)) {
+				while (list($index, $token) = eachArray($tokens)) {
 					list($id, $text) = $this->getToken($token);
 					$this->ptr = $index;
 					$return .= $text;
@@ -295,7 +295,7 @@ EOT;
 				$namespaceBlock = '';
 				if (ST_CURLY_OPEN === $id) {
 					$curlyCount = 1;
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = eachArray($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$namespaceBlock .= $text;
@@ -311,7 +311,7 @@ EOT;
 						}
 					}
 				} elseif (ST_SEMI_COLON === $id) {
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = eachArray($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 

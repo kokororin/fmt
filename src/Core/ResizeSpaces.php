@@ -38,7 +38,7 @@ final class ResizeSpaces extends FormatterPass {
 		$touchedGroupedUse = false;
 		$hasEchoAfterOpenTag = false;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->memoPtr();

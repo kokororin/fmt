@@ -25,7 +25,7 @@ final class TightConcat extends AdditionalPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		$whitespaces = " \t";
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -35,7 +35,7 @@ final class TightConcat extends AdditionalPass {
 				}
 				list($nextId, $nextText) = $this->inspectToken(+1);
 				if (T_WHITESPACE == $nextId && !$this->hasln($nextText) && !$this->rightUsefulTokenIs([T_LNUMBER, T_DNUMBER])) {
-					each($this->tkns);
+					eachArray($this->tkns);
 				}
 			default:
 				$this->appendCode($text);

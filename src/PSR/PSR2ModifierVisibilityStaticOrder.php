@@ -35,7 +35,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 		$static = null;
 		$skipWhitespaces = false;
 		$touchedClassInterfaceTrait = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

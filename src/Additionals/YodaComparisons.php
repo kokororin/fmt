@@ -68,7 +68,7 @@ EOT;
 
 	protected function yodise($source) {
 		$tkns = $this->aggregateVariables($source);
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			if (is_null($token)) {
 				continue;
 			}
@@ -137,7 +137,7 @@ EOT;
 
 	private function aggregateVariables($source) {
 		$tkns = token_get_all($source);
-		while (list($ptr, $token) = each($tkns)) {
+		while (list($ptr, $token) = eachArray($tkns)) {
 			list($id, $text) = $this->getToken($token);
 
 			if (ST_PARENTHESES_OPEN == $id) {
@@ -149,7 +149,7 @@ EOT;
 			if (ST_QUOTE == $id) {
 				$stack = $text;
 				$initialPtr = $ptr;
-				while (list($ptr, $token) = each($tkns)) {
+				while (list($ptr, $token) = eachArray($tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$stack .= $text;
 					$tkns[$ptr] = null;
@@ -176,7 +176,7 @@ EOT;
 				)) {
 					continue;
 				}
-				while (list($ptr, $token) = each($tkns)) {
+				while (list($ptr, $token) = eachArray($tkns)) {
 					list($id, $text) = $this->getToken($token);
 					$tkns[$ptr] = null;
 					if (ST_CURLY_OPEN == $id) {

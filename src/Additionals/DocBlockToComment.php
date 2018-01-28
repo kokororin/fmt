@@ -28,7 +28,7 @@ final class DocBlockToComment extends AdditionalPass {
 		$this->useCache = true;
 
 		$touchedOpenTag = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			$this->tkns[$this->ptr] = [$id, $text];
@@ -86,7 +86,7 @@ EOT;
 	}
 
 	protected function walkAndNormalizeUntil($tknid) {
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			$this->ptr = $index;
 			$this->cache = [];
 			if ($token[0] == $tknid) {

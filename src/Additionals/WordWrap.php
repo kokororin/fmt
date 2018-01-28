@@ -29,7 +29,7 @@ final class WordWrap extends AdditionalPass {
 
 		$currentLineLength = 0;
 		$detectedTab = false;
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 

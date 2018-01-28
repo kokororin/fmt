@@ -29,7 +29,7 @@ final class StripExtraCommaInList extends FormatterPass {
 		$contextStack = [];
 		$touchedListArrayString = false;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

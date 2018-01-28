@@ -27,7 +27,7 @@ final class StripNewlineWithinClassBody extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -47,7 +47,7 @@ final class StripNewlineWithinClassBody extends AdditionalPass {
 
 				$count = 1;
 				$block = '';
-				while (list($index, $token) = each($this->tkns)) {
+				while (list($index, $token) = eachArray($this->tkns)) {
 					list($id, $text) = $this->getToken($token);
 
 					if (ST_CURLY_OPEN == $id) {

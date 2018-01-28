@@ -24,6 +24,7 @@ require __DIR__ . '/../src/Core/FormatterPass.php';
 require __DIR__ . '/../src/Additionals/AdditionalPass.php';
 require __DIR__ . '/../src/Additionals/EncapsulateNamespaces.php';
 require __DIR__ . '/../src/version.php';
+require __DIR__ . '/../src/helpers.php';
 
 error_reporting(E_ALL);
 $opt = getopt('Mmp');

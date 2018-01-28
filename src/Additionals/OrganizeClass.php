@@ -36,7 +36,7 @@ class OrganizeClass extends AdditionalPass {
 		$return = '';
 		$classBlock = '';
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {
@@ -126,7 +126,7 @@ EOT;
 		$touchedDocComment = false;
 		$useStack = '';
 
-		while (list($index, $token) = each($tokens)) {
+		while (list($index, $token) = eachArray($tokens)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

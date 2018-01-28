@@ -61,3 +61,19 @@ function tabwriter(array $lines) {
 
 	return $final;
 }
+
+function eachArray(&$array) {
+	if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+		return each($array);
+	}
+	$res = [];
+	$key = key($array);
+	if (null !== $key) {
+		next($array);
+		$res[1] = $res['value'] = $array[$key];
+		$res[0] = $res['key'] = $key;
+	} else {
+		$res = false;
+	}
+	return $res;
+}

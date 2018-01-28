@@ -31,7 +31,7 @@ final class AlignEquals extends AdditionalPass {
 		$bracketCount = 0;
 		$contextCounter = 0;
 
-		while (list($index, $token) = each($this->tkns)) {
+		while (list($index, $token) = eachArray($this->tkns)) {
 			list($id, $text) = $this->getToken($token);
 			$this->ptr = $index;
 			switch ($id) {

@@ -15,5 +15,6 @@
 /**
  * @codeCoverageIgnore
  */
-final class CodeFormatter extends BaseCodeFormatter {
+final class CodeFormatter extends BaseCodeFormatter
+{
 }

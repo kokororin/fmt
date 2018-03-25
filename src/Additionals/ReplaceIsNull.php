@@ -12,46 +12,51 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-final class ReplaceIsNull extends AdditionalPass {
-	public function candidate($source, $foundTokens) {
-		return true;
-	}
+final class ReplaceIsNull extends AdditionalPass
+{
+    public function candidate($source, $foundTokens)
+    {
+        return true;
+    }
 
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
-		$this->useCache = true;
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
-			$this->cache = [];
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
+        $this->useCache = true;
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
+            $this->cache = [];
 
-			if (T_STRING == $id && 'is_null' == strtolower($text) && !$this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON])) {
-				$this->appendCode('null');
-				$this->printAndStopAt(ST_PARENTHESES_OPEN);
-				$this->appendCode('===');
-				$this->printAndStopAt(ST_PARENTHESES_CLOSE);
-				continue;
-			}
+            if (T_STRING == $id && 'is_null' == strtolower($text) && !$this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON])) {
+                $this->appendCode('null');
+                $this->printAndStopAt(ST_PARENTHESES_OPEN);
+                $this->appendCode('===');
+                $this->printAndStopAt(ST_PARENTHESES_CLOSE);
+                continue;
+            }
 
-			$this->appendCode($text);
-		}
+            $this->appendCode($text);
+        }
 
-		return $this->code;
-	}
+        return $this->code;
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getDescription() {
-		return 'Replace is_null($a) with null === $a.';
-	}
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDescription()
+    {
+        return 'Replace is_null($a) with null === $a.';
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getExample() {
-		return <<<'EOT'
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getExample()
+    {
+        return <<<'EOT'
 <?php
 is_null($a);
 ?>
@@ -60,5 +65,5 @@ to
 null === $a;
 ?>
 EOT;
-	}
+    }
 }

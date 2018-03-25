@@ -17,7 +17,7 @@ $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory
 $files = new RegexIterator($files, '/\.php$/');
 
 foreach ($files as $file) {
-	if (!preg_match('/^vendor/i', $files->getSubPathname()) && !preg_match('/^bin/i', $files->getSubPathname())) {
-		exec(PHP_BINARY . ' ' . __DIR__ . '/../src/fmt.src.php --config=' . __DIR__ . '/../.phpfmt.ini ' . $file);
-	}
+    if (!preg_match('/^vendor/i', $files->getSubPathname()) && !preg_match('/^bin/i', $files->getSubPathname())) {
+        exec(PHP_BINARY . ' ' . __DIR__ . '/../src/fmt.src.php --config=' . __DIR__ . '/../.phpfmt.ini ' . $file);
+    }
 }

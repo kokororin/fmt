@@ -15,47 +15,52 @@
 /**
  * From PHP-CS-Fixer
  */
-final class StrictComparison extends AdditionalPass {
-	public function candidate($source, $foundTokens) {
-		if (isset($foundTokens[T_IS_EQUAL]) || isset($foundTokens[T_IS_NOT_EQUAL])) {
-			return true;
-		}
+final class StrictComparison extends AdditionalPass
+{
+    public function candidate($source, $foundTokens)
+    {
+        if (isset($foundTokens[T_IS_EQUAL]) || isset($foundTokens[T_IS_NOT_EQUAL])) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
 
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
 
-			if (T_IS_EQUAL == $id) {
-				$text = '===';
-			} elseif (T_IS_NOT_EQUAL == $id) {
-				$text = '!==';
-			}
+            if (T_IS_EQUAL == $id) {
+                $text = '===';
+            } elseif (T_IS_NOT_EQUAL == $id) {
+                $text = '!==';
+            }
 
-			$this->appendCode($text);
-		}
+            $this->appendCode($text);
+        }
 
-		return $this->code;
-	}
+        return $this->code;
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getDescription() {
-		return 'All comparisons are converted to strict. Danger! This pass leads to behavior change.';
-	}
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDescription()
+    {
+        return 'All comparisons are converted to strict. Danger! This pass leads to behavior change.';
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getExample() {
-		return <<<'EOT'
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getExample()
+    {
+        return <<<'EOT'
 <?php
 // From
 if($a == $b){}
@@ -66,5 +71,5 @@ if($a === $b){}
 if($a !== $b){}
 ?>
 EOT;
-	}
+    }
 }

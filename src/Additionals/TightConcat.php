@@ -12,51 +12,57 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-final class TightConcat extends AdditionalPass {
-	public function candidate($source, $foundTokens) {
-		if (isset($foundTokens[ST_CONCAT])) {
-			return true;
-		}
+final class TightConcat extends AdditionalPass
+{
+    public function candidate($source, $foundTokens)
+    {
+        if (isset($foundTokens[ST_CONCAT])) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
-		$whitespaces = " \t";
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
-			switch ($id) {
-				case ST_CONCAT:
-					if (!$this->leftUsefulTokenIs([T_LNUMBER, T_DNUMBER]) && !$this->hasLnBefore()) {
-						$this->code = rtrim($this->code, $whitespaces);
-					}
-					list($nextId, $nextText) = $this->inspectToken(+1);
-					if (T_WHITESPACE == $nextId && !$this->hasln($nextText) && !$this->rightUsefulTokenIs([T_LNUMBER, T_DNUMBER])) {
-						eachArray($this->tkns);
-					}
-				default:
-					$this->appendCode($text);
-					break;
-			}
-		}
-		return $this->code;
-	}
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
+        $whitespaces = " \t";
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
+            switch ($id) {
+                case ST_CONCAT:
+                    if (!$this->leftUsefulTokenIs([T_LNUMBER, T_DNUMBER]) && !$this->hasLnBefore()) {
+                        $this->code = rtrim($this->code, $whitespaces);
+                    }
+                    list($nextId, $nextText) = $this->inspectToken(+1);
+                    if (T_WHITESPACE == $nextId && !$this->hasln($nextText) && !$this->rightUsefulTokenIs([T_LNUMBER, T_DNUMBER])) {
+                        eachArray($this->tkns);
+                    }
+                    // no break
+                default:
+                    $this->appendCode($text);
+                    break;
+            }
+        }
+        return $this->code;
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getDescription() {
-		return 'Ensure string concatenation does not have spaces, except when close to numbers.';
-	}
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDescription()
+    {
+        return 'Ensure string concatenation does not have spaces, except when close to numbers.';
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getExample() {
-		return <<<'EOT'
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getExample()
+    {
+        return <<<'EOT'
 <?php
 // From
 $a = 'a' . 'b';
@@ -66,5 +72,5 @@ $a = 'a'.'b';
 $a = 'a'. 1 .'b';
 ?>
 EOT;
-	}
+    }
 }

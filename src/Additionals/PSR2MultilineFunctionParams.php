@@ -12,79 +12,84 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-final class PSR2MultilineFunctionParams extends AdditionalPass {
-	const LINE_BREAK = "\x2 LN \x3";
+final class PSR2MultilineFunctionParams extends AdditionalPass
+{
+    const LINE_BREAK = "\x2 LN \x3";
 
-	public function candidate($source, $foundTokens) {
-		if (isset($foundTokens[T_FUNCTION])) {
-			return true;
-		}
+    public function candidate($source, $foundTokens)
+    {
+        if (isset($foundTokens[T_FUNCTION])) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
-			switch ($id) {
-				case T_FUNCTION:
-					$this->appendCode($text);
-					$this->printUntil(ST_PARENTHESES_OPEN);
-					$this->appendCode(self::LINE_BREAK);
-					$touchedComma = false;
-					while (list($index, $token) = eachArray($this->tkns)) {
-						list($id, $text) = $this->getToken($token);
-						$this->ptr = $index;
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
+            switch ($id) {
+                case T_FUNCTION:
+                    $this->appendCode($text);
+                    $this->printUntil(ST_PARENTHESES_OPEN);
+                    $this->appendCode(self::LINE_BREAK);
+                    $touchedComma = false;
+                    while (list($index, $token) = eachArray($this->tkns)) {
+                        list($id, $text) = $this->getToken($token);
+                        $this->ptr = $index;
 
-						if (ST_PARENTHESES_OPEN === $id) {
-							$this->appendCode($text);
-							$this->printUntil(ST_PARENTHESES_CLOSE);
-							continue;
-						} elseif (ST_BRACKET_OPEN === $id) {
-							$this->appendCode($text);
-							$this->printUntil(ST_BRACKET_CLOSE);
-							continue;
-						} elseif (ST_PARENTHESES_CLOSE === $id) {
-							$this->appendCode(self::LINE_BREAK);
-							$this->appendCode($text);
-							break;
-						}
-						$this->appendCode($text);
+                        if (ST_PARENTHESES_OPEN === $id) {
+                            $this->appendCode($text);
+                            $this->printUntil(ST_PARENTHESES_CLOSE);
+                            continue;
+                        } elseif (ST_BRACKET_OPEN === $id) {
+                            $this->appendCode($text);
+                            $this->printUntil(ST_BRACKET_CLOSE);
+                            continue;
+                        } elseif (ST_PARENTHESES_CLOSE === $id) {
+                            $this->appendCode(self::LINE_BREAK);
+                            $this->appendCode($text);
+                            break;
+                        }
+                        $this->appendCode($text);
 
-						if (ST_COMMA === $id && !$this->hasLnAfter()) {
-							$touchedComma = true;
-							$this->appendCode(self::LINE_BREAK);
-						}
-					}
-					$placeholderReplace = $this->newLine;
-					if (!$touchedComma) {
-						$placeholderReplace = '';
-					}
-					$this->code = str_replace(self::LINE_BREAK, $placeholderReplace, $this->code);
-					break;
-				default:
-					$this->appendCode($text);
-			}
-		}
+                        if (ST_COMMA === $id && !$this->hasLnAfter()) {
+                            $touchedComma = true;
+                            $this->appendCode(self::LINE_BREAK);
+                        }
+                    }
+                    $placeholderReplace = $this->newLine;
+                    if (!$touchedComma) {
+                        $placeholderReplace = '';
+                    }
+                    $this->code = str_replace(self::LINE_BREAK, $placeholderReplace, $this->code);
+                    break;
+                default:
+                    $this->appendCode($text);
+            }
+        }
 
-		return $this->code;
-	}
+        return $this->code;
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getDescription() {
-		return 'Break function parameters into multiple lines.';
-	}
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDescription()
+    {
+        return 'Break function parameters into multiple lines.';
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getExample() {
-		return <<<'EOT'
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getExample()
+    {
+        return <<<'EOT'
 <?php
 // PSR2 Mode - From
 function a($a, $b, $c)
@@ -98,5 +103,5 @@ function a(
 ) {}
 ?>
 EOT;
-	}
+    }
 }

@@ -12,48 +12,51 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-final class MergeDoubleArrowAndArray extends FormatterPass {
-	public function candidate($source, $foundTokens) {
-		if (isset($foundTokens[T_ARRAY], $foundTokens[T_DOUBLE_ARROW])) {
-			return true;
-		}
+final class MergeDoubleArrowAndArray extends FormatterPass
+{
+    public function candidate($source, $foundTokens)
+    {
+        if (isset($foundTokens[T_ARRAY], $foundTokens[T_DOUBLE_ARROW])) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
-		$touchedDoubleArrow = false;
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
+        $touchedDoubleArrow = false;
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
 
-			if (T_DOUBLE_ARROW == $id) {
-				$touchedDoubleArrow = true;
-				$this->appendCode($text);
-				continue;
-			}
+            if (T_DOUBLE_ARROW == $id) {
+                $touchedDoubleArrow = true;
+                $this->appendCode($text);
+                continue;
+            }
 
-			if ($touchedDoubleArrow) {
-				if (
-					T_WHITESPACE == $id ||
-					T_DOC_COMMENT == $id ||
-					T_COMMENT == $id
-				) {
-					$this->appendCode($text);
-					continue;
-				}
-				if (T_ARRAY === $id) {
-					$this->rtrimAndAppendCode($text);
-					$touchedDoubleArrow = false;
-					continue;
-				}
-				$touchedDoubleArrow = false;
-			}
+            if ($touchedDoubleArrow) {
+                if (
+                    T_WHITESPACE == $id ||
+                    T_DOC_COMMENT == $id ||
+                    T_COMMENT == $id
+                ) {
+                    $this->appendCode($text);
+                    continue;
+                }
+                if (T_ARRAY === $id) {
+                    $this->rtrimAndAppendCode($text);
+                    $touchedDoubleArrow = false;
+                    continue;
+                }
+                $touchedDoubleArrow = false;
+            }
 
-			$this->appendCode($text);
-		}
-		return $this->code;
-	}
+            $this->appendCode($text);
+        }
+        return $this->code;
+    }
 }

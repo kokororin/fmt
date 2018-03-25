@@ -12,110 +12,114 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-final class AlignGroupDoubleArrow extends AlignDoubleArrow {
-	public function format($source) {
-		$this->tkns = token_get_all($source);
-		$this->code = '';
+final class AlignGroupDoubleArrow extends AlignDoubleArrow
+{
+    public function format($source)
+    {
+        $this->tkns = token_get_all($source);
+        $this->code = '';
 
-		$levelCounter = 0;
-		$levelEntranceCounter = [];
-		$contextCounter = [];
-		$maxContextCounter = [];
+        $levelCounter = 0;
+        $levelEntranceCounter = [];
+        $contextCounter = [];
+        $maxContextCounter = [];
 
-		while (list($index, $token) = eachArray($this->tkns)) {
-			list($id, $text) = $this->getToken($token);
-			$this->ptr = $index;
-			switch ($id) {
-				case ST_COMMA:
-					if (!$this->hasLnAfter() && !$this->hasLnRightToken()) {
-						if (!isset($levelEntranceCounter[$levelCounter])) {
-							$levelEntranceCounter[$levelCounter] = 0;
-						}
-						if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-							$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-							$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-						}
-						++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
-						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
-					} elseif ($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] > 1) {
-						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 1;
-					}
-					$this->appendCode($text);
-					break;
+        while (list($index, $token) = eachArray($this->tkns)) {
+            list($id, $text) = $this->getToken($token);
+            $this->ptr = $index;
+            switch ($id) {
+                case ST_COMMA:
+                    if (!$this->hasLnAfter() && !$this->hasLnRightToken()) {
+                        if (!isset($levelEntranceCounter[$levelCounter])) {
+                            $levelEntranceCounter[$levelCounter] = 0;
+                        }
+                        if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+                            $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                            $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                        }
+                        ++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
+                        $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
+                    } elseif ($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] > 1) {
+                        $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 1;
+                    }
+                    $this->appendCode($text);
+                    break;
 
-				case T_DOUBLE_ARROW:
-					$this->appendCode(
-						sprintf(
-							self::ALIGNABLE_EQUAL,
-							$levelCounter,
-							$levelEntranceCounter[$levelCounter],
-							$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
-						) . $text
-					);
-					break;
+                case T_DOUBLE_ARROW:
+                    $this->appendCode(
+                        sprintf(
+                            self::ALIGNABLE_EQUAL,
+                            $levelCounter,
+                            $levelEntranceCounter[$levelCounter],
+                            $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]
+                        ) . $text
+                    );
+                    break;
 
-				case T_WHITESPACE:
-					if ($this->hasLn($text) && substr_count($text, $this->newLine) >= 2) {
-						++$levelCounter;
-						if (!isset($levelEntranceCounter[$levelCounter])) {
-							$levelEntranceCounter[$levelCounter] = 0;
-						}
-						++$levelEntranceCounter[$levelCounter];
-						if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-							$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-							$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-						}
-						++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
-						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
-					}
-					$this->appendCode($text);
-					break;
+                case T_WHITESPACE:
+                    if ($this->hasLn($text) && substr_count($text, $this->newLine) >= 2) {
+                        ++$levelCounter;
+                        if (!isset($levelEntranceCounter[$levelCounter])) {
+                            $levelEntranceCounter[$levelCounter] = 0;
+                        }
+                        ++$levelEntranceCounter[$levelCounter];
+                        if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+                            $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                            $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                        }
+                        ++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
+                        $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
+                    }
+                    $this->appendCode($text);
+                    break;
 
-				case ST_PARENTHESES_OPEN:
-				case ST_BRACKET_OPEN:
-					++$levelCounter;
-					if (!isset($levelEntranceCounter[$levelCounter])) {
-						$levelEntranceCounter[$levelCounter] = 0;
-					}
-					++$levelEntranceCounter[$levelCounter];
-					if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-					}
-					++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
-					$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
+                case ST_PARENTHESES_OPEN:
+                case ST_BRACKET_OPEN:
+                    ++$levelCounter;
+                    if (!isset($levelEntranceCounter[$levelCounter])) {
+                        $levelEntranceCounter[$levelCounter] = 0;
+                    }
+                    ++$levelEntranceCounter[$levelCounter];
+                    if (!isset($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+                        $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                        $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                    }
+                    ++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
+                    $maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
 
-					$this->appendCode($text);
-					break;
+                    $this->appendCode($text);
+                    break;
 
-				case ST_PARENTHESES_CLOSE:
-				case ST_BRACKET_CLOSE:
-					--$levelCounter;
-					$this->appendCode($text);
-					break;
+                case ST_PARENTHESES_CLOSE:
+                case ST_BRACKET_CLOSE:
+                    --$levelCounter;
+                    $this->appendCode($text);
+                    break;
 
-				default:
-					$this->appendCode($text);
-					break;
-			}
-		}
-		$this->align($maxContextCounter);
+                default:
+                    $this->appendCode($text);
+                    break;
+            }
+        }
+        $this->align($maxContextCounter);
 
-		return $this->code;
-	}
+        return $this->code;
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getDescription() {
-		return 'Vertically align T_DOUBLE_ARROW (=>) by line groups.';
-	}
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDescription()
+    {
+        return 'Vertically align T_DOUBLE_ARROW (=>) by line groups.';
+    }
 
-	/**
-	 * @codeCoverageIgnore
-	 */
-	public function getExample() {
-		return <<<'EOT'
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getExample()
+    {
+        return <<<'EOT'
 <?php
 $a = [
 	1 => 1,
@@ -134,5 +138,5 @@ $a = [
 ];
 ?>
 EOT;
-	}
+    }
 }

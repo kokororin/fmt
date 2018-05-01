@@ -22,6 +22,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'--config=FILENAME' => 'configuration file. Default: .phpfmt.ini',
 		'--constructor=type' => 'analyse classes for attributes and generate constructor - camel, snake, golang',
 		'--dry-run' => 'Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied',
+		'--enable_auto_align' => 'enable auto align of ST_EQUAL and T_DOUBLE_ARROW',
 		'--exclude=pass1,passN,...' => 'disable specific passes',
 		'--help-pass' => 'show specific information for one pass',
 		'--ignore=PATTERN-1,PATTERN-N,...' => 'ignore file names whose names contain any PATTERN-N',
@@ -65,13 +66,14 @@ function showHelp($argv, $enableCache, $inPhar) {
 }
 
 $getoptLongOptions = [
+	'align_equals',
+	'align_double_arrow',
 	'cache::',
 	'cakephp',
 	'config:',
 	'constructor:',
 	'dry-run',
-	'align_equals',
-	'align_double_arrow',
+	'enable_auto_align',
 	'exclude:',
 	'help',
 	'help-pass:',
@@ -275,6 +277,12 @@ if (isset($opts['smart_linebreak_after_curly'])) {
 if (isset($opts['yoda'])) {
 	$fmt->enablePass('YodaComparisons');
 	$argv = extractFromArgv($argv, 'yoda');
+}
+
+if (isset($opts['enable_auto_align'])) {
+	$fmt->enablePass('AlignEquals');
+	$fmt->enablePass('AlignDoubleArrow');
+	$argv = extractFromArgv($argv, 'enable_auto_align');
 }
 
 if (isset($opts['align_equals'])) {

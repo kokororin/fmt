@@ -15,12 +15,14 @@
 function showHelp($argv, $enableCache, $inPhar) {
 	echo 'Usage: ' . $argv[0] . ' [-hv] [-o=FILENAME] [--config=FILENAME] ' . ($enableCache ? '[--cache[=FILENAME]] ' : '') . '[options] <target>', PHP_EOL;
 	$options = [
+		'--align_equals' => 'enable auto align of ST_EQUAL',
+		'--align_double_arrow' => 'enable auto align of T_DOUBLE_ARROW',
 		'--cache[=FILENAME]' => 'cache file. Default: ',
 		'--cakephp' => 'Apply CakePHP coding style',
 		'--config=FILENAME' => 'configuration file. Default: .phpfmt.ini',
 		'--constructor=type' => 'analyse classes for attributes and generate constructor - camel, snake, golang',
 		'--dry-run' => 'Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied',
-		'--enable_auto_align' => 'disable auto align of ST_EQUAL and T_DOUBLE_ARROW',
+		'--enable_auto_align' => 'enable auto align of ST_EQUAL and T_DOUBLE_ARROW',
 		'--exclude=pass1,passN,...' => 'disable specific passes',
 		'--help-pass' => 'show specific information for one pass',
 		'--ignore=PATTERN-1,PATTERN-N,...' => 'ignore file names whose names contain any PATTERN-N',
@@ -64,6 +66,8 @@ function showHelp($argv, $enableCache, $inPhar) {
 }
 
 $getoptLongOptions = [
+	'align_equals',
+	'align_double_arrow',
 	'cache::',
 	'cakephp',
 	'config:',
@@ -279,6 +283,16 @@ if (isset($opts['enable_auto_align'])) {
 	$fmt->enablePass('AlignEquals');
 	$fmt->enablePass('AlignDoubleArrow');
 	$argv = extractFromArgv($argv, 'enable_auto_align');
+}
+
+if (isset($opts['align_equals'])) {
+	$fmt->enablePass('AlignEquals');
+	$argv = extractFromArgv($argv, 'align_equals');
+}
+
+if (isset($opts['align_double_arrow'])) {
+	$fmt->enablePass('AlignDoubleArrow');
+	$argv = extractFromArgv($argv, 'align_double_arrow');
 }
 
 if (isset($opts['psr'])) {

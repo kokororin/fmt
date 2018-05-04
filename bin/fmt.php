@@ -850,14 +850,23 @@ class StreamOutput extends Output
     protected function hasColorSupport()
     {
         if (DIRECTORY_SEPARATOR === '\\') {
-            return
-                '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR.'.'.PHP_WINDOWS_VERSION_MINOR.'.'.PHP_WINDOWS_VERSION_BUILD
+            return (function_exists('sapi_windows_vt100_support')
+                && @sapi_windows_vt100_support($this->stream))
                 || false !== getenv('ANSICON')
                 || 'ON' === getenv('ConEmuANSI')
                 || 'xterm' === getenv('TERM');
         }
 
-        return function_exists('posix_isatty') && @posix_isatty($this->stream);
+        if (function_exists('stream_isatty')) {
+            return @stream_isatty($this->stream);
+        }
+
+        if (function_exists('posix_isatty')) {
+            return @posix_isatty($this->stream);
+        }
+
+        $stat = @fstat($this->stream);
+                return $stat ? 0020000 === ($stat['mode'] & 0170000) : false;
     }
 }
 
@@ -13623,12 +13632,14 @@ EOT;
 function showHelp($argv, $enableCache, $inPhar) {
 	echo 'Usage: ' . $argv[0] . ' [-hv] [-o=FILENAME] [--config=FILENAME] ' . ($enableCache ? '[--cache[=FILENAME]] ' : '') . '[options] <target>', PHP_EOL;
 	$options = [
+		'--align_equals' => 'enable auto align of ST_EQUAL',
+		'--align_double_arrow' => 'enable auto align of T_DOUBLE_ARROW',
 		'--cache[=FILENAME]' => 'cache file. Default: ',
 		'--cakephp' => 'Apply CakePHP coding style',
 		'--config=FILENAME' => 'configuration file. Default: .phpfmt.ini',
 		'--constructor=type' => 'analyse classes for attributes and generate constructor - camel, snake, golang',
 		'--dry-run' => 'Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied',
-		'--enable_auto_align' => 'disable auto align of ST_EQUAL and T_DOUBLE_ARROW',
+		'--enable_auto_align' => 'enable auto align of ST_EQUAL and T_DOUBLE_ARROW',
 		'--exclude=pass1,passN,...' => 'disable specific passes',
 		'--help-pass' => 'show specific information for one pass',
 		'--ignore=PATTERN-1,PATTERN-N,...' => 'ignore file names whose names contain any PATTERN-N',
@@ -13672,6 +13683,8 @@ function showHelp($argv, $enableCache, $inPhar) {
 }
 
 $getoptLongOptions = [
+	'align_equals',
+	'align_double_arrow',
 	'cache::',
 	'cakephp',
 	'config:',
@@ -13887,6 +13900,16 @@ if (isset($opts['enable_auto_align'])) {
 	$fmt->enablePass('AlignEquals');
 	$fmt->enablePass('AlignDoubleArrow');
 	$argv = extractFromArgv($argv, 'enable_auto_align');
+}
+
+if (isset($opts['align_equals'])) {
+	$fmt->enablePass('AlignEquals');
+	$argv = extractFromArgv($argv, 'align_equals');
+}
+
+if (isset($opts['align_double_arrow'])) {
+	$fmt->enablePass('AlignDoubleArrow');
+	$argv = extractFromArgv($argv, 'align_double_arrow');
 }
 
 if (isset($opts['psr'])) {

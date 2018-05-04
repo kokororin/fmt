@@ -13,7 +13,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	
+
 
 
 namespace Symfony\Component\Console\Formatter{
@@ -21,28 +21,28 @@ namespace Symfony\Component\Console\Formatter{
 
 interface OutputFormatterInterface
 {
-    
+
     public function setDecorated($decorated);
 
-    
+
     public function isDecorated();
 
-    
+
     public function setStyle($name, OutputFormatterStyleInterface $style);
 
-    
+
     public function hasStyle($name);
 
-    
+
     public function getStyle($name);
 
-    
+
     public function format($message);
 }
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Helper{
@@ -50,19 +50,19 @@ namespace Symfony\Component\Console\Helper{
 
 interface HelperInterface
 {
-    
+
     public function setHelperSet(HelperSet $helperSet = null);
 
-    
+
     public function getHelperSet();
 
-    
+
     public function getName();
 }
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Helper{
@@ -74,19 +74,19 @@ abstract class Helper implements HelperInterface
 {
     protected $helperSet = null;
 
-    
+
     public function setHelperSet(HelperSet $helperSet = null)
     {
         $this->helperSet = $helperSet;
     }
 
-    
+
     public function getHelperSet()
     {
         return $this->helperSet;
     }
 
-    
+
     public static function strlen($string)
     {
         if (!function_exists('mb_strwidth')) {
@@ -165,7 +165,7 @@ abstract class Helper implements HelperInterface
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Formatter{
@@ -173,7 +173,7 @@ namespace Symfony\Component\Console\Formatter{
 
 class OutputFormatterStyleStack
 {
-    
+
     private $styles;
 
     private $emptyStyle;
@@ -184,19 +184,19 @@ class OutputFormatterStyleStack
         $this->reset();
     }
 
-    
+
     public function reset()
     {
         $this->styles = array();
     }
 
-    
+
     public function push(OutputFormatterStyleInterface $style)
     {
         $this->styles[] = $style;
     }
 
-    
+
     public function pop(OutputFormatterStyleInterface $style = null)
     {
         if (empty($this->styles)) {
@@ -218,7 +218,7 @@ class OutputFormatterStyleStack
         throw new \InvalidArgumentException('Incorrectly nested style tag found.');
     }
 
-    
+
     public function getCurrent()
     {
         if (empty($this->styles)) {
@@ -228,7 +228,7 @@ class OutputFormatterStyleStack
         return $this->styles[count($this->styles) - 1];
     }
 
-    
+
     public function setEmptyStyle(OutputFormatterStyleInterface $emptyStyle)
     {
         $this->emptyStyle = $emptyStyle;
@@ -236,7 +236,7 @@ class OutputFormatterStyleStack
         return $this;
     }
 
-    
+
     public function getEmptyStyle()
     {
         return $this->emptyStyle;
@@ -245,7 +245,7 @@ class OutputFormatterStyleStack
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Formatter{
@@ -253,28 +253,28 @@ namespace Symfony\Component\Console\Formatter{
 
 interface OutputFormatterStyleInterface
 {
-    
+
     public function setForeground($color = null);
 
-    
+
     public function setBackground($color = null);
 
-    
+
     public function setOption($option);
 
-    
+
     public function unsetOption($option);
 
-    
+
     public function setOptions(array $options);
 
-    
+
     public function apply($text);
 }
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Formatter{
@@ -316,7 +316,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
     private $background;
     private $options = array();
 
-    
+
     public function __construct($foreground = null, $background = null, array $options = array())
     {
         if (null !== $foreground) {
@@ -330,7 +330,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         }
     }
 
-    
+
     public function setForeground($color = null)
     {
         if (null === $color) {
@@ -350,7 +350,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         $this->foreground = static::$availableForegroundColors[$color];
     }
 
-    
+
     public function setBackground($color = null)
     {
         if (null === $color) {
@@ -370,7 +370,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         $this->background = static::$availableBackgroundColors[$color];
     }
 
-    
+
     public function setOption($option)
     {
         if (!isset(static::$availableOptions[$option])) {
@@ -386,7 +386,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         }
     }
 
-    
+
     public function unsetOption($option)
     {
         if (!isset(static::$availableOptions[$option])) {
@@ -403,7 +403,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         }
     }
 
-    
+
     public function setOptions(array $options)
     {
         $this->options = array();
@@ -413,7 +413,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
         }
     }
 
-    
+
     public function apply($text)
     {
         $setCodes = array();
@@ -444,7 +444,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Formatter{
@@ -456,7 +456,7 @@ class OutputFormatter implements OutputFormatterInterface
     private $styles = array();
     private $styleStack;
 
-    
+
     public static function escape($text)
     {
         $text = preg_replace('/([^\\\\]?)</', '$1\\<', $text);
@@ -464,7 +464,7 @@ class OutputFormatter implements OutputFormatterInterface
         return self::escapeTrailingBackslash($text);
     }
 
-    
+
     public static function escapeTrailingBackslash($text)
     {
         if ('\\' === substr($text, -1)) {
@@ -477,7 +477,7 @@ class OutputFormatter implements OutputFormatterInterface
         return $text;
     }
 
-    
+
     public function __construct($decorated = false, array $styles = array())
     {
         $this->decorated = (bool) $decorated;
@@ -494,31 +494,31 @@ class OutputFormatter implements OutputFormatterInterface
         $this->styleStack = new OutputFormatterStyleStack();
     }
 
-    
+
     public function setDecorated($decorated)
     {
         $this->decorated = (bool) $decorated;
     }
 
-    
+
     public function isDecorated()
     {
         return $this->decorated;
     }
 
-    
+
     public function setStyle($name, OutputFormatterStyleInterface $style)
     {
         $this->styles[strtolower($name)] = $style;
     }
 
-    
+
     public function hasStyle($name)
     {
         return isset($this->styles[strtolower($name)]);
     }
 
-    
+
     public function getStyle($name)
     {
         if (!$this->hasStyle($name)) {
@@ -528,7 +528,7 @@ class OutputFormatter implements OutputFormatterInterface
         return $this->styles[strtolower($name)];
     }
 
-    
+
     public function format($message)
     {
         $message = (string) $message;
@@ -573,13 +573,13 @@ class OutputFormatter implements OutputFormatterInterface
         return str_replace('\\<', '<', $output);
     }
 
-    
+
     public function getStyleStack()
     {
         return $this->styleStack;
     }
 
-    
+
     private function createStyleFromString($string)
     {
         if (isset($this->styles[$string])) {
@@ -610,7 +610,7 @@ class OutputFormatter implements OutputFormatterInterface
         return $style;
     }
 
-    
+
     private function applyCurrentStyle($text)
     {
         return $this->isDecorated() && strlen($text) > 0 ? $this->styleStack->getCurrent()->apply($text) : $text;
@@ -619,7 +619,7 @@ class OutputFormatter implements OutputFormatterInterface
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Output{
@@ -639,33 +639,33 @@ interface OutputInterface
     const OUTPUT_RAW = 1;
     const OUTPUT_PLAIN = 2;
 
-    
+
     public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL);
 
-    
+
     public function writeln($messages, $type = self::OUTPUT_NORMAL);
 
-    
+
     public function setVerbosity($level);
 
-    
+
     public function getVerbosity();
 
-    
+
     public function setDecorated($decorated);
 
-    
+
     public function isDecorated();
 
     public function setFormatter(OutputFormatterInterface $formatter);
 
-    
+
     public function getFormatter();
 }
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Output{
@@ -673,7 +673,7 @@ namespace Symfony\Component\Console\Output{
 
 interface ConsoleOutputInterface extends OutputInterface
 {
-    
+
     public function getErrorOutput();
 
     public function setErrorOutput(OutputInterface $error);
@@ -681,7 +681,7 @@ interface ConsoleOutputInterface extends OutputInterface
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Output{
@@ -695,7 +695,7 @@ abstract class Output implements OutputInterface
     private $verbosity;
     private $formatter;
 
-    
+
     public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = false, OutputFormatterInterface $formatter = null)
     {
         $this->verbosity = null === $verbosity ? self::VERBOSITY_NORMAL : $verbosity;
@@ -703,73 +703,73 @@ abstract class Output implements OutputInterface
         $this->formatter->setDecorated($decorated);
     }
 
-    
+
     public function setFormatter(OutputFormatterInterface $formatter)
     {
         $this->formatter = $formatter;
     }
 
-    
+
     public function getFormatter()
     {
         return $this->formatter;
     }
 
-    
+
     public function setDecorated($decorated)
     {
         $this->formatter->setDecorated($decorated);
     }
 
-    
+
     public function isDecorated()
     {
         return $this->formatter->isDecorated();
     }
 
-    
+
     public function setVerbosity($level)
     {
         $this->verbosity = (int) $level;
     }
 
-    
+
     public function getVerbosity()
     {
         return $this->verbosity;
     }
 
-    
+
     public function isQuiet()
     {
         return self::VERBOSITY_QUIET === $this->verbosity;
     }
 
-    
+
     public function isVerbose()
     {
         return self::VERBOSITY_VERBOSE <= $this->verbosity;
     }
 
-    
+
     public function isVeryVerbose()
     {
         return self::VERBOSITY_VERY_VERBOSE <= $this->verbosity;
     }
 
-    
+
     public function isDebug()
     {
         return self::VERBOSITY_DEBUG <= $this->verbosity;
     }
 
-    
+
     public function writeln($messages, $type = self::OUTPUT_NORMAL)
     {
         $this->write($messages, true, $type);
     }
 
-    
+
     public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
     {
         if (self::VERBOSITY_QUIET === $this->verbosity) {
@@ -796,13 +796,13 @@ abstract class Output implements OutputInterface
         }
     }
 
-    
+
     abstract protected function doWrite($message, $newline);
 }
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Output{
@@ -814,7 +814,7 @@ class StreamOutput extends Output
 {
     private $stream;
 
-    
+
     public function __construct($stream, $verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
         if (!is_resource($stream) || 'stream' !== get_resource_type($stream)) {
@@ -830,13 +830,13 @@ class StreamOutput extends Output
         parent::__construct($verbosity, $decorated, $formatter);
     }
 
-    
+
     public function getStream()
     {
         return $this->stream;
     }
 
-    
+
     protected function doWrite($message, $newline)
     {
         if (false === @fwrite($this->stream, $message) || ($newline && (false === @fwrite($this->stream, PHP_EOL)))) {
@@ -846,7 +846,7 @@ class StreamOutput extends Output
         fflush($this->stream);
     }
 
-    
+
     protected function hasColorSupport()
     {
         if (DIRECTORY_SEPARATOR === '\\') {
@@ -872,7 +872,7 @@ class StreamOutput extends Output
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Output{
@@ -884,7 +884,7 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 {
     private $stderr;
 
-    
+
     public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
         parent::__construct($this->openOutputStream(), $verbosity, $decorated, $formatter);
@@ -897,52 +897,52 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
         }
     }
 
-    
+
     public function setDecorated($decorated)
     {
         parent::setDecorated($decorated);
         $this->stderr->setDecorated($decorated);
     }
 
-    
+
     public function setFormatter(OutputFormatterInterface $formatter)
     {
         parent::setFormatter($formatter);
         $this->stderr->setFormatter($formatter);
     }
 
-    
+
     public function setVerbosity($level)
     {
         parent::setVerbosity($level);
         $this->stderr->setVerbosity($level);
     }
 
-    
+
     public function getErrorOutput()
     {
         return $this->stderr;
     }
 
-    
+
     public function setErrorOutput(OutputInterface $error)
     {
         $this->stderr = $error;
     }
 
-    
+
     protected function hasStdoutSupport()
     {
         return false === $this->isRunningOS400();
     }
 
-    
+
     protected function hasStderrSupport()
     {
         return false === $this->isRunningOS400();
     }
 
-    
+
     private function isRunningOS400()
     {
         $checks = array(
@@ -954,7 +954,7 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
         return false !== stripos(implode(';', $checks), 'OS400');
     }
 
-    
+
     private function openOutputStream()
     {
         $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
@@ -962,7 +962,7 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
         return @fopen($outputStream, 'w') ?: fopen('php://output', 'w');
     }
 
-    
+
     private function openErrorStream()
     {
         $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
@@ -973,7 +973,7 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 
 }
 
-	
+
 
 
 namespace Symfony\Component\Console\Helper{
@@ -1005,7 +1005,7 @@ class ProgressBar
     private static $formatters;
     private static $formats;
 
-    
+
     public function __construct(OutputInterface $output, $max = 0)
     {
         if ($output instanceof ConsoleOutputInterface) {
@@ -1024,7 +1024,7 @@ class ProgressBar
         $this->startTime = time();
     }
 
-    
+
     public static function setPlaceholderFormatterDefinition($name, $callable)
     {
         if (!self::$formatters) {
@@ -1034,7 +1034,7 @@ class ProgressBar
         self::$formatters[$name] = $callable;
     }
 
-    
+
     public static function getPlaceholderFormatterDefinition($name)
     {
         if (!self::$formatters) {
@@ -1044,7 +1044,7 @@ class ProgressBar
         return isset(self::$formatters[$name]) ? self::$formatters[$name] : null;
     }
 
-    
+
     public static function setFormatDefinition($name, $format)
     {
         if (!self::$formats) {
@@ -1054,7 +1054,7 @@ class ProgressBar
         self::$formats[$name] = $format;
     }
 
-    
+
     public static function getFormatDefinition($name)
     {
         if (!self::$formats) {
@@ -1064,7 +1064,7 @@ class ProgressBar
         return isset(self::$formats[$name]) ? self::$formats[$name] : null;
     }
 
-    
+
     public function setMessage($message, $name = 'message')
     {
         $this->messages[$name] = $message;
@@ -1075,19 +1075,19 @@ class ProgressBar
         return $this->messages[$name];
     }
 
-    
+
     public function getStartTime()
     {
         return $this->startTime;
     }
 
-    
+
     public function getMaxSteps()
     {
         return $this->max;
     }
 
-    
+
     public function getStep()
     {
         @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.6 and will be removed in 3.0. Use the getProgress() method instead.', E_USER_DEPRECATED);
@@ -1095,43 +1095,43 @@ class ProgressBar
         return $this->getProgress();
     }
 
-    
+
     public function getProgress()
     {
         return $this->step;
     }
 
-    
+
     public function getStepWidth()
     {
         return $this->stepWidth;
     }
 
-    
+
     public function getProgressPercent()
     {
         return $this->percent;
     }
 
-    
+
     public function setBarWidth($size)
     {
         $this->barWidth = (int) $size;
     }
 
-    
+
     public function getBarWidth()
     {
         return $this->barWidth;
     }
 
-    
+
     public function setBarCharacter($char)
     {
         $this->barChar = $char;
     }
 
-    
+
     public function getBarCharacter()
     {
         if (null === $this->barChar) {
@@ -1141,44 +1141,44 @@ class ProgressBar
         return $this->barChar;
     }
 
-    
+
     public function setEmptyBarCharacter($char)
     {
         $this->emptyBarChar = $char;
     }
 
-    
+
     public function getEmptyBarCharacter()
     {
         return $this->emptyBarChar;
     }
 
-    
+
     public function setProgressCharacter($char)
     {
         $this->progressChar = $char;
     }
 
-    
+
     public function getProgressCharacter()
     {
         return $this->progressChar;
     }
 
-    
+
     public function setFormat($format)
     {
         $this->format = null;
         $this->internalFormat = $format;
     }
 
-    
+
     public function setRedrawFrequency($freq)
     {
         $this->redrawFreq = max((int) $freq, 1);
     }
 
-    
+
     public function start($max = null)
     {
         $this->startTime = time();
@@ -1192,13 +1192,13 @@ class ProgressBar
         $this->display();
     }
 
-    
+
     public function advance($step = 1)
     {
         $this->setProgress($this->step + $step);
     }
 
-    
+
     public function setCurrent($step)
     {
         @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.6 and will be removed in 3.0. Use the setProgress() method instead.', E_USER_DEPRECATED);
@@ -1206,13 +1206,13 @@ class ProgressBar
         $this->setProgress($step);
     }
 
-    
+
     public function setOverwrite($overwrite)
     {
         $this->overwrite = (bool) $overwrite;
     }
 
-    
+
     public function setProgress($step)
     {
         $step = (int) $step;
@@ -1233,7 +1233,7 @@ class ProgressBar
         }
     }
 
-    
+
     public function finish()
     {
         if (!$this->max) {
@@ -1247,7 +1247,7 @@ class ProgressBar
         $this->setProgress($this->max);
     }
 
-    
+
     public function display()
     {
         if (OutputInterface::VERBOSITY_QUIET === $this->output->getVerbosity()) {
@@ -1278,7 +1278,7 @@ class ProgressBar
         }, $this->format));
     }
 
-    
+
     public function clear()
     {
         if (!$this->overwrite) {
@@ -1292,7 +1292,7 @@ class ProgressBar
         $this->overwrite('');
     }
 
-    
+
     private function setRealFormat($format)
     {
                 if (!$this->max && null !== self::getFormatDefinition($format.'_nomax')) {
@@ -1306,14 +1306,14 @@ class ProgressBar
         $this->formatLineCount = substr_count($this->format, "\n");
     }
 
-    
+
     private function setMaxSteps($max)
     {
         $this->max = max(0, (int) $max);
         $this->stepWidth = $this->max ? Helper::strlen($this->max) : 4;
     }
 
-    
+
     private function overwrite($message)
     {
         if ($this->overwrite) {
@@ -1431,7 +1431,7 @@ class ProgressBar
 namespace {
 	$concurrent = function_exists('pcntl_fork');
 	if ($concurrent) {
-		
+
 define('PHP_INT_LENGTH', strlen(sprintf('%u', PHP_INT_MAX)));
 function cofunc(callable $fn) {
 	$pid = pcntl_fork();
@@ -1634,7 +1634,7 @@ function select_channel(array $actions) {
 }
 
 	}
-	
+
 interface Cacher {
 	const DEFAULT_CACHE_FILENAME = '.php.tools.cache';
 
@@ -1648,7 +1648,7 @@ interface Cacher {
 	$enableCache = false;
 	if (class_exists('SQLite3')) {
 		$enableCache = true;
-		
+
 
 final class Cache implements Cacher {
 	private $db;
@@ -1723,7 +1723,7 @@ final class Cache implements Cacher {
 }
 
 	} else {
-		
+
 
 final class Cache implements Cacher {
 	public function create_db() {}
@@ -1738,7 +1738,7 @@ final class Cache implements Cacher {
 
 	define('VERSION', '19.6.7');
 
-	
+
 function extractFromArgv($argv, $item) {
 	return array_values(
 		array_filter($argv,
@@ -1805,53 +1805,8 @@ function eachArray(&$array) {
 	return $res;
 }
 
-	
-function selfupdate($argv, $inPhar) {
-	$opts = [
-		'http' => [
-			'method' => 'GET',
-			'header' => "User-agent: phpfmt fmt.phar selfupdate\r\n",
-		],
-	];
-
-	$context = stream_context_create($opts);
-
-		$releases = json_decode(file_get_contents('https://api.github.com/repos/phpfmt-next/fmt/tags', false, $context), true);
-	$commit = json_decode(file_get_contents($releases[0]['commit']['url'], false, $context), true);
-	$files = json_decode(file_get_contents($commit['commit']['tree']['url'], false, $context), true);
-	foreach ($files['tree'] as $file) {
-		if ('bin' == $file['path']) {
-			$binFiles = json_decode(file_get_contents($file['url'], false, $context), true);
-			foreach ($binFiles['tree'] as $binFile) {
-				if ('fmt.phar' == $binFile['path']) {
-					$phar_file = base64_decode(json_decode(file_get_contents($binFile['url'], false, $context), true)['content']);
-				}
-				if ('fmt.phar.sha1' == $binFile['path']) {
-					$phar_sha1 = base64_decode(json_decode(file_get_contents($binFile['url'], false, $context), true)['content']);
-				}
-			}
-		}
-	}
-	if (!isset($phar_sha1) || !isset($phar_file)) {
-		fwrite(STDERR, 'Could not autoupdate - no release found' . PHP_EOL);
-		exit(255);
-	}
-	if ($inPhar && !file_exists($argv[0])) {
-		$argv[0] = dirname(Phar::running(false)) . DIRECTORY_SEPARATOR . $argv[0];
-	}
-	if (sha1_file($argv[0]) != $phar_sha1) {
-		copy($argv[0], $argv[0] . '~');
-		file_put_contents($argv[0], $phar_file);
-		chmod($argv[0], 0777 & ~umask());
-		fwrite(STDERR, 'Updated successfully' . PHP_EOL);
-		exit(0);
-	}
-	fwrite(STDERR, 'Up-to-date!' . PHP_EOL);
-	exit(0);
-}
 
 
-	
 define('ST_AT', '@');
 define('ST_BRACKET_CLOSE', ']');
 define('ST_BRACKET_OPEN', '[');
@@ -1904,7 +1859,7 @@ define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
 define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
 
-	
+
 abstract class FormatterPass {
 	protected $cache = [];
 
@@ -2856,14 +2811,14 @@ abstract class FormatterPass {
 	}
 }
 
-	
+
 abstract class AdditionalPass extends FormatterPass {
 	abstract public function getDescription();
 
 	abstract public function getExample();
 }
 
-	
+
 
 abstract class BaseCodeFormatter {
 	protected $passes = [
@@ -3151,7 +3106,7 @@ abstract class BaseCodeFormatter {
 }
 
 
-	
+
 class SandboxedPass extends FormatterPass {
 	public function candidate($source, $foundTokens) {
 		return static::candidate($source, $foundTokens);
@@ -3425,7 +3380,7 @@ class SandboxedPass extends FormatterPass {
 		return parent::walkUntil($tknid);
 	}
 }
-	
+
 
 final class CodeFormatter extends BaseCodeFormatter {
 	public function __construct($passName) {
@@ -3445,7 +3400,7 @@ final class CodeFormatter extends BaseCodeFormatter {
 		$inPhar = false;
 	}
 	if (!isset($testEnv)) {
-		
+
 function showHelp($argv, $enableCache, $inPhar) {
 	echo 'Usage: ' . $argv[0] . ' [-h] --pass=Pass ', PHP_EOL;
 

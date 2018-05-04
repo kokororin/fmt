@@ -1,5 +1,4 @@
 # phpfmt
-[![Build Status](https://travis-ci.org/phpfmt-next/fmt.svg?branch=master)](https://travis-ci.org/phpfmt-next/fmt)
 
 ## Requirements
 - PHP >= 5.6.0 to run the formatter. Note that the formatter can parse even a PHP file version 4 in case needed. HHVM is not supported.
@@ -36,7 +35,6 @@ Usage: fmt.phar [-hv] [-o=FILENAME] [--config=FILENAME] [--cache[=FILENAME]] [op
   --psr1                            activate PSR1 style
   --psr1-naming                     activate PSR1 style - Section 3 and 4.3 - Class and method names case.
   --psr2                            activate PSR2 style
-  --selfupdate                      self-update fmt.phar from Github
   --setters_and_getters=type        analyse classes for attributes and generate setters and getters - camel, snake, golang
   --smart_linebreak_after_curly     convert multistatement blocks into multiline blocks
   --version                         version

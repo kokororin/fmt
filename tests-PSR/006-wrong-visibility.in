@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class A {
 	function b(){
 		$this->b->execute(

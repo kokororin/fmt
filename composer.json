@@ -1,10 +1,10 @@
 {
-    "name": "phpfmt-next/fmt",
+    "name": "kokororin/fmt",
     "type": "application",
     "description": "A script to automatically fix K&R and PSR-1/2 Coding Standard.",
     "license": "BSD-3-Clause",
     "keywords": ["language syntax", "formatter", "formatting", "psr1", "psr2", "coding", "style"],
-    "homepage": "https://github.com/phpfmt-next/fmt",
+    "homepage": "https://github.com/kokororin/fmt",
     "bin": [
         "bin/fmt.phar",
         "bin/refactor.phar"
@@ -16,8 +16,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/phpfmt-next/fmt/issues",
-        "source": "https://github.com/phpfmt-next/fmt/fmt"
+        "issues": "https://github.com/kokororin/fmt/issues",
+        "source": "https://github.com/kokororin/fmt/fmt"
     },
     "scripts": {
         "build": "php scripts/build.php",
@@ -40,7 +40,7 @@
             "name": "dericofilho/csp",
             "version": "2.0.0",
             "source": {
-                "url": "https://github.com/phpfmt-next/csp.git",
+                "url": "https://github.com/kokororin/csp.git",
                 "type": "git",
                 "reference": "master"
             }

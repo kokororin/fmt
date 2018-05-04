@@ -13,7 +13,7 @@ Try to get acquainted with the `FormatterPass` class, which holds all the calls 
 
 ## Assumptions
 
-* Forked phpfmt-next/fmt into your own Github Account.
+* Forked kokororin/fmt into your own Github Account.
 * Cloned your forked repository locally.
 * Installed php 5.6 or newer
 

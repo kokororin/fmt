@@ -100,7 +100,7 @@ class Build extends FormatterPass {
 					if (T_OPEN_TAG == $included[0][0]) {
 						unset($included[0]);
 					}
-					while (list(, $token) = each($included)) {
+					while (list(, $token) = eachArray($included)) {
 						list($id, $text) = $this->getToken($token);
 						if (T_COMMENT == $id || T_DOC_COMMENT == $id) {
 							continue;

@@ -4,6 +4,7 @@ fmt is possible because these people helped. Star them.
 
 * https://github.com/ccirello
 * https://github.com/Shaked
+* https://github.com/kokororin
 
 ## Contributors
 

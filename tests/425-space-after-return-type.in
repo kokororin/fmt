@@ -6,7 +6,7 @@ class FooTestClass2 {
 		string $anotherLongVariableName,
 		string $reallyLongVariableName,
 		string $tooLongVariableNameSoThatLineLimitExeeds
-	): string {
+	):    string {
 		$foobar = 'asd';
 		return $foobar;
 	}

@@ -301,7 +301,11 @@ final class ResizeSpaces extends FormatterPass {
 				case T_SWITCH:
 				case T_TRY:
 				case ST_COMMA:
-					$this->appendCode($text . ' ');
+					if ($this->leftTokenIs(T_DOUBLE_COLON)) {
+						$this->appendCode($text);
+					} else {
+						$this->appendCode($text . ' ');
+					}
 					break;
 
 				case T_CLONE:
@@ -398,7 +402,7 @@ final class ResizeSpaces extends FormatterPass {
 					break;
 
 				case T_STRING:
-					if ($this->leftToken() === ST_COLON && $this->rightToken() === ST_CURLY_OPEN) {
+					if ($this->leftTokenIs(ST_COLON) && $this->rightTokenIs(ST_CURLY_OPEN)) {
 						$this->appendCode($text . ' ');
 					} else {
 						$this->appendCode($text);

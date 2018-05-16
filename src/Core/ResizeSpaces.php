@@ -397,6 +397,14 @@ final class ResizeSpaces extends FormatterPass {
 					$this->appendCode(str_replace([' ', "\t"], '', $text) . ' ');
 					break;
 
+				case T_STRING:
+					if ($this->leftToken() === ST_COLON && $this->rightToken() === ST_CURLY_OPEN) {
+						$this->appendCode($text . ' ');
+					} else {
+						$this->appendCode($text);
+					}
+					break;
+
 				case ST_REFERENCE:
 					$spaceBefore = !$this->leftMemoUsefulTokenIs([ST_EQUAL, ST_PARENTHESES_OPEN, T_AS, T_DOUBLE_ARROW, ST_COMMA]) && !$this->leftMemoUsefulTokenIs([T_FUNCTION]);
 					$spaceAfter = !$touchedFunction && !$this->leftMemoUsefulTokenIs([ST_EQUAL, ST_PARENTHESES_OPEN, T_AS, T_DOUBLE_ARROW, ST_COMMA]);

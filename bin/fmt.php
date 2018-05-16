@@ -1736,7 +1736,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.8');
+	define('VERSION', '19.6.9');
 
 	
 function extractFromArgv($argv, $item) {
@@ -5150,7 +5150,11 @@ final class ResizeSpaces extends FormatterPass {
 				case T_SWITCH:
 				case T_TRY:
 				case ST_COMMA:
-					$this->appendCode($text . ' ');
+					if ($this->leftTokenIs(T_DOUBLE_COLON)) {
+						$this->appendCode($text);
+					} else {
+						$this->appendCode($text . ' ');
+					}
 					break;
 
 				case T_CLONE:
@@ -5244,6 +5248,14 @@ final class ResizeSpaces extends FormatterPass {
 				case T_UNSET_CAST:
 				case T_GOTO:
 					$this->appendCode(str_replace([' ', "\t"], '', $text) . ' ');
+					break;
+
+				case T_STRING:
+					if ($this->leftTokenIs(ST_COLON) && $this->rightTokenIs(ST_CURLY_OPEN)) {
+						$this->appendCode($text . ' ');
+					} else {
+						$this->appendCode($text);
+					}
 					break;
 
 				case ST_REFERENCE:

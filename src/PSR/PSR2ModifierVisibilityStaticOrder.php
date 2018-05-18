@@ -89,6 +89,10 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
+					if ($this->leftTokenIs(T_AS)) {
+						$this->appendCode($text);
+						break;
+					}
 					$visibility = $text;
 					$skipWhitespaces = true;
 					break;

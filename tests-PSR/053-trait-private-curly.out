@@ -1,0 +1,13 @@
+<?php
+//passes: default,PSR2ModifierVisibilityStaticOrder
+class Test1
+{
+    use TestTrait {
+        foo as private bar;
+    }
+
+    function baz()
+    {
+
+    }
+}

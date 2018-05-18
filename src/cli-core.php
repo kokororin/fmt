@@ -47,6 +47,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'-v' => 'verbose',
 	];
 	if ($inPhar) {
+		$options['--selfupdate'] = 'self-update fmt.phar from Kotori API';
 		$options['--version'] = 'version';
 	}
 	$options['--cache[=FILENAME]'] .= (Cacher::DEFAULT_CACHE_FILENAME);
@@ -96,6 +97,7 @@ $getoptLongOptions = [
 	'yoda',
 ];
 if ($inPhar) {
+	$getoptLongOptions[] = 'selfupdate';
 	$getoptLongOptions[] = 'version';
 }
 if (!$enableCache) {
@@ -131,6 +133,9 @@ if (isset($opts['list-simple'])) {
 	}
 	echo tabwriter($helpLines);
 	die();
+}
+if (isset($opts['selfupdate'])) {
+	selfupdate($argv, $inPhar);
 }
 if (isset($opts['version'])) {
 	if ($inPhar) {

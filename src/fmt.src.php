@@ -44,6 +44,7 @@ namespace {
 
 	require __DIR__ . '/version.php';
 	require __DIR__ . '/helpers.php';
+	require __DIR__ . '/selfupdate.php';
 
 	require __DIR__ . '/Core/constants.php';
 	require __DIR__ . '/Core/FormatterPass.php';

@@ -1736,7 +1736,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.9');
+	define('VERSION', '19.6.10');
 
 	
 function extractFromArgv($argv, $item) {
@@ -1803,6 +1803,35 @@ function eachArray(&$array) {
 		$res = false;
 	}
 	return $res;
+}
+
+	
+function selfupdate($argv, $inPhar) {
+	$opts = [
+		'http' => [
+			'method' => 'GET',
+			'header' => "User-agent: phpfmt fmt.phar selfupdate\r\n",
+		],
+	];
+
+	$context = stream_context_create($opts);
+	$url = 'https://api.kotori.love/github/fmt.phar';
+
+	$headers = get_headers($url, 1);
+
+	$pharData = file_get_contents($url, false, $context);
+
+	if (sha1($pharData) !== $headers['X-Hash']) {
+		fwrite(STDERR, 'Could not autoupdate' . PHP_EOL);
+		exit(255);
+	}
+
+	if ($inPhar) {
+		file_put_contents(Phar::running(false), $pharData);
+		fwrite(STDERR, 'Updated successfully' . PHP_EOL);
+		exit(0);
+	}
+	exit(0);
 }
 
 
@@ -5312,7 +5341,7 @@ final class ResizeSpaces extends FormatterPass {
 					break;
 
 				case T_YIELD_FROM:
-					$this->appendCode($text . $this->getSpace($this->rightTokenIs(T_STRING)));
+					$this->appendCode($text . ' ');
 					break;
 
 				default:
@@ -6380,6 +6409,10 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
+					if ($this->leftTokenIs(T_AS) || $this->rightTokenIs(T_CONST)) {
+						$this->appendCode($text);
+						break;
+					}
 					$visibility = $text;
 					$skipWhitespaces = true;
 					break;
@@ -13631,6 +13664,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'-v' => 'verbose',
 	];
 	if ($inPhar) {
+		$options['--selfupdate'] = 'self-update fmt.phar from Kotori API';
 		$options['--version'] = 'version';
 	}
 	$options['--cache[=FILENAME]'] .= (Cacher::DEFAULT_CACHE_FILENAME);
@@ -13680,6 +13714,7 @@ $getoptLongOptions = [
 	'yoda',
 ];
 if ($inPhar) {
+	$getoptLongOptions[] = 'selfupdate';
 	$getoptLongOptions[] = 'version';
 }
 if (!$enableCache) {
@@ -13715,6 +13750,9 @@ if (isset($opts['list-simple'])) {
 	}
 	echo tabwriter($helpLines);
 	die();
+}
+if (isset($opts['selfupdate'])) {
+	selfupdate($argv, $inPhar);
 }
 if (isset($opts['version'])) {
 	if ($inPhar) {

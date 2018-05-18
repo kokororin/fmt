@@ -1736,7 +1736,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.9');
+	define('VERSION', '19.6.10');
 
 	
 function extractFromArgv($argv, $item) {
@@ -1803,6 +1803,35 @@ function eachArray(&$array) {
 		$res = false;
 	}
 	return $res;
+}
+
+	
+function selfupdate($argv, $inPhar) {
+	$opts = [
+		'http' => [
+			'method' => 'GET',
+			'header' => "User-agent: phpfmt fmt.phar selfupdate\r\n",
+		],
+	];
+
+	$context = stream_context_create($opts);
+	$url = 'https://api.kotori.love/github/fmt.phar';
+
+	$headers = get_headers($url, 1);
+
+	$pharData = file_get_contents($url, false, $context);
+
+	if (sha1($pharData) !== $headers['X-Hash']) {
+		fwrite(STDERR, 'Could not autoupdate' . PHP_EOL);
+		exit(255);
+	}
+
+	if ($inPhar) {
+		file_put_contents(Phar::running(false), $pharData);
+		fwrite(STDERR, 'Updated successfully' . PHP_EOL);
+		exit(0);
+	}
+	exit(0);
 }
 
 

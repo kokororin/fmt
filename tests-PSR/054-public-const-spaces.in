@@ -1,0 +1,9 @@
+<?php
+//version:7.1
+//passes: default,PSR2ModifierVisibilityStaticOrder
+class Foo
+{
+    // As of PHP 7.1.0
+    protected const BAR = 'bar';
+    private const BAZ = 'baz';
+}

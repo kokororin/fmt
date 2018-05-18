@@ -89,7 +89,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-					if ($this->leftTokenIs(T_AS)) {
+					if ($this->leftTokenIs(T_AS) || $this->rightTokenIs(T_CONST)) {
 						$this->appendCode($text);
 						break;
 					}

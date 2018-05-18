@@ -463,7 +463,7 @@ final class ResizeSpaces extends FormatterPass {
 					break;
 
 				case T_YIELD_FROM:
-					$this->appendCode($text . $this->getSpace($this->rightTokenIs(T_STRING)));
+					$this->appendCode($text . ' ');
 					break;
 
 				default:

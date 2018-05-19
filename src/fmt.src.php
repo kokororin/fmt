@@ -12,167 +12,170 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+namespace {
+	require_once __DIR__ . '/Core/constants.php';
+}
+
 namespace Extern {
-	require __DIR__ . '/../vendor/symfony/console/Formatter/OutputFormatterInterface.php';
-	require __DIR__ . '/../vendor/symfony/console/Helper/HelperInterface.php';
-	require __DIR__ . '/../vendor/symfony/console/Helper/Helper.php';
-	require __DIR__ . '/../vendor/symfony/console/Formatter/OutputFormatterStyleStack.php';
-	require __DIR__ . '/../vendor/symfony/console/Formatter/OutputFormatterStyleInterface.php';
-	require __DIR__ . '/../vendor/symfony/console/Formatter/OutputFormatterStyle.php';
-	require __DIR__ . '/../vendor/symfony/console/Formatter/OutputFormatter.php';
-	require __DIR__ . '/../vendor/symfony/console/Output/OutputInterface.php';
-	require __DIR__ . '/../vendor/symfony/console/Output/ConsoleOutputInterface.php';
-	require __DIR__ . '/../vendor/symfony/console/Output/Output.php';
-	require __DIR__ . '/../vendor/symfony/console/Output/StreamOutput.php';
-	require __DIR__ . '/../vendor/symfony/console/Output/ConsoleOutput.php';
-	require __DIR__ . '/../vendor/symfony/console/Helper/ProgressBar.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Formatter/OutputFormatterInterface.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Helper/HelperInterface.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Helper/Helper.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Formatter/OutputFormatterStyleStack.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Formatter/OutputFormatterStyleInterface.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Formatter/OutputFormatterStyle.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Formatter/OutputFormatter.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Output/OutputInterface.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Output/ConsoleOutputInterface.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Output/Output.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Output/StreamOutput.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Output/ConsoleOutput.php';
+	require FMT_VENDOR_DIR . '/symfony/console/Helper/ProgressBar.php';
 }
 
 namespace {
 	$concurrent = function_exists('pcntl_fork');
 	if ($concurrent) {
-		require __DIR__ . '/../vendor/dericofilho/csp/csp.php';
+		require FMT_VENDOR_DIR . '/dericofilho/csp/csp.php';
 	}
-	require __DIR__ . '/Core/Cacher.php';
+	require FMT_SRC_DIR . '/Core/Cacher.php';
 	$enableCache = false;
 	if (class_exists('SQLite3')) {
 		$enableCache = true;
-		require __DIR__ . '/Core/Cache.php';
+		require FMT_SRC_DIR . '/Core/Cache.php';
 	} else {
-		require __DIR__ . '/Core/Cache_dummy.php';
+		require FMT_SRC_DIR . '/Core/Cache_dummy.php';
 	}
 
-	require __DIR__ . '/version.php';
-	require __DIR__ . '/helpers.php';
-	require __DIR__ . '/selfupdate.php';
+	require FMT_SRC_DIR . '/version.php';
+	require FMT_SRC_DIR . '/helpers.php';
+	require FMT_SRC_DIR . '/selfupdate.php';
 
-	require __DIR__ . '/Core/constants.php';
-	require __DIR__ . '/Core/FormatterPass.php';
-	require __DIR__ . '/Additionals/AdditionalPass.php';
-	require __DIR__ . '/Core/BaseCodeFormatter.php';
+	require FMT_SRC_DIR . '/Core/FormatterPass.php';
+	require FMT_SRC_DIR . '/Additionals/AdditionalPass.php';
+	require FMT_SRC_DIR . '/Core/BaseCodeFormatter.php';
 	if ('1' === getenv('FMTDEBUG') || 'step' === getenv('FMTDEBUG')) {
-		require __DIR__ . '/Core/CodeFormatter_debug.php';
+		require FMT_SRC_DIR . '/Core/CodeFormatter_debug.php';
 	} elseif ('profile' === getenv('FMTDEBUG')) {
-		require __DIR__ . '/Core/CodeFormatter_profile.php';
+		require FMT_SRC_DIR . '/Core/CodeFormatter_profile.php';
 	} else {
-		require __DIR__ . '/Core/CodeFormatter.php';
+		require FMT_SRC_DIR . '/Core/CodeFormatter.php';
 	}
 
-	require __DIR__ . '/Core/AddMissingCurlyBraces.php';
-	require __DIR__ . '/Core/AutoImport.php';
-	require __DIR__ . '/Core/ConstructorPass.php';
-	require __DIR__ . '/Core/EliminateDuplicatedEmptyLines.php';
-	require __DIR__ . '/Core/ExternalPass.php';
-	require __DIR__ . '/Core/ExtraCommaInArray.php';
-	require __DIR__ . '/Core/LeftAlignComment.php';
-	require __DIR__ . '/Core/MergeCurlyCloseAndDoWhile.php';
-	require __DIR__ . '/Core/MergeDoubleArrowAndArray.php';
-	require __DIR__ . '/Core/MergeParenCloseWithCurlyOpen.php';
-	require __DIR__ . '/Core/NormalizeIsNotEquals.php';
-	require __DIR__ . '/Core/NormalizeLnAndLtrimLines.php';
-	require __DIR__ . '/Core/Reindent.php';
-	require __DIR__ . '/Core/ReindentColonBlocks.php';
-	require __DIR__ . '/Core/ReindentComments.php';
-	require __DIR__ . '/Core/ReindentEqual.php';
-	require __DIR__ . '/Core/ReindentObjOps.php';
-	require __DIR__ . '/Core/ResizeSpaces.php';
-	require __DIR__ . '/Core/RTrim.php';
-	require __DIR__ . '/Core/SettersAndGettersPass.php';
-	require __DIR__ . '/Core/SplitCurlyCloseAndTokens.php';
-	require __DIR__ . '/Core/StripExtraCommaInList.php';
-	require __DIR__ . '/Core/SurrogateToken.php';
-	require __DIR__ . '/Core/TwoCommandsInSameLine.php';
+	require FMT_SRC_DIR . '/Core/AddMissingCurlyBraces.php';
+	require FMT_SRC_DIR . '/Core/AutoImport.php';
+	require FMT_SRC_DIR . '/Core/ConstructorPass.php';
+	require FMT_SRC_DIR . '/Core/EliminateDuplicatedEmptyLines.php';
+	require FMT_SRC_DIR . '/Core/ExternalPass.php';
+	require FMT_SRC_DIR . '/Core/ExtraCommaInArray.php';
+	require FMT_SRC_DIR . '/Core/LeftAlignComment.php';
+	require FMT_SRC_DIR . '/Core/MergeCurlyCloseAndDoWhile.php';
+	require FMT_SRC_DIR . '/Core/MergeDoubleArrowAndArray.php';
+	require FMT_SRC_DIR . '/Core/MergeParenCloseWithCurlyOpen.php';
+	require FMT_SRC_DIR . '/Core/NormalizeIsNotEquals.php';
+	require FMT_SRC_DIR . '/Core/NormalizeLnAndLtrimLines.php';
+	require FMT_SRC_DIR . '/Core/Reindent.php';
+	require FMT_SRC_DIR . '/Core/ReindentColonBlocks.php';
+	require FMT_SRC_DIR . '/Core/ReindentComments.php';
+	require FMT_SRC_DIR . '/Core/ReindentEqual.php';
+	require FMT_SRC_DIR . '/Core/ReindentObjOps.php';
+	require FMT_SRC_DIR . '/Core/ResizeSpaces.php';
+	require FMT_SRC_DIR . '/Core/RTrim.php';
+	require FMT_SRC_DIR . '/Core/SettersAndGettersPass.php';
+	require FMT_SRC_DIR . '/Core/SplitCurlyCloseAndTokens.php';
+	require FMT_SRC_DIR . '/Core/StripExtraCommaInList.php';
+	require FMT_SRC_DIR . '/Core/SurrogateToken.php';
+	require FMT_SRC_DIR . '/Core/TwoCommandsInSameLine.php';
 
-	require __DIR__ . '/PSR/PSR1BOMMark.php';
-	require __DIR__ . '/PSR/PSR1ClassConstants.php';
-	require __DIR__ . '/PSR/PSR1ClassNames.php';
-	require __DIR__ . '/PSR/PSR1MethodNames.php';
-	require __DIR__ . '/PSR/PSR1OpenTags.php';
-	require __DIR__ . '/PSR/PSR2AlignObjOp.php';
-	require __DIR__ . '/PSR/PSR2CurlyOpenNextLine.php';
-	require __DIR__ . '/PSR/PSR2IndentWithSpace.php';
-	require __DIR__ . '/PSR/PSR2KeywordsLowerCase.php';
-	require __DIR__ . '/PSR/PSR2LnAfterNamespace.php';
-	require __DIR__ . '/PSR/PSR2ModifierVisibilityStaticOrder.php';
-	require __DIR__ . '/PSR/PSR2SingleEmptyLineAndStripClosingTag.php';
-	require __DIR__ . '/PSR/PsrDecorator.php';
+	require FMT_SRC_DIR . '/PSR/PSR1BOMMark.php';
+	require FMT_SRC_DIR . '/PSR/PSR1ClassConstants.php';
+	require FMT_SRC_DIR . '/PSR/PSR1ClassNames.php';
+	require FMT_SRC_DIR . '/PSR/PSR1MethodNames.php';
+	require FMT_SRC_DIR . '/PSR/PSR1OpenTags.php';
+	require FMT_SRC_DIR . '/PSR/PSR2AlignObjOp.php';
+	require FMT_SRC_DIR . '/PSR/PSR2CurlyOpenNextLine.php';
+	require FMT_SRC_DIR . '/PSR/PSR2IndentWithSpace.php';
+	require FMT_SRC_DIR . '/PSR/PSR2KeywordsLowerCase.php';
+	require FMT_SRC_DIR . '/PSR/PSR2LnAfterNamespace.php';
+	require FMT_SRC_DIR . '/PSR/PSR2ModifierVisibilityStaticOrder.php';
+	require FMT_SRC_DIR . '/PSR/PSR2SingleEmptyLineAndStripClosingTag.php';
+	require FMT_SRC_DIR . '/PSR/PsrDecorator.php';
 
-	require __DIR__ . '/Additionals/AddMissingParentheses.php';
-	require __DIR__ . '/Additionals/AliasToMaster.php';
-	require __DIR__ . '/Additionals/AlignConstVisibilityEquals.php';
-	require __DIR__ . '/Additionals/AlignDoubleArrow.php';
-	require __DIR__ . '/Additionals/AlignDoubleSlashComments.php';
-	require __DIR__ . '/Additionals/AlignEquals.php';
-	require __DIR__ . '/Additionals/AlignGroupDoubleArrow.php';
-	require __DIR__ . '/Additionals/AlignPHPCode.php';
-	require __DIR__ . '/Additionals/AlignTypehint.php';
-	require __DIR__ . '/Additionals/AllmanStyleBraces.php';
-	require __DIR__ . '/Additionals/AutoPreincrement.php';
-	require __DIR__ . '/Additionals/AutoSemicolon.php';
-	require __DIR__ . '/Additionals/CakePHPStyle.php';
-	require __DIR__ . '/Additionals/ClassToSelf.php';
-	require __DIR__ . '/Additionals/ClassToStatic.php';
-	require __DIR__ . '/Additionals/ConvertOpenTagWithEcho.php';
-	require __DIR__ . '/Additionals/DocBlockToComment.php';
-	require __DIR__ . '/Additionals/DoubleToSingleQuote.php';
-	require __DIR__ . '/Additionals/EchoToPrint.php';
-	require __DIR__ . '/Additionals/EncapsulateNamespaces.php';
-	require __DIR__ . '/Additionals/GeneratePHPDoc.php';
-	require __DIR__ . '/Additionals/IndentTernaryConditions.php';
-	require __DIR__ . '/Additionals/JoinToImplode.php';
-	require __DIR__ . '/Additionals/LeftWordWrap.php';
-	require __DIR__ . '/Additionals/LongArray.php';
-	require __DIR__ . '/Additionals/MergeElseIf.php';
-	require __DIR__ . '/Additionals/SplitElseIf.php';
-	require __DIR__ . '/Additionals/MergeNamespaceWithOpenTag.php';
-	require __DIR__ . '/Additionals/MildAutoPreincrement.php';
-	require __DIR__ . '/Additionals/NewLineBeforeReturn.php';
-	require __DIR__ . '/Additionals/NoSpaceAfterPHPDocBlocks.php';
-	require __DIR__ . '/Additionals/OrganizeClass.php';
-	require __DIR__ . '/Additionals/OrderAndRemoveUseClauses.php';
-	require __DIR__ . '/Additionals/OnlyOrderUseClauses.php';
-	require __DIR__ . '/Additionals/OrderMethod.php';
-	require __DIR__ . '/Additionals/OrderMethodAndVisibility.php';
-	require __DIR__ . '/Additionals/PHPDocTypesToFunctionTypehint.php';
-	require __DIR__ . '/Additionals/PrettyPrintDocBlocks.php';
-	require __DIR__ . '/Additionals/PSR2EmptyFunction.php';
-	require __DIR__ . '/Additionals/PSR2MultilineFunctionParams.php';
-	require __DIR__ . '/Additionals/ReindentAndAlignObjOps.php';
-	require __DIR__ . '/Additionals/ReindentSwitchBlocks.php';
-	require __DIR__ . '/Additionals/RemoveIncludeParentheses.php';
-	require __DIR__ . '/Additionals/RemoveSemicolonAfterCurly.php';
-	require __DIR__ . '/Additionals/RemoveUseLeadingSlash.php';
-	require __DIR__ . '/Additionals/ReplaceBooleanAndOr.php';
-	require __DIR__ . '/Additionals/ReplaceIsNull.php';
-	require __DIR__ . '/Additionals/RestoreComments.php';
-	require __DIR__ . '/Additionals/ReturnNull.php';
-	require __DIR__ . '/Additionals/ShortArray.php';
-	require __DIR__ . '/Additionals/SmartLnAfterCurlyOpen.php';
-	require __DIR__ . '/Additionals/SortUseNameSpace.php';
-	require __DIR__ . '/Additionals/SpaceAroundControlStructures.php';
-	require __DIR__ . '/Additionals/SpaceAfterExclamationMark.php';
-	require __DIR__ . '/Additionals/SpaceAroundExclamationMark.php';
-	require __DIR__ . '/Additionals/SpaceAroundParentheses.php';
-	require __DIR__ . '/Additionals/SpaceBetweenMethods.php';
-	require __DIR__ . '/Additionals/StrictBehavior.php';
-	require __DIR__ . '/Additionals/StrictComparison.php';
-	require __DIR__ . '/Additionals/StripExtraCommaInArray.php';
-	require __DIR__ . '/Additionals/StripNewlineAfterClassOpen.php';
-	require __DIR__ . '/Additionals/StripNewlineAfterCurlyOpen.php';
-	require __DIR__ . '/Additionals/StripNewlineWithinClassBody.php';
-	require __DIR__ . '/Additionals/StripSpaces.php';
-	require __DIR__ . '/Additionals/StripSpaceWithinControlStructures.php';
-	require __DIR__ . '/Additionals/TightConcat.php';
-	require __DIR__ . '/Additionals/TrimSpaceBeforeSemicolon.php';
-	require __DIR__ . '/Additionals/UpgradeToPreg.php';
-	require __DIR__ . '/Additionals/WordWrap.php';
-	require __DIR__ . '/Additionals/WrongConstructorName.php';
-	require __DIR__ . '/Additionals/YodaComparisons.php';
+	require FMT_SRC_DIR . '/Additionals/AddMissingParentheses.php';
+	require FMT_SRC_DIR . '/Additionals/AliasToMaster.php';
+	require FMT_SRC_DIR . '/Additionals/AlignConstVisibilityEquals.php';
+	require FMT_SRC_DIR . '/Additionals/AlignDoubleArrow.php';
+	require FMT_SRC_DIR . '/Additionals/AlignDoubleSlashComments.php';
+	require FMT_SRC_DIR . '/Additionals/AlignEquals.php';
+	require FMT_SRC_DIR . '/Additionals/AlignGroupDoubleArrow.php';
+	require FMT_SRC_DIR . '/Additionals/AlignPHPCode.php';
+	require FMT_SRC_DIR . '/Additionals/AlignTypehint.php';
+	require FMT_SRC_DIR . '/Additionals/AllmanStyleBraces.php';
+	require FMT_SRC_DIR . '/Additionals/AutoPreincrement.php';
+	require FMT_SRC_DIR . '/Additionals/AutoSemicolon.php';
+	require FMT_SRC_DIR . '/Additionals/CakePHPStyle.php';
+	require FMT_SRC_DIR . '/Additionals/ClassToSelf.php';
+	require FMT_SRC_DIR . '/Additionals/ClassToStatic.php';
+	require FMT_SRC_DIR . '/Additionals/ConvertOpenTagWithEcho.php';
+	require FMT_SRC_DIR . '/Additionals/DocBlockToComment.php';
+	require FMT_SRC_DIR . '/Additionals/DoubleToSingleQuote.php';
+	require FMT_SRC_DIR . '/Additionals/EchoToPrint.php';
+	require FMT_SRC_DIR . '/Additionals/EncapsulateNamespaces.php';
+	require FMT_SRC_DIR . '/Additionals/GeneratePHPDoc.php';
+	require FMT_SRC_DIR . '/Additionals/IndentTernaryConditions.php';
+	require FMT_SRC_DIR . '/Additionals/JoinToImplode.php';
+	require FMT_SRC_DIR . '/Additionals/LeftWordWrap.php';
+	require FMT_SRC_DIR . '/Additionals/LongArray.php';
+	require FMT_SRC_DIR . '/Additionals/MergeElseIf.php';
+	require FMT_SRC_DIR . '/Additionals/SplitElseIf.php';
+	require FMT_SRC_DIR . '/Additionals/MergeNamespaceWithOpenTag.php';
+	require FMT_SRC_DIR . '/Additionals/MildAutoPreincrement.php';
+	require FMT_SRC_DIR . '/Additionals/NewLineBeforeReturn.php';
+	require FMT_SRC_DIR . '/Additionals/NoSpaceAfterPHPDocBlocks.php';
+	require FMT_SRC_DIR . '/Additionals/OrganizeClass.php';
+	require FMT_SRC_DIR . '/Additionals/OrderAndRemoveUseClauses.php';
+	require FMT_SRC_DIR . '/Additionals/OnlyOrderUseClauses.php';
+	require FMT_SRC_DIR . '/Additionals/OrderMethod.php';
+	require FMT_SRC_DIR . '/Additionals/OrderMethodAndVisibility.php';
+	require FMT_SRC_DIR . '/Additionals/PHPDocTypesToFunctionTypehint.php';
+	require FMT_SRC_DIR . '/Additionals/PrettyPrintDocBlocks.php';
+	require FMT_SRC_DIR . '/Additionals/PSR2EmptyFunction.php';
+	require FMT_SRC_DIR . '/Additionals/PSR2MultilineFunctionParams.php';
+	require FMT_SRC_DIR . '/Additionals/ReindentAndAlignObjOps.php';
+	require FMT_SRC_DIR . '/Additionals/ReindentSwitchBlocks.php';
+	require FMT_SRC_DIR . '/Additionals/RemoveIncludeParentheses.php';
+	require FMT_SRC_DIR . '/Additionals/RemoveSemicolonAfterCurly.php';
+	require FMT_SRC_DIR . '/Additionals/RemoveUseLeadingSlash.php';
+	require FMT_SRC_DIR . '/Additionals/ReplaceBooleanAndOr.php';
+	require FMT_SRC_DIR . '/Additionals/ReplaceIsNull.php';
+	require FMT_SRC_DIR . '/Additionals/RestoreComments.php';
+	require FMT_SRC_DIR . '/Additionals/ReturnNull.php';
+	require FMT_SRC_DIR . '/Additionals/ShortArray.php';
+	require FMT_SRC_DIR . '/Additionals/SmartLnAfterCurlyOpen.php';
+	require FMT_SRC_DIR . '/Additionals/SortUseNameSpace.php';
+	require FMT_SRC_DIR . '/Additionals/SpaceAroundControlStructures.php';
+	require FMT_SRC_DIR . '/Additionals/SpaceAfterExclamationMark.php';
+	require FMT_SRC_DIR . '/Additionals/SpaceAroundExclamationMark.php';
+	require FMT_SRC_DIR . '/Additionals/SpaceAroundParentheses.php';
+	require FMT_SRC_DIR . '/Additionals/SpaceBetweenMethods.php';
+	require FMT_SRC_DIR . '/Additionals/StrictBehavior.php';
+	require FMT_SRC_DIR . '/Additionals/StrictComparison.php';
+	require FMT_SRC_DIR . '/Additionals/StripExtraCommaInArray.php';
+	require FMT_SRC_DIR . '/Additionals/StripNewlineAfterClassOpen.php';
+	require FMT_SRC_DIR . '/Additionals/StripNewlineAfterCurlyOpen.php';
+	require FMT_SRC_DIR . '/Additionals/StripNewlineWithinClassBody.php';
+	require FMT_SRC_DIR . '/Additionals/StripSpaces.php';
+	require FMT_SRC_DIR . '/Additionals/StripSpaceWithinControlStructures.php';
+	require FMT_SRC_DIR . '/Additionals/TightConcat.php';
+	require FMT_SRC_DIR . '/Additionals/TrimSpaceBeforeSemicolon.php';
+	require FMT_SRC_DIR . '/Additionals/UpgradeToPreg.php';
+	require FMT_SRC_DIR . '/Additionals/WordWrap.php';
+	require FMT_SRC_DIR . '/Additionals/WrongConstructorName.php';
+	require FMT_SRC_DIR . '/Additionals/YodaComparisons.php';
 
 	if (!isset($inPhar)) {
 		$inPhar = false;
 	}
 	if (!isset($testEnv)) {
-		require __DIR__ . '/cli-core.php';
+		require FMT_SRC_DIR . '/cli-core.php';
 	}
 }

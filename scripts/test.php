@@ -20,38 +20,40 @@ if (!ini_get('short_open_tag')) {
 	exit($ret);
 }
 
+require __DIR__ . '/../src/Core/constants.php';
+
 $isHHVM = (false !== strpos(phpversion(), 'hhvm'));
 $shortTagEnabled = ini_get('short_open_tag');
 $opt = getopt('v', ['verbose', 'deployed', 'coverage', 'coveralls', 'testNumber:', 'stop', 'baseline']);
 $isCoverage = isset($opt['coverage']) || isset($opt['coveralls']);
 $isCoveralls = isset($opt['coveralls']);
 if ($isCoverage) {
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Exception.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Node.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/Iterator.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Util.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/File.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/Directory.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/Dashboard.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/File.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/Directory.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Factory.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Report/Clover.php';
-	require __DIR__ . '/../vendor/phpunit/php-token-stream/src/Token/Stream.php';
-	require __DIR__ . '/../vendor/sebastian/version/src/Version.php';
-	require __DIR__ . '/../vendor/symfony/yaml/Yaml.php';
-	require __DIR__ . '/../vendor/phpunit/php-text-template/src/Template.php';
-	require __DIR__ . '/../vendor/phpunit/php-token-stream/src/Token.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Driver.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Driver/Xdebug.php';
-	require __DIR__ . '/../vendor/sebastian/environment/src/Runtime.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage.php';
-	require __DIR__ . '/../vendor/phpunit/php-file-iterator/src/Iterator.php';
-	require __DIR__ . '/../vendor/phpunit/php-file-iterator/src/Factory.php';
-	require __DIR__ . '/../vendor/phpunit/php-file-iterator/src/Facade.php';
-	require __DIR__ . '/../vendor/phpunit/php-code-coverage/src/CodeCoverage/Filter.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Exception.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Node.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/Iterator.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Util.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/File.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/Directory.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML/Renderer/Dashboard.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/File.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Node/Directory.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Factory.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/HTML.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Report/Clover.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-token-stream/src/Token/Stream.php';
+	require FMT_VENDOR_DIR . '/sebastian/version/src/Version.php';
+	require FMT_VENDOR_DIR . '/symfony/yaml/Yaml.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-text-template/src/Template.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-token-stream/src/Token.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Driver.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Driver/Xdebug.php';
+	require FMT_VENDOR_DIR . '/sebastian/environment/src/Runtime.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-file-iterator/src/Iterator.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-file-iterator/src/Factory.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-file-iterator/src/Facade.php';
+	require FMT_VENDOR_DIR . '/phpunit/php-code-coverage/src/CodeCoverage/Filter.php';
 
 	$filter = new PHP_CodeCoverage_Filter();
 	$filter->addFileToBlacklist('fmt.php');
@@ -83,9 +85,9 @@ $start = microtime(true);
 $testEnv = true;
 ob_start();
 if (!isset($opt['deployed'])) {
-	include realpath(__DIR__ . '/../src/fmt.src.php');
+	include realpath(FMT_SRC_DIR . '/fmt.src.php');
 } else {
-	include realpath(__DIR__ . '/bin/fmt.php');
+	include realpath(FMT_BIN_DIR . '/fmt.php');
 }
 ob_end_clean();
 
@@ -93,7 +95,7 @@ echo 'Running tests...', PHP_EOL;
 $brokenTests = [];
 $skippedTests = [];
 
-$cases = glob(__DIR__ . '/../tests/' . $testNumber . '*.in');
+$cases = glob(FMT_ROOT_DIR . '/tests/' . $testNumber . '*.in');
 $count = 0;
 $bailOut = false;
 foreach ($cases as $caseIn) {
@@ -171,7 +173,7 @@ foreach ($cases as $caseIn) {
 	$isCoverage && $coverage->stop();
 }
 
-$cases = glob(__DIR__ . '/../tests-PSR/' . $testNumber . '*.in');
+$cases = glob(FMT_ROOT_DIR . '/tests-PSR/' . $testNumber . '*.in');
 if (!$bailOut) {
 	foreach ($cases as $caseIn) {
 		++$count;

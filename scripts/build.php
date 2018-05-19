@@ -18,13 +18,13 @@ if (ini_get('phar.readonly')) {
 	passthru(PHP_BINARY . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
 	exit($ret);
 }
-require __DIR__ . '/../vendor/dericofilho/csp/csp.php';
 require __DIR__ . '/../src/Core/constants.php';
-require __DIR__ . '/../src/Core/FormatterPass.php';
-require __DIR__ . '/../src/Additionals/AdditionalPass.php';
-require __DIR__ . '/../src/Additionals/EncapsulateNamespaces.php';
-require __DIR__ . '/../src/version.php';
-require __DIR__ . '/../src/helpers.php';
+require FMT_VENDOR_DIR . '/dericofilho/csp/csp.php';
+require FMT_SRC_DIR . '/Core/FormatterPass.php';
+require FMT_SRC_DIR . '/Additionals/AdditionalPass.php';
+require FMT_SRC_DIR . '/Additionals/EncapsulateNamespaces.php';
+require FMT_SRC_DIR . '/version.php';
+require FMT_SRC_DIR . '/helpers.php';
 
 error_reporting(E_ALL);
 $opt = getopt('Mmp');
@@ -40,7 +40,7 @@ if (isset($opt['M'])) {
 }
 if (!empty($newver)) {
 	echo 'Bumping version to: ', $newver, PHP_EOL;
-	file_put_contents(__DIR__ . '/../src/version.php', $newver);
+	file_put_contents(FMT_SRC_DIR . '/version.php', $newver);
 }
 
 class Build extends FormatterPass {
@@ -84,14 +84,17 @@ class Build extends FormatterPass {
 					break;
 
 				case T_REQUIRE:
+				case T_REQUIRE_ONCE:
 					list($id, $text) = $this->walkUntil(T_CONSTANT_ENCAPSED_STRING);
 					$fn = str_replace(['"', "'"], '', $text);
 					$fn = str_replace(['"', "'"], '', $fn);
 
-					if (is_file(__DIR__ . '/../src/' . $fn)) {
-						$fn = __DIR__ . '/../src/' . $fn;
-					} elseif (is_file(__DIR__ . '/' . $fn)) {
-						$fn = __DIR__ . '/' . $fn;
+					if (is_file(FMT_SRC_DIR . '/' . $fn)) {
+						$fn = FMT_SRC_DIR . '/' . $fn;
+					} elseif (is_file(FMT_VENDOR_DIR . '/' . $fn)) {
+						$fn = FMT_VENDOR_DIR . '/' . $fn;
+					} elseif (is_file(FMT_SCRIPTS_DIR . '/' . $fn)) {
+						$fn = FMT_SCRIPTS_DIR . '/' . $fn;
 					}
 
 					$source = file_get_contents($fn);
@@ -135,9 +138,9 @@ for ($i = 0; $i < $workers; ++$i) {
 				break;
 			}
 			echo $target, PHP_EOL;
-			file_put_contents(__DIR__ . '/' . $target . '.php', $pass->format(file_get_contents(__DIR__ . '/../src/' . $target . '.src.php')));
-			if (file_exists(__DIR__ . '/../src/' . $target . '.stub.src.php')) {
-				file_put_contents(__DIR__ . '/' . $target . '.stub.php', $pass->format(file_get_contents(__DIR__ . '/../src/' . $target . '.stub.src.php')));
+			file_put_contents(FMT_SCRIPTS_DIR . '/' . $target . '.php', $pass->format(file_get_contents(FMT_SRC_DIR . '/' . $target . '.src.php')));
+			if (file_exists(FMT_SRC_DIR . '/' . $target . '.stub.src.php')) {
+				file_put_contents(FMT_SCRIPTS_DIR . '/' . $target . '.stub.php', $pass->format(file_get_contents(FMT_SRC_DIR . '/' . $target . '.stub.src.php')));
 			}
 		}
 		$chn_done->in('done');
@@ -161,30 +164,30 @@ $chn_done->close();
 echo 'Building PHARs...';
 $phars = ['fmt', 'fmt-external', 'refactor'];
 foreach ($phars as $target) {
-	file_put_contents(__DIR__ . '/' . $target . '.stub.php', '<?php namespace {$inPhar = true;} ' . preg_replace('/' . preg_quote('<?php') . '/', '', file_get_contents(__DIR__ . '/' . $target . '.stub.php'), 1));
-	$phar = new Phar(__DIR__ . '/' . $target . '.phar', FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::KEY_AS_FILENAME, $target . '.phar');
-	$phar[$target . '.stub.php'] = file_get_contents(__DIR__ . '/' . $target . '.stub.php');
+	file_put_contents(FMT_SCRIPTS_DIR . '/' . $target . '.stub.php', '<?php namespace {$inPhar = true;} ' . preg_replace('/' . preg_quote('<?php') . '/', '', file_get_contents(FMT_SCRIPTS_DIR . '/' . $target . '.stub.php'), 1));
+	$phar = new Phar(FMT_SCRIPTS_DIR . '/' . $target . '.phar', FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::KEY_AS_FILENAME, $target . '.phar');
+	$phar[$target . '.stub.php'] = file_get_contents(FMT_SCRIPTS_DIR . '/' . $target . '.stub.php');
 	$phar->setStub('#!/usr/bin/env php' . "\n" . $phar->createDefaultStub($target . '.stub.php'));
-	file_put_contents(__DIR__ . '/' . $target . '.phar.sha1', sha1_file(__DIR__ . '/' . $target . '.phar'));
-	unlink(__DIR__ . '/' . $target . '.stub.php');
+	file_put_contents(FMT_SCRIPTS_DIR . '/' . $target . '.phar.sha1', sha1_file(FMT_SCRIPTS_DIR . '/' . $target . '.phar'));
+	unlink(FMT_SCRIPTS_DIR . '/' . $target . '.stub.php');
 }
 echo 'done', PHP_EOL;
 
 $variants = ['.php' => 0755, '.phar' => 0755, '.phar.sha1' => 0444];
 foreach ($targets as $target) {
 	foreach ($variants as $variant => $permission) {
-		if (file_exists(__DIR__ . '/' . $target . $variant)) {
+		if (file_exists(FMT_SCRIPTS_DIR . '/' . $target . $variant)) {
 			echo 'moving ', $target . $variant, ' to bin' . DIRECTORY_SEPARATOR . $target . $variant, PHP_EOL;
-			rename(__DIR__ . '/' . $target . $variant, __DIR__ . '/../bin/' . $target . $variant);
-			chmod(__DIR__ . '/../bin/' . $target . $variant, $permission);
+			rename(FMT_SCRIPTS_DIR . '/' . $target . $variant, FMT_BIN_DIR . '/' . $target . $variant);
+			chmod(FMT_BIN_DIR . '/' . $target . $variant, $permission);
 		}
 	}
 }
 
-$readmePath = __DIR__ . '/../README.md';
+$readmePath = FMT_ROOT_DIR . '/README.md';
 $readmeContent = file_get_contents($readmePath);
 
-$cmd = PHP_BINARY . ' ' . __DIR__ . '/../bin/fmt.phar --list-simple';
+$cmd = PHP_BINARY . ' ' . FMT_BIN_DIR . '/fmt.phar --list-simple';
 $passes = explode(PHP_EOL, trim(`$cmd`));
 $passes = implode(PHP_EOL,
 	array_map(function ($v) {
@@ -192,7 +195,7 @@ $passes = implode(PHP_EOL,
 	}, $passes)
 );
 
-$cmd = 'cd ' . __DIR__ . '/../bin && ' . PHP_BINARY . ' fmt.phar --help';
+$cmd = 'cd ' . FMT_BIN_DIR . ' && ' . PHP_BINARY . ' fmt.phar --help';
 $help = trim(`$cmd`);
 
 $readmeContent = preg_replace_callback('/<!-- help START -->(.*)<!-- help END -->/s', function ($matches) use ($help) {

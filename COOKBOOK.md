@@ -112,7 +112,7 @@ In the phpfmt, passes work by iterating through pieces of codes (each being a To
 In our case, we want to find all comments, and iterate through each one of them check if they are preceded by a semicolon symbol.
 
 Be sure to get acquainted with PHP default [list of parser
-tokens](http://php.net/manual/en/tokens.php), and phpfmt special token list at `src/Core/constants.php`.
+tokens](http://php.net/manual/en/tokens.php), and phpfmt special token list at `src/constants.php`.
 
 ### Step 2 - Implementation
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 # Copyright (c) 2015, phpfmt and its authors
 # All rights reserved.
@@ -18,7 +19,7 @@ if (ini_get('phar.readonly')) {
 	passthru(PHP_BINARY . ' -dphar.readonly=0 ' . __FILE__ . ' ' . implode(' ', $argv) . ' 2>&1', $ret);
 	exit($ret);
 }
-require __DIR__ . '/../src/Core/constants.php';
+require __DIR__ . '/../src/constants.php';
 require FMT_VENDOR_DIR . '/dericofilho/csp/csp.php';
 require FMT_SRC_DIR . '/Core/FormatterPass.php';
 require FMT_SRC_DIR . '/Additionals/AdditionalPass.php';

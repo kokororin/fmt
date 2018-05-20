@@ -20,7 +20,7 @@ if (!ini_get('short_open_tag')) {
 	exit($ret);
 }
 
-require __DIR__ . '/../src/Core/constants.php';
+require __DIR__ . '/../src/constants.php';
 
 $isHHVM = (false !== strpos(phpversion(), 'hhvm'));
 $shortTagEnabled = ini_get('short_open_tag');

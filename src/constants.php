@@ -24,11 +24,12 @@
 //3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 //
 //THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-define('FMT_ROOT_DIR', realpath(__DIR__ . '/../..'));
-define('FMT_SRC_DIR', realpath(__DIR__ . '/../../src'));
-define('FMT_SCRIPTS_DIR', realpath(__DIR__ . '/../../scripts'));
-define('FMT_BIN_DIR', realpath(__DIR__ . '/../../bin'));
-define('FMT_VENDOR_DIR', realpath(__DIR__ . '/../../vendor'));
+
+define('FMT_ROOT_DIR', realpath(__DIR__ . '/..'));
+define('FMT_SRC_DIR', realpath(__DIR__ . '/../src'));
+define('FMT_SCRIPTS_DIR', realpath(__DIR__ . '/../scripts'));
+define('FMT_BIN_DIR', realpath(__DIR__ . '/../bin'));
+define('FMT_VENDOR_DIR', realpath(__DIR__ . '/../vendor'));
 
 define('ST_AT', '@');
 define('ST_BRACKET_CLOSE', ']');

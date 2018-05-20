@@ -190,11 +190,18 @@ $readmeContent = file_get_contents($readmePath);
 
 $cmd = PHP_BINARY . ' ' . FMT_BIN_DIR . '/fmt.phar --list-simple';
 $passes = explode(PHP_EOL, trim(`$cmd`));
-$passes = implode(PHP_EOL,
-	array_map(function ($v) {
-		return ' * ' . $v;
-	}, $passes)
-);
+
+$passes = array_map(function ($pass) {
+	$splited = explode(' ', $pass);
+	$row = '| ' . $splited[0];
+	unset($splited[0]);
+	$splited = array_filter($splited, function ($v) {
+		return trim($v) !== '';
+	});
+	$row .= ' | ' . implode(' ', $splited) . ' |';
+	return $row;
+}, $passes);
+$passes = implode(PHP_EOL, $passes);
 
 $cmd = 'cd ' . FMT_BIN_DIR . ' && ' . PHP_BINARY . ' fmt.phar --help';
 $help = trim(`$cmd`);
@@ -207,7 +214,11 @@ $ php fmt.phar --help
 }, $readmeContent);
 
 $readmeContent = preg_replace_callback('/<!-- transformations START -->(.*)<!-- transformations END -->/s', function ($matches) use ($passes) {
-	return '<!-- transformations START -->' . PHP_EOL . $passes . PHP_EOL . '<!-- transformations END -->';
+	return '<!-- transformations START -->' . PHP_EOL
+		. '| Key | Description |' . PHP_EOL
+		. '| -------- | ----------- |' . PHP_EOL
+		. $passes . PHP_EOL
+		. '<!-- transformations END -->';
 }, $readmeContent);
 
 file_put_contents($readmePath, $readmeContent);

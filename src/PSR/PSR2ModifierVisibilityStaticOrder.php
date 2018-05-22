@@ -63,6 +63,13 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 					$touchedClassInterfaceTrait = true;
 					$this->appendCode($text);
 					break;
+				case T_USE:
+					if ($this->rightTokenIs(ST_CURLY_OPEN, [T_STRING, T_WHITESPACE])) {
+						$found[] = T_USE;
+						$touchedClassInterfaceTrait = true;
+					}
+					$this->appendCode($text);
+					break;
 				case ST_CURLY_OPEN:
 				case ST_PARENTHESES_OPEN:
 					if ($touchedClassInterfaceTrait) {

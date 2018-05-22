@@ -10,4 +10,8 @@ class Test1
     {
 
     }
+
+    function bax() {
+      
+    }
 }

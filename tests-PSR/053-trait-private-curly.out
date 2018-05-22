@@ -6,7 +6,12 @@ class Test1
         foo as private bar;
     }
 
-    function baz()
+    public function baz()
+    {
+
+    }
+
+    public function bax()
     {
 
     }

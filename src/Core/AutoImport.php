@@ -228,14 +228,14 @@ final class AutoImportPass extends FormatterPass {
 					$token = new SurrogateToken();
 				}
 				if (T_FINAL === $id || T_ABSTRACT === $id || T_INTERFACE === $id || T_CLASS === $id || T_FUNCTION === $id || T_TRAIT === $id || T_VARIABLE === $id) {
-					if (sizeof($useStack) > 0) {
+					if (count($useStack) > 0) {
 						$newTokens[] = $this->newLine;
 						$newTokens[] = $this->newLine;
 					}
 					$newTokens[] = $token;
 					break 2;
 				} elseif ($touchedNamespace && (T_DOC_COMMENT === $id || T_COMMENT === $id)) {
-					if (sizeof($useStack) > 0) {
+					if (count($useStack) > 0) {
 						$newTokens[] = $this->newLine;
 					}
 					$newTokens[] = $token;

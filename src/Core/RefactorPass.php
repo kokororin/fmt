@@ -35,7 +35,7 @@ final class RefactorPass extends FormatterPass {
 
 	public function format($source) {
 		$from = $this->getFrom();
-		$fromSize = sizeof($from);
+		$fromSize = count($from);
 		$fromStr = implode('', array_map(function ($v) {
 			return $v[1];
 		}, $from));

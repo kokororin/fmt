@@ -213,7 +213,7 @@ final class ReindentObjOps extends FormatterPass {
 
 	protected function indentParenthesesContent() {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -238,7 +238,7 @@ final class ReindentObjOps extends FormatterPass {
 
 	protected function injectPlaceholderParenthesesContent($placeholder) {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -260,7 +260,7 @@ final class ReindentObjOps extends FormatterPass {
 	}
 
 	private function hasLnInBlock($tkns, $ptr, $start, $end) {
-		$sizeOfTkns = sizeof($tkns);
+		$sizeOfTkns = count($tkns);
 		$count = 0;
 		for ($i = $ptr; $i < $sizeOfTkns; ++$i) {
 			$token = $tkns[$i];

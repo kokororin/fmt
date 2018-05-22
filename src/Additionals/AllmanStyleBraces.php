@@ -120,7 +120,7 @@ final class AllmanStyleBraces extends AdditionalPass {
 
 				case ST_COMMA:
 					$this->appendCode($text);
-					$foundIndent = &$foundStack[sizeof($foundStack) - 1];
+					$foundIndent = &$foundStack[count($foundStack) - 1];
 					if ($this->hasLnAfter() && $foundIndent['implicit']) {
 						$foundIndent['implicit'] = false;
 						$this->setIndent(+1);

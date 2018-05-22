@@ -30,7 +30,7 @@ class ClassToSelf extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		$tknsLen = sizeof($this->tkns);
+		$tknsLen = count($this->tkns);
 
 		$touchedDoubleColon = false;
 		for ($ptr = 0; $ptr < $tknsLen; ++$ptr) {

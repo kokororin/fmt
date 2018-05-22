@@ -44,7 +44,7 @@ final class StripExtraCommaInList extends FormatterPass {
 
 				case ST_PARENTHESES_OPEN:
 					if (isset($contextStack[0]) && T_LIST == end($contextStack) && $this->rightTokenIs(ST_PARENTHESES_CLOSE)) {
-						$contextStack[sizeof($contextStack) - 1] = self::EMPTY_LIST;
+						$contextStack[count($contextStack) - 1] = self::EMPTY_LIST;
 					} elseif (!$touchedListArrayString) {
 						$contextStack[] = ST_PARENTHESES_OPEN;
 					}

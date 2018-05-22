@@ -60,7 +60,7 @@ final class AlignPHPCode extends AdditionalPass {
 					}
 
 					$tmp = explode($this->newLine, $stack);
-					$lastLine = sizeof($tmp) - 2;
+					$lastLine = count($tmp) - 2;
 					foreach ($tmp as $idx => $line) {
 						$before = $prevSpace;
 						if ('' === trim($line)) {

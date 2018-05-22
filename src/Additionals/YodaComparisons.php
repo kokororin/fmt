@@ -96,7 +96,7 @@ EOT;
 					}
 
 					$rightPureVariable = $this->isPureVariable($rightId);
-					for ($rightmost = $right; $rightmost < sizeof($tkns) - 1; ++$rightmost) {
+					for ($rightmost = $right; $rightmost < count($tkns) - 1; ++$rightmost) {
 						list($rightScanId) = $this->getToken($tkns[$rightmost]);
 						if ($this->isLowerPrecedence($rightScanId)) {
 							--$rightmost;

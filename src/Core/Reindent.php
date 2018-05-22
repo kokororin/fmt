@@ -47,7 +47,7 @@ final class Reindent extends FormatterPass {
 			) {
 				$bottomFoundStack = end($foundStack);
 				if (isset($bottomFoundStack['implicit']) && $bottomFoundStack['implicit']) {
-					$idx = sizeof($foundStack) - 1;
+					$idx = count($foundStack) - 1;
 					$foundStack[$idx]['implicit'] = false;
 					$this->setIndent(+1);
 				}

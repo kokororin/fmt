@@ -243,7 +243,7 @@ if (!$bailOut) {
 
 echo PHP_EOL;
 echo 'Tests:', $count . PHP_EOL;
-echo 'Broken:', sizeof($brokenTests) . PHP_EOL;
+echo 'Broken:', count($brokenTests) . PHP_EOL;
 if (isset($opt['v']) || isset($opt['verbose'])) {
 	foreach ($brokenTests as $caseOut => $test) {
 		file_put_contents($caseOut . '-got', $test);
@@ -304,12 +304,12 @@ if ($isCoveralls) {
 		echo implode('', $newFile), PHP_EOL;
 	}
 }
-if (sizeof($brokenTests) > 0) {
+if (count($brokenTests) > 0) {
 	echo 'run test.php -v to see the error diffs', PHP_EOL;
 	exit(255);
 }
 
-if (sizeof($skippedTests) > 0) {
+if (count($skippedTests) > 0) {
 	echo 'Skipped tests:', PHP_EOL, implode(PHP_EOL, $skippedTests), PHP_EOL;
 }
 exit(0);

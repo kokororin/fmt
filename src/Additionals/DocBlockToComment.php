@@ -140,7 +140,7 @@ EOT;
 	}
 
 	private function variableListFromParenthesesBlock($tkns, $ptr) {
-		$sizeOfTkns = sizeof($tkns);
+		$sizeOfTkns = count($tkns);
 		$variableList = [];
 		$count = 0;
 		for ($i = $ptr; $i < $sizeOfTkns; ++$i) {

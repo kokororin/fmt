@@ -21,7 +21,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'--cakephp' => 'Apply CakePHP coding style',
 		'--config=FILENAME' => 'configuration file. Default: .phpfmt.ini',
 		'--constructor=type' => 'analyse classes for attributes and generate constructor - camel, snake, golang',
-		'--dry-run' => 'Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied',
+		'--dry-run' => 'Runs the formatter without actually changing files; returns exit code 1 if changes would have been applied',
 		'--enable_auto_align' => 'enable auto align of ST_EQUAL and T_DOUBLE_ARROW',
 		'--exclude=pass1,passN,...' => 'disable specific passes',
 		'--help-pass' => 'show specific information for one pass',
@@ -50,7 +50,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		$options['--selfupdate'] = 'self-update fmt.phar from Kotori API';
 		$options['--version'] = 'version';
 	}
-	$options['--cache[=FILENAME]'] .= (Cacher::DEFAULT_CACHE_FILENAME);
+	$options['--cache[=FILENAME]'] .= Cacher::DEFAULT_CACHE_FILENAME;
 	if (!$enableCache) {
 		unset($options['--cache[=FILENAME]']);
 	}
@@ -119,7 +119,7 @@ if (isset($opts['list'])) {
 		}
 	}
 	echo tabwriter($helpLines);
-	die();
+	exit();
 }
 
 if (isset($opts['list-simple'])) {
@@ -132,7 +132,7 @@ if (isset($opts['list-simple'])) {
 		}
 	}
 	echo tabwriter($helpLines);
-	die();
+	exit();
 }
 if (isset($opts['selfupdate'])) {
 	selfupdate($argv, $inPhar);
@@ -163,6 +163,17 @@ if (isset($opts['config'])) {
 			}
 		}
 		fwrite(STDERR, PHP_EOL);
+	} elseif ('1' == $opts['config'] && file_exists(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini') && is_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini')) {
+		fwrite(STDERR, 'Configuration file found' . PHP_EOL);
+		$iniOpts = parse_ini_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini', true);
+		if (isset($opts['profile'])) {
+			$argv = extractFromArgv($argv, 'profile');
+			$profile = &$iniOpts[$opts['profile']];
+			if (isset($profile)) {
+				$iniOpts = $profile;
+			}
+		}
+		$opts = array_merge($iniOpts, $opts);
 	} else {
 		if (!file_exists($opts['config']) || !is_file($opts['config'])) {
 			fwrite(STDERR, 'Custom configuration not file found' . PHP_EOL);
@@ -173,17 +184,6 @@ if (isset($opts['config'])) {
 			$opts += $iniOpts;
 		}
 	}
-} elseif (file_exists(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini') && is_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini')) {
-	fwrite(STDERR, 'Configuration file found' . PHP_EOL);
-	$iniOpts = parse_ini_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini', true);
-	if (isset($opts['profile'])) {
-		$argv = extractFromArgv($argv, 'profile');
-		$profile = &$iniOpts[$opts['profile']];
-		if (isset($profile)) {
-			$iniOpts = $profile;
-		}
-	}
-	$opts = array_merge($iniOpts, $opts);
 }
 if (isset($opts['h']) || isset($opts['help'])) {
 	showHelp($argv, $enableCache, $inPhar);
@@ -199,7 +199,7 @@ if (isset($opts['help-pass'])) {
 	} else {
 		echo $argv[0], ': Core pass.';
 	}
-	die();
+	exit();
 }
 
 $cache = null;
@@ -516,7 +516,7 @@ if (isset($opts['i'])) {
 
 			$progress = new \Symfony\Component\Console\Helper\ProgressBar(
 				new \Symfony\Component\Console\Output\StreamOutput(fopen('php://stderr', 'w')),
-				sizeof(iterator_to_array($files))
+				count(iterator_to_array($files))
 			);
 			$progress->start();
 			foreach ($files as $file) {
@@ -601,7 +601,7 @@ if (isset($opts['i'])) {
 	}
 	fwrite(STDERR, ' ' . $fileCount . ' files total' . PHP_EOL);
 	fwrite(STDERR, 'Took ' . round(microtime(true) - $start, 2) . 's' . PHP_EOL);
-	if (sizeof($missingFiles)) {
+	if (count($missingFiles)) {
 		fwrite(STDERR, 'Files not found: ' . PHP_EOL);
 		foreach ($missingFiles as $file) {
 			fwrite(STDERR, "\t - " . $file . PHP_EOL);

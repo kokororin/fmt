@@ -86,7 +86,7 @@ final class UpgradeToPreg extends AdditionalPass {
 
 			list(, $countTokens) = $this->peekAndCountUntilAny($this->tkns, $this->ptr, [ST_COMMA, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE]);
 			unset($countTokens[T_CONSTANT_ENCAPSED_STRING], $countTokens[ST_COMMA], $countTokens[ST_PARENTHESES_CLOSE]);
-			if (sizeof($countTokens) > 0) {
+			if (count($countTokens) > 0) {
 				continue;
 			}
 

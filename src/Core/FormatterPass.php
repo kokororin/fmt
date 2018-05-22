@@ -230,7 +230,7 @@ abstract class FormatterPass {
 
 	protected function peekAndCountUntilAny($tkns, $ptr, $tknids) {
 		$tknids = array_flip($tknids);
-		$tknsSize = sizeof($tkns);
+		$tknsSize = count($tkns);
 		$countTokens = [];
 		$id = null;
 		for ($i = $ptr; $i < $tknsSize; ++$i) {
@@ -396,7 +396,7 @@ abstract class FormatterPass {
 	}
 
 	protected function refSkipBlocks($tkns, &$ptr) {
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 
 			if (T_CLOSE_TAG == $id) {
@@ -528,7 +528,7 @@ abstract class FormatterPass {
 	protected function refSkipIfTokenIsAny($tkns, &$ptr, $skipIds) {
 		$skipIds = array_flip($skipIds);
 		++$ptr;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (!isset($skipIds[$id])) {
 				break;
@@ -545,7 +545,7 @@ abstract class FormatterPass {
 
 	protected function refWalkBlock($tkns, &$ptr, $start, $end) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if ($start == $id) {
 				++$count;
@@ -577,7 +577,7 @@ abstract class FormatterPass {
 
 	protected function refWalkCurlyBlock($tkns, &$ptr) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (ST_CURLY_OPEN == $id) {
 				++$count;
@@ -962,7 +962,7 @@ abstract class FormatterPass {
 
 	private function walkRight($tkns, $idx, $ignoreList) {
 		$i = $idx;
-		$tknsSize = sizeof($tkns) - 1;
+		$tknsSize = count($tkns) - 1;
 		while (++$i < $tknsSize && isset($ignoreList[$tkns[$i][0]]));
 		return $i;
 	}

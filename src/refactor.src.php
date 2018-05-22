@@ -62,7 +62,7 @@ namespace {
 				echo '  ', str_pad($k, $maxLen), '  ', $v, PHP_EOL;
 			}
 			echo PHP_EOL, 'If <target> is blank, it reads from stdin', PHP_EOL;
-			die();
+			exit();
 		}
 		if (isset($opts['from']) && !isset($opts['to'])) {
 			fwrite(STDERR, 'Refactor must have --from and --to parameters' . PHP_EOL);

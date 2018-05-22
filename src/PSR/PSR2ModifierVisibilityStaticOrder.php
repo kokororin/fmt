@@ -81,7 +81,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				case ST_CURLY_CLOSE:
 				case ST_PARENTHESES_CLOSE:
 					array_pop($found);
-					if (1 === sizeof($found)) {
+					if (1 === count($found)) {
 						array_pop($found);
 					}
 					$this->appendCode($text);

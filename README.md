@@ -19,7 +19,7 @@ Usage: fmt.phar [-hv] [-o=FILENAME] [--config=FILENAME] [--cache[=FILENAME]] [op
   --cakephp                         Apply CakePHP coding style
   --config=FILENAME                 configuration file. Default: .phpfmt.ini
   --constructor=type                analyse classes for attributes and generate constructor - camel, snake, golang
-  --dry-run                         Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied
+  --dry-run                         Runs the formatter without actually changing files; returns exit code 1 if changes would have been applied
   --enable_auto_align               enable auto align of ST_EQUAL and T_DOUBLE_ARROW
   --exclude=pass1,passN,...         disable specific passes
   --help-pass                       show specific information for one pass

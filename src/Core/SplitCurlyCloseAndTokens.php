@@ -33,7 +33,7 @@ class SplitCurlyCloseAndTokens extends FormatterPass {
 
 	public function format($source) {
 		reset($this->tkns);
-		$sizeofTkns = sizeof($this->tkns);
+		$sizeofTkns = count($this->tkns);
 
 		$this->code = '';
 		$blockStack = [];

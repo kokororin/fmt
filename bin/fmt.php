@@ -12,6 +12,73 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+namespace {
+	
+
+if (!defined('FMT_CONSTANTS_DEFINED')) {
+	define('FMT_CONSTANTS_DEFINED', true);
+
+	define('FMT_ROOT_DIR', realpath(__DIR__ . '/..'));
+	define('FMT_SRC_DIR', realpath(__DIR__ . '/../src'));
+	define('FMT_SCRIPTS_DIR', realpath(__DIR__ . '/../scripts'));
+	define('FMT_BIN_DIR', realpath(__DIR__ . '/../bin'));
+	define('FMT_VENDOR_DIR', realpath(__DIR__ . '/../vendor'));
+
+	define('ST_AT', '@');
+	define('ST_BRACKET_CLOSE', ']');
+	define('ST_BRACKET_OPEN', '[');
+	define('ST_COLON', ':');
+	define('ST_COMMA', ',');
+	define('ST_CONCAT', '.');
+	define('ST_CURLY_CLOSE', '}');
+	define('ST_CURLY_OPEN', '{');
+	define('ST_DIVIDE', '/');
+	define('ST_DOLLAR', '$');
+	define('ST_EQUAL', '=');
+	define('ST_EXCLAMATION', '!');
+	define('ST_IS_GREATER', '>');
+	define('ST_IS_SMALLER', '<');
+	define('ST_MINUS', '-');
+	define('ST_MODULUS', '%');
+	define('ST_PARENTHESES_CLOSE', ')');
+	define('ST_PARENTHESES_OPEN', '(');
+	define('ST_PLUS', '+');
+	define('ST_QUESTION', '?');
+	define('ST_QUOTE', '"');
+	define('ST_REFERENCE', '&');
+	define('ST_SEMI_COLON', ';');
+	define('ST_TIMES', '*');
+	define('ST_BITWISE_OR', '|');
+	define('ST_BITWISE_XOR', '^');
+	if (!defined('T_POW')) {
+		define('T_POW', '**');
+	}
+	if (!defined('T_POW_EQUAL')) {
+		define('T_POW_EQUAL', '**=');
+	}
+	if (!defined('T_YIELD')) {
+		define('T_YIELD', 'yield');
+	}
+	if (!defined('T_YIELD_FROM')) {
+		define('T_YIELD_FROM', 'yield_from');
+	}
+	if (!defined('T_FINALLY')) {
+		define('T_FINALLY', 'finally');
+	}
+	if (!defined('T_SPACESHIP')) {
+		define('T_SPACESHIP', '<=>');
+	}
+	if (!defined('T_COALESCE')) {
+		define('T_COALESCE', '??');
+	}
+
+	define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
+	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
+	define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
+}
+
+}
+
 
 	
 
@@ -1736,7 +1803,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.6.10');
+	define('VERSION', '19.7.0');
 
 	
 function extractFromArgv($argv, $item) {
@@ -1834,59 +1901,6 @@ function selfupdate($argv, $inPhar) {
 	exit(0);
 }
 
-
-	
-define('ST_AT', '@');
-define('ST_BRACKET_CLOSE', ']');
-define('ST_BRACKET_OPEN', '[');
-define('ST_COLON', ':');
-define('ST_COMMA', ',');
-define('ST_CONCAT', '.');
-define('ST_CURLY_CLOSE', '}');
-define('ST_CURLY_OPEN', '{');
-define('ST_DIVIDE', '/');
-define('ST_DOLLAR', '$');
-define('ST_EQUAL', '=');
-define('ST_EXCLAMATION', '!');
-define('ST_IS_GREATER', '>');
-define('ST_IS_SMALLER', '<');
-define('ST_MINUS', '-');
-define('ST_MODULUS', '%');
-define('ST_PARENTHESES_CLOSE', ')');
-define('ST_PARENTHESES_OPEN', '(');
-define('ST_PLUS', '+');
-define('ST_QUESTION', '?');
-define('ST_QUOTE', '"');
-define('ST_REFERENCE', '&');
-define('ST_SEMI_COLON', ';');
-define('ST_TIMES', '*');
-define('ST_BITWISE_OR', '|');
-define('ST_BITWISE_XOR', '^');
-if (!defined('T_POW')) {
-	define('T_POW', '**');
-}
-if (!defined('T_POW_EQUAL')) {
-	define('T_POW_EQUAL', '**=');
-}
-if (!defined('T_YIELD')) {
-	define('T_YIELD', 'yield');
-}
-if (!defined('T_YIELD_FROM')) {
-	define('T_YIELD_FROM', 'yield_from');
-}
-if (!defined('T_FINALLY')) {
-	define('T_FINALLY', 'finally');
-}
-if (!defined('T_SPACESHIP')) {
-	define('T_SPACESHIP', '<=>');
-}
-if (!defined('T_COALESCE')) {
-	define('T_COALESCE', '??');
-}
-
-define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
-define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
-define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
 
 	
 abstract class FormatterPass {
@@ -2102,7 +2116,7 @@ abstract class FormatterPass {
 
 	protected function peekAndCountUntilAny($tkns, $ptr, $tknids) {
 		$tknids = array_flip($tknids);
-		$tknsSize = sizeof($tkns);
+		$tknsSize = count($tkns);
 		$countTokens = [];
 		$id = null;
 		for ($i = $ptr; $i < $tknsSize; ++$i) {
@@ -2268,7 +2282,7 @@ abstract class FormatterPass {
 	}
 
 	protected function refSkipBlocks($tkns, &$ptr) {
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 
 			if (T_CLOSE_TAG == $id) {
@@ -2400,7 +2414,7 @@ abstract class FormatterPass {
 	protected function refSkipIfTokenIsAny($tkns, &$ptr, $skipIds) {
 		$skipIds = array_flip($skipIds);
 		++$ptr;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (!isset($skipIds[$id])) {
 				break;
@@ -2417,7 +2431,7 @@ abstract class FormatterPass {
 
 	protected function refWalkBlock($tkns, &$ptr, $start, $end) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if ($start == $id) {
 				++$count;
@@ -2449,7 +2463,7 @@ abstract class FormatterPass {
 
 	protected function refWalkCurlyBlock($tkns, &$ptr) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (ST_CURLY_OPEN == $id) {
 				++$count;
@@ -2834,7 +2848,7 @@ abstract class FormatterPass {
 
 	private function walkRight($tkns, $idx, $ignoreList) {
 		$i = $idx;
-		$tknsSize = sizeof($tkns) - 1;
+		$tknsSize = count($tkns) - 1;
 		while (++$i < $tknsSize && isset($ignoreList[$tkns[$i][0]]));
 		return $i;
 	}
@@ -3214,7 +3228,7 @@ final class AddMissingCurlyBraces extends FormatterPass {
 		$this->code = '';
 										$touchedCurlyClose = false;
 		$hasCurlyOnLeft = false; 
-		for ($index = sizeof($this->tkns) - 1; 0 <= $index; --$index) {
+		for ($index = count($this->tkns) - 1; 0 <= $index; --$index) {
 			$token = $this->tkns[$index];
 			list($id) = $this->getToken($token);
 			$this->ptr = $index;
@@ -3492,14 +3506,14 @@ final class AutoImportPass extends FormatterPass {
 					$token = new SurrogateToken();
 				}
 				if (T_FINAL === $id || T_ABSTRACT === $id || T_INTERFACE === $id || T_CLASS === $id || T_FUNCTION === $id || T_TRAIT === $id || T_VARIABLE === $id) {
-					if (sizeof($useStack) > 0) {
+					if (count($useStack) > 0) {
 						$newTokens[] = $this->newLine;
 						$newTokens[] = $this->newLine;
 					}
 					$newTokens[] = $token;
 					break 2;
 				} elseif ($touchedNamespace && (T_DOC_COMMENT === $id || T_COMMENT === $id)) {
-					if (sizeof($useStack) > 0) {
+					if (count($useStack) > 0) {
 						$newTokens[] = $this->newLine;
 					}
 					$newTokens[] = $token;
@@ -4225,7 +4239,7 @@ final class Reindent extends FormatterPass {
 			) {
 				$bottomFoundStack = end($foundStack);
 				if (isset($bottomFoundStack['implicit']) && $bottomFoundStack['implicit']) {
-					$idx = sizeof($foundStack) - 1;
+					$idx = count($foundStack) - 1;
 					$foundStack[$idx]['implicit'] = false;
 					$this->setIndent(+1);
 				}
@@ -4505,7 +4519,7 @@ final class ReindentEqual extends FormatterPass {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 
-		for ($index = sizeof($this->tkns) - 1; 0 <= $index; --$index) {
+		for ($index = count($this->tkns) - 1; 0 <= $index; --$index) {
 			$token = $this->tkns[$index];
 			list($id) = $this->getToken($token);
 			$this->ptr = $index;
@@ -4820,7 +4834,7 @@ final class ReindentObjOps extends FormatterPass {
 
 	protected function indentParenthesesContent() {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -4845,7 +4859,7 @@ final class ReindentObjOps extends FormatterPass {
 
 	protected function injectPlaceholderParenthesesContent($placeholder) {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -4867,7 +4881,7 @@ final class ReindentObjOps extends FormatterPass {
 	}
 
 	private function hasLnInBlock($tkns, $ptr, $start, $end) {
-		$sizeOfTkns = sizeof($tkns);
+		$sizeOfTkns = count($tkns);
 		$count = 0;
 		for ($i = $ptr; $i < $sizeOfTkns; ++$i) {
 			$token = $tkns[$i];
@@ -5552,7 +5566,7 @@ class SplitCurlyCloseAndTokens extends FormatterPass {
 
 	public function format($source) {
 		reset($this->tkns);
-		$sizeofTkns = sizeof($this->tkns);
+		$sizeofTkns = count($this->tkns);
 
 		$this->code = '';
 		$blockStack = [];
@@ -5685,7 +5699,7 @@ final class StripExtraCommaInList extends FormatterPass {
 
 				case ST_PARENTHESES_OPEN:
 					if (isset($contextStack[0]) && T_LIST == end($contextStack) && $this->rightTokenIs(ST_PARENTHESES_CLOSE)) {
-						$contextStack[sizeof($contextStack) - 1] = self::EMPTY_LIST;
+						$contextStack[count($contextStack) - 1] = self::EMPTY_LIST;
 					} elseif (!$touchedListArrayString) {
 						$contextStack[] = ST_PARENTHESES_OPEN;
 					}
@@ -6383,6 +6397,13 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 					$touchedClassInterfaceTrait = true;
 					$this->appendCode($text);
 					break;
+				case T_USE:
+					if ($this->rightTokenIs(ST_CURLY_OPEN, [T_STRING, T_WHITESPACE])) {
+						$found[] = T_USE;
+						$touchedClassInterfaceTrait = true;
+					}
+					$this->appendCode($text);
+					break;
 				case ST_CURLY_OPEN:
 				case ST_PARENTHESES_OPEN:
 					if ($touchedClassInterfaceTrait) {
@@ -6394,7 +6415,7 @@ final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 				case ST_CURLY_CLOSE:
 				case ST_PARENTHESES_CLOSE:
 					array_pop($found);
-					if (1 === sizeof($found)) {
+					if (1 === count($found)) {
 						array_pop($found);
 					}
 					$this->appendCode($text);
@@ -7362,7 +7383,7 @@ final class AlignPHPCode extends AdditionalPass {
 					}
 
 					$tmp = explode($this->newLine, $stack);
-					$lastLine = sizeof($tmp) - 2;
+					$lastLine = count($tmp) - 2;
 					foreach ($tmp as $idx => $line) {
 						$before = $prevSpace;
 						if ('' === trim($line)) {
@@ -7610,7 +7631,7 @@ final class AllmanStyleBraces extends AdditionalPass {
 
 				case ST_COMMA:
 					$this->appendCode($text);
-					$foundIndent = &$foundStack[sizeof($foundStack) - 1];
+					$foundIndent = &$foundStack[count($foundStack) - 1];
 					if ($this->hasLnAfter() && $foundIndent['implicit']) {
 						$foundIndent['implicit'] = false;
 						$this->setIndent(+1);
@@ -7706,7 +7727,7 @@ class AutoPreincrement extends AdditionalPass {
 
 	public function format($source) {
 		$this->tkns = token_get_all($source);
-		for ($this->ptr = sizeof($this->tkns) - 1; $this->ptr >= 0; --$this->ptr) {
+		for ($this->ptr = count($this->tkns) - 1; $this->ptr >= 0; --$this->ptr) {
 			$token = $this->tkns[$this->ptr];
 			$tokenRef = &$this->tkns[$this->ptr];
 
@@ -8354,7 +8375,7 @@ class ClassToSelf extends AdditionalPass {
 	public function format($source) {
 		$this->tkns = token_get_all($source);
 		$this->code = '';
-		$tknsLen = sizeof($this->tkns);
+		$tknsLen = count($this->tkns);
 
 		$touchedDoubleColon = false;
 		for ($ptr = 0; $ptr < $tknsLen; ++$ptr) {
@@ -8644,7 +8665,7 @@ EOT;
 	}
 
 	private function variableListFromParenthesesBlock($tkns, $ptr) {
-		$sizeOfTkns = sizeof($tkns);
+		$sizeOfTkns = count($tkns);
 		$variableList = [];
 		$count = 0;
 		for ($i = $ptr; $i < $sizeOfTkns; ++$i) {
@@ -9262,7 +9283,7 @@ final class LongArray extends AdditionalPass {
 					break;
 				case ST_PARENTHESES_OPEN:
 					if (isset($contextStack[0]) && T_ARRAY == end($contextStack) && $this->rightTokenIs(ST_PARENTHESES_CLOSE)) {
-						$contextStack[sizeof($contextStack) - 1] = self::EMPTY_ARRAY;
+						$contextStack[count($contextStack) - 1] = self::EMPTY_ARRAY;
 					} elseif (!$this->leftTokenIs([T_ARRAY, T_STRING])) {
 						$contextStack[] = ST_PARENTHESES_OPEN;
 					}
@@ -11124,7 +11145,7 @@ EOT;
 
 	protected function indentParenthesesContent() {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -11149,7 +11170,7 @@ EOT;
 
 	protected function injectPlaceholderParenthesesContent($placeholder) {
 		$count = 0;
-		$sizeofTokens = sizeof($this->tkns);
+		$sizeofTokens = count($this->tkns);
 		for ($i = $this->ptr; $i < $sizeofTokens; ++$i) {
 			$token = &$this->tkns[$i];
 			list($id, $text) = $this->getToken($token);
@@ -11171,7 +11192,7 @@ EOT;
 	}
 
 	private function hasLnInBlock($tkns, $ptr, $start, $end) {
-		$sizeOfTkns = sizeof($tkns);
+		$sizeOfTkns = count($tkns);
 		$count = 0;
 		for ($i = $ptr; $i < $sizeOfTkns; ++$i) {
 			$token = $tkns[$i];
@@ -12519,7 +12540,7 @@ final class StripExtraCommaInArray extends AdditionalPass {
 					break;
 				case ST_PARENTHESES_OPEN:
 					if (isset($contextStack[0]) && T_ARRAY == end($contextStack) && $this->rightTokenIs(ST_PARENTHESES_CLOSE)) {
-						$contextStack[sizeof($contextStack) - 1] = self::EMPTY_ARRAY;
+						$contextStack[count($contextStack) - 1] = self::EMPTY_ARRAY;
 					} elseif (!$this->leftTokenIs([T_ARRAY, T_STRING])) {
 						$contextStack[] = ST_PARENTHESES_OPEN;
 					}
@@ -13127,7 +13148,7 @@ final class UpgradeToPreg extends AdditionalPass {
 
 			list(, $countTokens) = $this->peekAndCountUntilAny($this->tkns, $this->ptr, [ST_COMMA, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE]);
 			unset($countTokens[T_CONSTANT_ENCAPSED_STRING], $countTokens[ST_COMMA], $countTokens[ST_PARENTHESES_CLOSE]);
-			if (sizeof($countTokens) > 0) {
+			if (count($countTokens) > 0) {
 				continue;
 			}
 
@@ -13455,7 +13476,7 @@ EOT;
 					}
 
 					$rightPureVariable = $this->isPureVariable($rightId);
-					for ($rightmost = $right; $rightmost < sizeof($tkns) - 1; ++$rightmost) {
+					for ($rightmost = $right; $rightmost < count($tkns) - 1; ++$rightmost) {
 						list($rightScanId) = $this->getToken($tkns[$rightmost]);
 						if ($this->isLowerPrecedence($rightScanId)) {
 							--$rightmost;
@@ -13638,7 +13659,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		'--cakephp' => 'Apply CakePHP coding style',
 		'--config=FILENAME' => 'configuration file. Default: .phpfmt.ini',
 		'--constructor=type' => 'analyse classes for attributes and generate constructor - camel, snake, golang',
-		'--dry-run' => 'Runs the formatter without atually changing files; returns exit code 1 if changes would have been applied',
+		'--dry-run' => 'Runs the formatter without actually changing files; returns exit code 1 if changes would have been applied',
 		'--enable_auto_align' => 'enable auto align of ST_EQUAL and T_DOUBLE_ARROW',
 		'--exclude=pass1,passN,...' => 'disable specific passes',
 		'--help-pass' => 'show specific information for one pass',
@@ -13667,7 +13688,7 @@ function showHelp($argv, $enableCache, $inPhar) {
 		$options['--selfupdate'] = 'self-update fmt.phar from Kotori API';
 		$options['--version'] = 'version';
 	}
-	$options['--cache[=FILENAME]'] .= (Cacher::DEFAULT_CACHE_FILENAME);
+	$options['--cache[=FILENAME]'] .= Cacher::DEFAULT_CACHE_FILENAME;
 	if (!$enableCache) {
 		unset($options['--cache[=FILENAME]']);
 	}
@@ -13736,7 +13757,7 @@ if (isset($opts['list'])) {
 		}
 	}
 	echo tabwriter($helpLines);
-	die();
+	exit();
 }
 
 if (isset($opts['list-simple'])) {
@@ -13749,7 +13770,7 @@ if (isset($opts['list-simple'])) {
 		}
 	}
 	echo tabwriter($helpLines);
-	die();
+	exit();
 }
 if (isset($opts['selfupdate'])) {
 	selfupdate($argv, $inPhar);
@@ -13780,6 +13801,17 @@ if (isset($opts['config'])) {
 			}
 		}
 		fwrite(STDERR, PHP_EOL);
+	} elseif ('1' == $opts['config'] && file_exists(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini') && is_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini')) {
+		fwrite(STDERR, 'Configuration file found' . PHP_EOL);
+		$iniOpts = parse_ini_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini', true);
+		if (isset($opts['profile'])) {
+			$argv = extractFromArgv($argv, 'profile');
+			$profile = &$iniOpts[$opts['profile']];
+			if (isset($profile)) {
+				$iniOpts = $profile;
+			}
+		}
+		$opts = array_merge($iniOpts, $opts);
 	} else {
 		if (!file_exists($opts['config']) || !is_file($opts['config'])) {
 			fwrite(STDERR, 'Custom configuration not file found' . PHP_EOL);
@@ -13790,17 +13822,6 @@ if (isset($opts['config'])) {
 			$opts += $iniOpts;
 		}
 	}
-} elseif (file_exists(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini') && is_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini')) {
-	fwrite(STDERR, 'Configuration file found' . PHP_EOL);
-	$iniOpts = parse_ini_file(getcwd() . DIRECTORY_SEPARATOR . '.phpfmt.ini', true);
-	if (isset($opts['profile'])) {
-		$argv = extractFromArgv($argv, 'profile');
-		$profile = &$iniOpts[$opts['profile']];
-		if (isset($profile)) {
-			$iniOpts = $profile;
-		}
-	}
-	$opts = array_merge($iniOpts, $opts);
 }
 if (isset($opts['h']) || isset($opts['help'])) {
 	showHelp($argv, $enableCache, $inPhar);
@@ -13816,7 +13837,7 @@ if (isset($opts['help-pass'])) {
 	} else {
 		echo $argv[0], ': Core pass.';
 	}
-	die();
+	exit();
 }
 
 $cache = null;
@@ -14132,7 +14153,7 @@ if (isset($opts['i'])) {
 
 			$progress = new \Symfony\Component\Console\Helper\ProgressBar(
 				new \Symfony\Component\Console\Output\StreamOutput(fopen('php://stderr', 'w')),
-				sizeof(iterator_to_array($files))
+				count(iterator_to_array($files))
 			);
 			$progress->start();
 			foreach ($files as $file) {
@@ -14217,7 +14238,7 @@ if (isset($opts['i'])) {
 	}
 	fwrite(STDERR, ' ' . $fileCount . ' files total' . PHP_EOL);
 	fwrite(STDERR, 'Took ' . round(microtime(true) - $start, 2) . 's' . PHP_EOL);
-	if (sizeof($missingFiles)) {
+	if (count($missingFiles)) {
 		fwrite(STDERR, 'Files not found: ' . PHP_EOL);
 		foreach ($missingFiles as $file) {
 			fwrite(STDERR, "\t - " . $file . PHP_EOL);

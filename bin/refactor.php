@@ -14,57 +14,68 @@
 
 namespace {
 	
-define('ST_AT', '@');
-define('ST_BRACKET_CLOSE', ']');
-define('ST_BRACKET_OPEN', '[');
-define('ST_COLON', ':');
-define('ST_COMMA', ',');
-define('ST_CONCAT', '.');
-define('ST_CURLY_CLOSE', '}');
-define('ST_CURLY_OPEN', '{');
-define('ST_DIVIDE', '/');
-define('ST_DOLLAR', '$');
-define('ST_EQUAL', '=');
-define('ST_EXCLAMATION', '!');
-define('ST_IS_GREATER', '>');
-define('ST_IS_SMALLER', '<');
-define('ST_MINUS', '-');
-define('ST_MODULUS', '%');
-define('ST_PARENTHESES_CLOSE', ')');
-define('ST_PARENTHESES_OPEN', '(');
-define('ST_PLUS', '+');
-define('ST_QUESTION', '?');
-define('ST_QUOTE', '"');
-define('ST_REFERENCE', '&');
-define('ST_SEMI_COLON', ';');
-define('ST_TIMES', '*');
-define('ST_BITWISE_OR', '|');
-define('ST_BITWISE_XOR', '^');
-if (!defined('T_POW')) {
-	define('T_POW', '**');
-}
-if (!defined('T_POW_EQUAL')) {
-	define('T_POW_EQUAL', '**=');
-}
-if (!defined('T_YIELD')) {
-	define('T_YIELD', 'yield');
-}
-if (!defined('T_YIELD_FROM')) {
-	define('T_YIELD_FROM', 'yield_from');
-}
-if (!defined('T_FINALLY')) {
-	define('T_FINALLY', 'finally');
-}
-if (!defined('T_SPACESHIP')) {
-	define('T_SPACESHIP', '<=>');
-}
-if (!defined('T_COALESCE')) {
-	define('T_COALESCE', '??');
-}
 
-define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
-define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
-define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
+if (!defined('FMT_CONSTANTS_DEFINED')) {
+	define('FMT_CONSTANTS_DEFINED', true);
+
+	define('FMT_ROOT_DIR', realpath(__DIR__ . '/..'));
+	define('FMT_SRC_DIR', realpath(__DIR__ . '/../src'));
+	define('FMT_SCRIPTS_DIR', realpath(__DIR__ . '/../scripts'));
+	define('FMT_BIN_DIR', realpath(__DIR__ . '/../bin'));
+	define('FMT_VENDOR_DIR', realpath(__DIR__ . '/../vendor'));
+
+	define('ST_AT', '@');
+	define('ST_BRACKET_CLOSE', ']');
+	define('ST_BRACKET_OPEN', '[');
+	define('ST_COLON', ':');
+	define('ST_COMMA', ',');
+	define('ST_CONCAT', '.');
+	define('ST_CURLY_CLOSE', '}');
+	define('ST_CURLY_OPEN', '{');
+	define('ST_DIVIDE', '/');
+	define('ST_DOLLAR', '$');
+	define('ST_EQUAL', '=');
+	define('ST_EXCLAMATION', '!');
+	define('ST_IS_GREATER', '>');
+	define('ST_IS_SMALLER', '<');
+	define('ST_MINUS', '-');
+	define('ST_MODULUS', '%');
+	define('ST_PARENTHESES_CLOSE', ')');
+	define('ST_PARENTHESES_OPEN', '(');
+	define('ST_PLUS', '+');
+	define('ST_QUESTION', '?');
+	define('ST_QUOTE', '"');
+	define('ST_REFERENCE', '&');
+	define('ST_SEMI_COLON', ';');
+	define('ST_TIMES', '*');
+	define('ST_BITWISE_OR', '|');
+	define('ST_BITWISE_XOR', '^');
+	if (!defined('T_POW')) {
+		define('T_POW', '**');
+	}
+	if (!defined('T_POW_EQUAL')) {
+		define('T_POW_EQUAL', '**=');
+	}
+	if (!defined('T_YIELD')) {
+		define('T_YIELD', 'yield');
+	}
+	if (!defined('T_YIELD_FROM')) {
+		define('T_YIELD_FROM', 'yield_from');
+	}
+	if (!defined('T_FINALLY')) {
+		define('T_FINALLY', 'finally');
+	}
+	if (!defined('T_SPACESHIP')) {
+		define('T_SPACESHIP', '<=>');
+	}
+	if (!defined('T_COALESCE')) {
+		define('T_COALESCE', '??');
+	}
+
+	define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
+	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
+	define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
+}
 
 	
 abstract class FormatterPass {
@@ -280,7 +291,7 @@ abstract class FormatterPass {
 
 	protected function peekAndCountUntilAny($tkns, $ptr, $tknids) {
 		$tknids = array_flip($tknids);
-		$tknsSize = sizeof($tkns);
+		$tknsSize = count($tkns);
 		$countTokens = [];
 		$id = null;
 		for ($i = $ptr; $i < $tknsSize; ++$i) {
@@ -446,7 +457,7 @@ abstract class FormatterPass {
 	}
 
 	protected function refSkipBlocks($tkns, &$ptr) {
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 
 			if (T_CLOSE_TAG == $id) {
@@ -578,7 +589,7 @@ abstract class FormatterPass {
 	protected function refSkipIfTokenIsAny($tkns, &$ptr, $skipIds) {
 		$skipIds = array_flip($skipIds);
 		++$ptr;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (!isset($skipIds[$id])) {
 				break;
@@ -595,7 +606,7 @@ abstract class FormatterPass {
 
 	protected function refWalkBlock($tkns, &$ptr, $start, $end) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if ($start == $id) {
 				++$count;
@@ -627,7 +638,7 @@ abstract class FormatterPass {
 
 	protected function refWalkCurlyBlock($tkns, &$ptr) {
 		$count = 0;
-		for ($sizeOfTkns = sizeof($tkns); $ptr < $sizeOfTkns; ++$ptr) {
+		for ($sizeOfTkns = count($tkns); $ptr < $sizeOfTkns; ++$ptr) {
 			$id = $tkns[$ptr][0];
 			if (ST_CURLY_OPEN == $id) {
 				++$count;
@@ -1012,7 +1023,7 @@ abstract class FormatterPass {
 
 	private function walkRight($tkns, $idx, $ignoreList) {
 		$i = $idx;
-		$tknsSize = sizeof($tkns) - 1;
+		$tknsSize = count($tkns) - 1;
 		while (++$i < $tknsSize && isset($ignoreList[$tkns[$i][0]]));
 		return $i;
 	}
@@ -1042,7 +1053,7 @@ final class RefactorPass extends FormatterPass {
 
 	public function format($source) {
 		$from = $this->getFrom();
-		$fromSize = sizeof($from);
+		$fromSize = count($from);
 		$fromStr = implode('', array_map(function ($v) {
 			return $v[1];
 		}, $from));
@@ -1188,7 +1199,7 @@ final class RefactorPass extends FormatterPass {
 				echo '  ', str_pad($k, $maxLen), '  ', $v, PHP_EOL;
 			}
 			echo PHP_EOL, 'If <target> is blank, it reads from stdin', PHP_EOL;
-			die();
+			exit();
 		}
 		if (isset($opts['from']) && !isset($opts['to'])) {
 			fwrite(STDERR, 'Refactor must have --from and --to parameters' . PHP_EOL);

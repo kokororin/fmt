@@ -36,7 +36,10 @@
   },
   "require": {
     "php": ">=5.6.0",
-    "ext-tokenizer": "*"
+    "ext-mbstring": "*",
+    "ext-phar": "*",
+    "ext-tokenizer": "*",
+    "ext-xml": "*"
   },
   "require-dev": {
     "dericofilho/csp": "~2.0.0",

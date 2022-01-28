@@ -21,7 +21,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, intl, redis, pdo_mysql
+          extensions: mbstring, phar, tokenizer, xml
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Install dependencies
-        run: composer install --no-progress --optimize-autoloader
+        run: composer install --no-progress
 
       - name: Test
         run: composer test -- -v --baseline

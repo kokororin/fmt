@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -712,7 +712,9 @@ abstract class FormatterPass {
 		}
 		$str = '';
 		foreach ($tkns as $token) {
-			$str .= $token[1];
+			if ($token) {
+				$str .= $token[1];
+			}
 		}
 		return $str;
 	}
@@ -1153,6 +1155,7 @@ final class RefactorPass extends FormatterPass {
 		return $this;
 	}
 }
+
 
 	final class CodeFormatter {
 		private $debug = false;

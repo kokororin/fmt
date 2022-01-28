@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -1803,7 +1803,7 @@ final class Cache implements Cacher {
 
 	}
 
-	define('VERSION', '19.7.0');
+	define('VERSION', '19.8.0');
 
 	
 function extractFromArgv($argv, $item) {
@@ -2537,7 +2537,9 @@ abstract class FormatterPass {
 		}
 		$str = '';
 		foreach ($tkns as $token) {
-			$str .= $token[1];
+			if ($token) {
+				$str .= $token[1];
+			}
 		}
 		return $str;
 	}
@@ -3557,6 +3559,7 @@ final class AutoImportPass extends FormatterPass {
 		return $aliasCount;
 	}
 }
+
 	
 final class ConstructorPass extends FormatterPass {
 	const TYPE_CAMEL_CASE = 'camel';
@@ -3691,6 +3694,7 @@ final class ConstructorPass extends FormatterPass {
 		return $str;
 	}
 }
+
 	
 final class EliminateDuplicatedEmptyLines extends FormatterPass {
 	const EMPTY_LINE = "\x2 EMPTYLINE \x3";
@@ -3742,6 +3746,7 @@ final class EliminateDuplicatedEmptyLines extends FormatterPass {
 		return $ret;
 	}
 }
+
 	
 class ExternalPass {
 	private $passName = '';
@@ -3878,6 +3883,7 @@ final class ExtraCommaInArray extends FormatterPass {
 		return $this->renderLight();
 	}
 }
+
 	
 final class LeftAlignComment extends FormatterPass {
 	const NON_INDENTABLE_COMMENT = "/*\x2 COMMENT \x3*/";
@@ -4044,6 +4050,7 @@ final class MergeDoubleArrowAndArray extends FormatterPass {
 		return $this->code;
 	}
 }
+
 	
 final class MergeParenCloseWithCurlyOpen extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -4288,7 +4295,7 @@ final class Reindent extends FormatterPass {
 				case ST_PARENTHESES_CLOSE:
 				case ST_BRACKET_CLOSE:
 					$poppedID = array_pop($foundStack);
-					if (false === $poppedID['implicit']) {
+					if ($poppedID && false === $poppedID['implicit']) {
 						$this->setIndent(-1);
 					}
 					$this->appendCode($text);
@@ -4411,6 +4418,7 @@ final class ReindentColonBlocks extends FormatterPass {
 		}
 	}
 }
+
 	
 final class ReindentComments extends FormatterPass {
 	public $commentStack = [];
@@ -4509,6 +4517,7 @@ final class ReindentComments extends FormatterPass {
 		return $this->renderLight($this->tkns);
 	}
 }
+
 	
 final class ReindentEqual extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -4733,7 +4742,7 @@ final class ReindentObjOps extends FormatterPass {
 
 				case T_DOUBLE_COLON:
 				case T_OBJECT_OPERATOR:
-					if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) || 0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+					if (isset($touchCounter[$levelCounter]) && isset($levelEntranceCounter[$levelCounter]) && isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) && isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) && 0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
 						if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
 							$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
 						}
@@ -5378,6 +5387,7 @@ final class RTrim extends FormatterPass {
 		return preg_replace('/\h+$/mu', '', $source);
 	}
 }
+
 	
 final class SettersAndGettersPass extends FormatterPass {
 	const PLACEHOLDER = "/*SETTERSANDGETTERSPLACEHOLDER%s\x3*/";
@@ -5544,6 +5554,7 @@ final class SettersAndGettersPass extends FormatterPass {
 		eachArray($this->tkns);
 	}
 }
+
 	
 class SplitCurlyCloseAndTokens extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -5724,6 +5735,7 @@ final class StripExtraCommaInList extends FormatterPass {
 		return $this->renderLight();
 	}
 }
+
 	
 final class SurrogateToken {
 }
@@ -5840,6 +5852,7 @@ final class PSR1ClassConstants extends FormatterPass {
 		return $this->code;
 	}
 }
+
 	
 final class PSR1ClassNames extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -6210,6 +6223,7 @@ final class PSR2IndentWithSpace extends FormatterPass {
 		return $this->code;
 	}
 }
+
 	
 final class PSR2KeywordsLowerCase extends FormatterPass {
 	private static $reservedWords = [
@@ -6294,6 +6308,7 @@ final class PSR2KeywordsLowerCase extends FormatterPass {
 		return $this->code;
 	}
 }
+
 	
 final class PSR2LnAfterNamespace extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -6345,6 +6360,7 @@ final class PSR2LnAfterNamespace extends FormatterPass {
 		return $this->code;
 	}
 }
+
 	
 final class PSR2ModifierVisibilityStaticOrder extends FormatterPass {
 	public function candidate($source, $foundTokens) {
@@ -6578,6 +6594,7 @@ final class PsrDecorator {
 		self::PSR2($fmt);
 	}
 }
+
 
 	
 final class AddMissingParentheses extends AdditionalPass {
@@ -6865,6 +6882,7 @@ class A {
 EOT;
 	}
 }
+
 	
 class AlignDoubleArrow extends AdditionalPass {
 	const ALIGNABLE_EQUAL = "\x2 EQUAL%d.%d.%d \x3";
@@ -7069,7 +7087,7 @@ final class AlignDoubleSlashComments extends AdditionalPass {
 					if (LeftAlignComment::NON_INDENTABLE_COMMENT == $text) {
 						$touchedNonAlignableComment = true;
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 
 					$prefix = '';
@@ -7122,6 +7140,7 @@ $ccc = 333;  // Comment 3
 EOT;
 	}
 }
+
 	
 final class AlignEquals extends AdditionalPass {
 	const ALIGNABLE_EQUAL = "\x2 EQUAL%d \x3";
@@ -7562,7 +7581,7 @@ final class AllmanStyleBraces extends AdditionalPass {
 				case T_FUNCTION:
 					$currentIndentation = 0;
 					$poppedID = end($foundStack);
-					if (true === $poppedID['implicit']) {
+					if ($poppedID && true === $poppedID['implicit']) {
 						list($prevId, $prevText) = $this->inspectToken(-1);
 						$currentIndentation = substr_count($prevText, $this->indentChar, strrpos($prevText, "\n"));
 					}
@@ -7837,6 +7856,7 @@ EOT;
 		} while (!(ST_DOLLAR == $id || T_VARIABLE == $id));
 	}
 }
+
 	
 final class AutoSemicolon extends AdditionalPass {
 	const ST_CLOSURE = 'CLOSURE';
@@ -7911,7 +7931,7 @@ final class AutoSemicolon extends AdditionalPass {
 				case T_WHITESPACE:
 					if (!$this->hasLn($text)) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 					if ($touchedSingleColon && $ternary) {
 						$touchedSingleColon = false;
@@ -8028,7 +8048,7 @@ final class AutoSemicolon extends AdditionalPass {
 						])
 					) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 					if (
 						$this->rightUsefulTokenIs([
@@ -8068,7 +8088,7 @@ final class AutoSemicolon extends AdditionalPass {
 						])
 					) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 
 					if (
@@ -8076,7 +8096,7 @@ final class AutoSemicolon extends AdditionalPass {
 						ST_PARENTHESES_OPEN != $lastParen
 					) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 
 					if (
@@ -8088,12 +8108,12 @@ final class AutoSemicolon extends AdditionalPass {
 						)
 					) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 
 					if (0 != $ternary) {
 						$this->appendCode($text);
-						continue;
+						continue 2;
 					}
 
 					$this->appendCode(ST_SEMI_COLON . $text);
@@ -8839,7 +8859,7 @@ final class EncapsulateNamespaces extends AdditionalPass {
 						}
 						$this->appendCode($this->getCrlf() . ST_CURLY_CLOSE . $this->getCrlf());
 						prev($this->tkns);
-						continue;
+						continue 2;
 					}
 					break;
 				default:
@@ -9488,6 +9508,7 @@ final class MildAutoPreincrement extends AutoPreincrement {
 		return 'Automatically convert postincrement to preincrement. (Deprecated pass. Use AutoPreincrement instead).';
 	}
 }
+
 	
 final class NewLineBeforeReturn extends AdditionalPass {
 	public function candidate($source, $foundTokens) {
@@ -9601,6 +9622,7 @@ function a($myInt){
 EOT;
 	}
 }
+
 	
 class OrganizeClass extends AdditionalPass {
 	const METHOD_REPLACEMENT_PLACEHOLDER = "\x2 METHODPLACEHOLDER \x3";
@@ -10261,10 +10283,10 @@ final class OrderMethodAndVisibility extends OrganizeClass {
 				case T_FUNCTION:
 					$this->appendCode($text);
 					if (!$this->rightUsefulTokenIs(T_STRING)) {
-						continue;
+						continue 2;
 					}
 					if (!$this->leftTokenIs(T_DOC_COMMENT)) {
-						continue;
+						continue 2;
 					}
 
 					$foundParams = [];
@@ -10351,6 +10373,7 @@ function abc(int $a = 10, int $b = 20, $c): int {
 EOT;
 	}
 }
+
 	
 final class PrettyPrintDocBlocks extends AdditionalPass {
 	const EMPTY_LINE = "\x2 EMPTYLINE \x3";
@@ -11509,7 +11532,7 @@ final class RemoveUseLeadingSlash extends AdditionalPass {
 					$lastTouchedToken = $id;
 				case T_NS_SEPARATOR:
 					if (T_NAMESPACE == $lastTouchedToken && $this->leftTokenIs([T_USE])) {
-						continue;
+						continue 2;
 					}
 				default:
 					$this->appendCode($text);
@@ -11956,6 +11979,7 @@ final class SortUseNameSpace extends AdditionalPass {
 		return '';
 	}
 }
+
 	
 final class SpaceAroundControlStructures extends AdditionalPass {
 	
@@ -12196,6 +12220,7 @@ if ( ! true) foo();
 ';
 	}
 }
+
 	
 final class SpaceAroundParentheses extends AdditionalPass {
 	public function candidate($source, $foundTokens) {
@@ -12883,7 +12908,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 					if ($this->hasLnAfter()) {
 						eachArray($this->tkns);
 						$this->appendCode($this->newLine);
-						continue;
+						continue 2;
 					}
 
 					break;
@@ -12903,7 +12928,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 						if ($this->hasLnAfter()) {
 							eachArray($this->tkns);
 							$this->appendCode($this->newLine);
-							continue;
+							continue 2;
 						}
 					}
 
@@ -12927,7 +12952,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 				case ST_CURLY_CLOSE:
 					if ($this->hasLnBefore()) {
 						$this->rtrimAndAppendCode($this->newLine . $text);
-						continue;
+						continue 2;
 					}
 
 					$this->appendCode($text);
@@ -13462,7 +13487,7 @@ EOT;
 					list($leftId) = $tkns[$left];
 					list($rightId) = $tkns[$right];
 					if ($leftId == $rightId) {
-						continue;
+						continue 2;
 					}
 
 					$leftPureVariable = $this->isPureVariable($leftId);
@@ -13644,6 +13669,7 @@ EOT;
 		return self::CHAIN_VARIABLE == $id || T_VARIABLE == $id || T_INC == $id || T_DEC == $id || ST_EXCLAMATION == $id || T_COMMENT == $id || T_DOC_COMMENT == $id || T_WHITESPACE == $id;
 	}
 }
+
 
 	if (!isset($inPhar)) {
 		$inPhar = false;

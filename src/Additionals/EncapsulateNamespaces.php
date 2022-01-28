@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -45,7 +45,7 @@ final class EncapsulateNamespaces extends AdditionalPass {
 						}
 						$this->appendCode($this->getCrlf() . ST_CURLY_CLOSE . $this->getCrlf());
 						prev($this->tkns);
-						continue;
+						continue 2;
 					}
 					break;
 				default:

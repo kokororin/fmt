@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -63,7 +63,7 @@ class Build extends FormatterPass {
 						if ('Extern' == $rText) {
 							$this->walkUntil(ST_CURLY_OPEN);
 							$curlyStack[] = T_NAMESPACE;
-							continue;
+							continue 2;
 						}
 					}
 					$this->appendCode($text);
@@ -79,7 +79,7 @@ class Build extends FormatterPass {
 				case ST_CURLY_CLOSE;
 					$foundId = array_pop($curlyStack);
 					if (T_NAMESPACE == $foundId) {
-						continue;
+						continue 2;
 					}
 					$this->appendCode($text);
 					break;

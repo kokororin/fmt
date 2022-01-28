@@ -18,10 +18,10 @@ class PHPDocTypesToFunctionTypehint extends AdditionalPass {
 				case T_FUNCTION:
 					$this->appendCode($text);
 					if (!$this->rightUsefulTokenIs(T_STRING)) {
-						continue;
+						continue 2;
 					}
 					if (!$this->leftTokenIs(T_DOC_COMMENT)) {
-						continue;
+						continue 2;
 					}
 
 					$foundParams = [];

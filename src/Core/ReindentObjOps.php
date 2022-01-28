@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -112,7 +112,7 @@ final class ReindentObjOps extends FormatterPass {
 
 				case T_DOUBLE_COLON:
 				case T_OBJECT_OPERATOR:
-					if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) || 0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
+					if (isset($touchCounter[$levelCounter]) && isset($levelEntranceCounter[$levelCounter]) && isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) && isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) && 0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
 						if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
 							$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
 						}

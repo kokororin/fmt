@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2015, phpfmt and its authors
+# Copyright (c) 2014, phpfmt and its authors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -55,7 +55,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 					if ($this->hasLnAfter()) {
 						eachArray($this->tkns);
 						$this->appendCode($this->newLine);
-						continue;
+						continue 2;
 					}
 
 					break;
@@ -75,7 +75,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 						if ($this->hasLnAfter()) {
 							eachArray($this->tkns);
 							$this->appendCode($this->newLine);
-							continue;
+							continue 2;
 						}
 					}
 
@@ -99,7 +99,7 @@ final class StripSpaceWithinControlStructures extends AdditionalPass {
 				case ST_CURLY_CLOSE:
 					if ($this->hasLnBefore()) {
 						$this->rtrimAndAppendCode($this->newLine . $text);
-						continue;
+						continue 2;
 					}
 
 					$this->appendCode($text);

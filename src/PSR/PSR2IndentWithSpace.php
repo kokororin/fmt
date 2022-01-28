@@ -14,10 +14,13 @@
 
 final class PSR2IndentWithSpace extends FormatterPass {
 	private $size = 4;
-
+	private $char = ' ';
 	public function __construct($size = null) {
-		if ($size > 0) {
+		if (is_integer($size) && $size > 0) {
 			$this->size = $size;
+		} else if ($size==false) {
+			$this->char = "\t";
+			$this->size = 1;
 		}
 	}
 
@@ -26,7 +29,7 @@ final class PSR2IndentWithSpace extends FormatterPass {
 	}
 
 	public function format($source) {
-		$spaces = str_repeat(' ', (int) $this->size);
+		$spaces = str_repeat($this->char, (int) $this->size);
 		$this->tkns = token_get_all($source);
 		$this->code = '';
 		while (list($index, $token) = eachArray($this->tkns)) {
